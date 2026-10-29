@@ -1,0 +1,621 @@
+oct 22, 2026
+Procesamiento del Lenguaje Natural I (1/8) - a264b26 - Transcripción
+00:00:05
+
+lse posgrados: Hola, ¿qué tal? Buenas tardes.
+Vicky: Hola, buenas.
+Jeraldinne Molleda: Hola,
+Vicky: Okay.
+Jeraldinne Molleda: buenas tardes. Yes.
+Nicolas Lastra: Buenas tardes,
+lse posgrados: Esperamos unos minutos hasta las 7:5 y empezamos. Bien, ¿qué tal? Buenas tardes a todos. Ya estamos a la hora, así que vamos empezando. Eh, bienvenidos al curso de procesamiento de lenguaje natural. El primer curso eh lo vamos a estar dictando eh Fernando Silva y eh y yo JosselynOrdóñez. Nos vamos a estar dividiendo mitad y mitad, es decir, yo doy las primeras cuatro clases y Fernando va a dar las cuatro últimas. Eh, un poco para que me conozcan. Eh, yo actualmente soy data scientist cognitive de Creditor, que es un grupo financiero en Perú y veo específicamente proyectos de ella generativa eh para el banco BCP, que es uno de los bancos más grandes de Perú, así que me encuentro ahorita en Lima y principalmente ahorita estamos haciendo proyectos de de agentes eh conversacionales, WFlows con IA para analizar ar eh por ejemplo llamadas eh o documentos. Entonces, esa es un poco mi experiencia actual.
+
+
+00:05:06
+
+lse posgrados: Vengo de bastante tiempo del lado de banca, así que probablemente me vayan a escuchar hablar de bastantes ejemplos de sector banc. Eh, y bueno, también tengo mi pasado en negocio. De hecho, yo hice pregrado en en administración de empresas, así que también estoy un poco más orientado a este mundo de negocios. Y eh la maestría sí la hice en la UG, así que mi maestría se fue con IT para que se ponga un poco mi background. E para conocerlos no hay mucho tiempo para que se presenten, pero de repente hago una encuesta rápida y me responden con dedito arriba o abajo. Me gustaría saber quiénes ya en su trabajo aplican técnicas de procesamiento de lenguaje natural. Ponen dedito arriba si si alguno ya las aplicad. Carlos dice que no. Vickyno. Walter sí. Eh, veo dosis. Okay. La la mayoría no no la aplica. Eh, bit nada más dosis. Genial. ¿Y quiénes sí usan el lms en su día a día? O mejor quiénes no usan.
+
+
+00:06:17
+
+lse posgrados: Me ponen de abajo si todos los por ahora todos lo usan. y Argel. Entonces, digamos que todos son usuarios de de grandes modelos de lenguaje. Muy poquitos lo usan en el trabajo en sí ya como sus roles, su rol profesional, digamos. Pero eh creo que les va a servir bastante este curso para entender cómo funciona por detrás, pero no solamente los los modelos de lenguaje que usamos ya actualmente, sino también técnicas de pronamiento de lenguaje eh anteriores. Entonces, vamos a ir desde lo más básico, desde lo más antiguo y vamos a ir acercándonos al estado del arte ya eh a medida que que vayamos avanzando. Ahora vamos a ver el el temario del curso y ahí les explico un poco cómo enlaza con lo que digamos es más común y es está más popular ahora que son los los modelos de lenguaje eh grandes. Entonces, justo justo esto es la este es un poco el temario. En esta clase vamos a ver la introducción de qué es procesamiento de lenguaje natural que abarca y vamos a ver la parte inicial que es vectorización de documentos, que es digamos la base de cualquier eh proyecto o técnica de de procesamiento de lenguaje, que es básicamente cómo llevas texto a números, cómo haces esa conversión para que luego esos números puedan ser procesados.
+
+
+00:08:08
+
+lse posgrados: Eso lo vamos a ver esta clase. Y esta técnica de vectorización de hoy es una técnica clásica antigua, eh, que digamos es una una un vistazo inicial de cómo se puede hacer. Después en la clase dos vamos a ver otra técnica para vectorizar texto que va a ser el uso de Word Bedits que ya acá eh comienza son técnicas que ya comienzan a a capturar el sentido semántico del texto. Después, en la clase tres, vamos a entrar al uso de deep learning dentro de de procesamiento de lenguaje y específicamente las arquitecturas de redes recurrentes que son las que trabajan consecuencias. Eh, acá vamos a ver la básica que es el uso de la celda de Elman y luego algunas más avanzadas como la LCTM y Ju. Después en la clase cuatro eh vamos a crear un modelo de lenguaje básico utilizando o reutilizando lo visto en las tres clases pasadas y y usando sobre todo redes recurrentes. Entonces, en esta clase vamos a hacer todo el proceso desde el Corpus, la segmentación del corpus, tokenización y luego el diseño de la arquitectura de la red neuronal y la generación de texto.
+
+
+00:09:35
+
+lse posgrados: Entonces, acá es como un una clase donde vamos a a reutilizar todo y vamos a ver cómo se puede generar texto utilizando estas estas redes recurrentes que eh son no es el estado del arte aún, pero igual sirven para generar lenguaje y les va a ayudar bastante a ver cómo funciona por detrás. Después eh van a seguir con Fernando. En la clase 5 van a ver otros tipos de arquitecturas que también se pueden usar para procesamiento de lenguaje como las redes convolucionales. Y luego van a hacer algunos ejemplos de eh aplicaciones en modelo sequence to sequence. Y ya en la clase si 8 van a entrar un poco más al estado del arte en sí, ¿no? Lo que se usa actualmente en las en los modelos grandes, que sería el mecanismo de atención y los Transformers, que es la base, y después como esto se convierte en grandes modelos de lenguaje. Entonces, si se dan cuenta, la temática va más como en una secuencia histórica de cómo se inició el procesamiento del lenguaje y cómo se va avanzando en cada vez soluciones más más complejas y y ligadas a deep learning y al estado del arte al final.
+
+
+00:10:53
+
+lse posgrados: Entonces, esta es la temática eh que vamos a ver. Estas clases que están en verde son clases donde les vamos a presentar desafíos. Eh, ahorita les cuento, pero van a ver cuatro desafíos, que son las cuatro tareas con las que se va a ustedes van a obtener la nota y el promedio de los cuatro sería la nota del curso. Sobre esta temática, sobre este programa del curso, ¿tienen alguna duda?
+Vicky: Hola,
+CARLOS AGUSTIN BERDAGUER: Ah,
+Vicky: profe.
+CARLOS AGUSTIN BERDAGUER: bueno,
+lse posgrados: Sí,
+Vicky: Una pregunta.
+lse posgrados: una pregunta.
+Vicky: ¿Vamos a usar el campus?
+lse posgrados: El campus más usamos un repo, no tanto el campus. Eh, voy a tratar de colgar si las los materiales para que estén también ahí, pero en verdad va a ser más el uso repositorio, eh, donde ahí voy a colgar la información.
+CARLOS AGUSTIN BERDAGUER: Perdón, lo el código, las clases 1, 2, 4 y 6, la entrega de esos trabajos es en la misma clase.
+lse posgrados: Eh, te escucho un poco lejos, Carlos.
+CARLOS AGUSTIN BERDAGUER: Si la entrega de los trabajos de las clases 1, 2, 4 y 6 es el mismo día o es para el final del curso?
+
+
+00:12:09
+
+lse posgrados: Ah, okay, okay. No, no,
+CARLOS AGUSTIN BERDAGUER: M.
+lse posgrados: ahora les muestro el cronograma. Eh, termino de mostrar esto, si no porque creo que acá van a estar la respuesta a los a las preguntas que tiene. La primera sabe, el material va a estar en este repositorio, de hecho se los puedo ir pasando. La rama que está por default es la que vamos a usar para esta corte. Así que eh igual en otras ramas pueden ver si quieren cortes pasados. es todo abierto, así que no pueden darse una vuelta, pero en la en la rama específica de e la de noviembre, noviembre 2026 es la de ustedes. Entonces, este es el material que va a primar para ustedes tanto los desafíos que vamos a ir colgando acá como la los PPTs y los notebooks. Entonces, este es su RAM. Si quieren darse una vuelta por anteriores, también pueden hacerlo si si gusten. Entonces, ese es por el lado del material. Por el lado de los desafíos, eh, van a ser cuatro.
+
+
+00:13:20
+
+lse posgrados: Estas son las temáticas. Eh, primero es de vectorización de texto, luego uno de words, después uno de generación de secuencia y por último un modelo sequence to sequence. Eh, ¿cómo se entregan? Se entregan a través de un forms. Este este enlace ya está actualizado para esta corte, así que este va a ser el que van a usar. Luego cuando tengan las láminas ahí lo pueden revisar. Se envía a través de del link. Eh, pueden enviar acá el enlace a un Colab o a un repositorio de de GitHub. cualquiera de los dos eh funciona bien. Si es colaps y Gilhub asegúrense de que de que tengamos acceso para poder corregir. Eh, y sobre el cronograma es esto. Eh, digamos esta esta semana es donde se presentan el desafío uno. Lo presento en esta semana que es la semana uno y van a tener hasta la semana tres para entregarlo con la nota completa. Si se demoran y lo entregan después, no es que no lo vayamos a recibir, si lo recibimos, solamente que le vamos descontando notas e puntos, ¿no?
+
+
+00:14:32
+
+lse posgrados: Si lo traen la cuatro va a ser menos un punto sobre la nota que sac -2, -3 y -4. Entonces esa es la lógica. La idea es que le entren pronto para que nosotros también podamos corregir, ir corrigiendo con tiempo y ya si es que se les complica, pues tienen hasta la sem la el jueves de la clase 8 para entregar todo como como última fecha. Entonces, esta semana se se presenta el desafío dos, por ejemplo, le presento la próxima semana y tienen igual dos semanas a partir de ahí para entregar así para para los cuatro desafíos. Sobre los desafíos, en este cuarto vamos a probar qué tal les va en parejas. Antes eran individuales, pero ahora pueden elegir si hacerlo o individual o en pareja. Y cuando envían el formulario, ahí van a tener como opción también poner un segundo alumn. Entonces, eh ustedes decidan cómo se organiza de las dos formas y sí, para probar el curso es necesario que presenten los cuatro desafíos,
+Hernando Scheidl: Yeah.
+lse posgrados: es decir, si falta uno, a pesar de que el promedio sea mayor a cuatro, eh no pueden aprobar, tienen que estar los cuatro entregados y que tengan por lo menos una puntaje de cuatro.
+
+
+00:15:55
+
+lse posgrados: Eh, eso es sobre desafíos. No sé si queda más claro con con este cronograma o tienen alguna duda. Todo bien. Genial. Ya. Entonces, eso es un poco las reglas del curso. Igual no se preocupen que después yo les envío un correo con el enlace de formulario y también les voy a crear un Excel donde se va a ir actualizando las entregas. Eh, un Excel donde van a ver la fecha de entrega. La fecha de entrega que prima va a ser la del formulario en ahí mismo vamos a ir actualizando las notas para que vean. Eh, sobre la agenda de hoy, como les mostré, la clase de hoy es más introductoria. Vamos a ver eh qué es el procesamiento de lenguaje natural, la historia y vamos a ver diferentes aplicaciones y tareas que se pueden eh solucionar con con procesamiento de lenguaje y después vamos a entrar al preprocesamiento de texto. ¿Qué técnicas de de limpieza de texto hay? cómo se puede vectorizar el texto con una un método eh clásico.
+
+
+00:17:11
+
+lse posgrados: Y después también vamos a ver un ejemplo de cómo se puede usar esos vectores luego para crear un un modelo simple de machine learning de clasificación. Entonces, con esto empecemos eh la los temas de la clase de hoy. Primero, la parte de introducción y esta es más preguntas para ustedes. E, ¿cómo definirían el lenguaje? ¿Cómo creen o qué creen que abarcaría el lenguaje? Código para comunicarse. Claro. Comunicación. Sí. ¿Y qué se necesita para conjunto de palabras? También necesito Claro.
+Rodolfo Di Chiazza: y una semántica.
+lse posgrados: Semántica que es el significado, un significado que que digamos los dos compartan, ¿no? Los dos que se están comunicando que que se entienden. Mensaje, receptor. Sí, tal cual. Eh, ¿qué más? porque dijeron conjunto de palabras. Eh, pero ¿qué otras cosas creen que puede alterar el lenguaje o o el entendimiento del lenguaje?
+Rodolfo Di Chiazza: la codificación
+lse posgrados: Ahí. Eh, con codificación, ¿a qué te refieres, Rodolfo?
+Rodolfo Di Chiazza: y por ejemplo, ¿qué síbolos letras o o formas se usan para transmitir los mensajes que se quieren que se pueden expresar a través del lenguaje?
+
+
+00:18:54
+
+lse posgrados: Ah, como los caracteres, ¿no? Que también varían dependiendo del idioma,
+Rodolfo Di Chiazza: Claro.
+lse posgrados: ¿no?
+Rodolfo Di Chiazza: Y las palabras que se pueden formar.
+lse posgrados: UA. Ajá. Hay hay otros idiomas que usan más caracteres, por ejemplo, chinos.
+Rodolfo Di Chiazza: Exacto.
+lse posgrados: Dice ahí Lucas, el orden de las palabras también dependiendo del orden, de repente una palabra es sustantivo y en otra es eh no sé eh adjetivo u otro tipo de eh de significado. También otras cosas que que eh que modifican el lenguaje es el contexto, ¿no? Las mismas palabras entre ellas adquieren significados diferentes cuando están combinadas de cierta manera. E y también la cultura modifica el lenguaje con la forma como se entiende. Entonces son muchas cosas las que afectan. Ahí Nicolás dice, "Se puede pensar como un escándar. ¿A qué te refieres, Nicolás? Si quieres lo comentas. como un estándar de comunicación. ¿Te refieres?
+Matias Leonardo Coulougian: M.
+lse posgrados: Supongo que será unar para poder entenderse entre unos y otros, ¿no?
+
+
+00:20:22
+
+lse posgrados: Pero sí, eh son varias cosas las que afectan y por eso es que es tan complejo. Tiene eh por mucho tiempo fue eh un reto bastante grande poder lograr que una máquina entienda el lenguaje. Entonces, ¿cómo lo podríamos definir? De hecho, hay dos puntos de vista. Un punto de vista lingü de la lingüística que ve el lenguaje más cómodo, como un por ahí describían un código, un sistema de símbolos con reglas. este este punto de vista, pues requiere eh tener mapeadas una serie de reglas que implicarían la semántica, la sintaxis y es más pragmática, ¿no? Entonces, el principal, digamos, defensor de este punto de vista era Chamski, eh, que menciona la idea de la gramática generativa, ¿no? Es decir, si si fuéramos capaces de tener el conjunto de reglas total de de un idioma, utilizando esas reglas se podrían generar todas las oraciones correctas, ¿no? Y si tuvieses todas las reglas podrías eh generar infinitas eh oraciones. Entonces, justamente el NLP clásico trataba de de imaginar o consolidar cuáles son esas reglas de lenguaje que te permiten entenderlo e, incluso generar.
+
+
+00:21:55
+
+lse posgrados: Ahora, obviamente esto eh es un poco complicado porque como hemos hablado, el lenguaje cambia por cultura y por otros matices y es un poco difícil uno eh ponerse a pensar y enlistar todas las reglas, ¿no? Entonces, hacerlo manualmente en listar reglas manualmente era algo que se intentó, pero nunca llegó o o hacer este lista de reglas no nos iba a llevar al estado que estamos ahora, hacer las manos. Sin embargo, se podría argumentar que los LLMs actuales son una lista de reglas. Si si lo vemos desde este punto de vista lingüista, loss si bien tienen incluso eh miles de millones de parámetros, se podría decir que todas esos son reglas. Son reglas que uno no ha tenido que enlistar a mano, sino que el mismo modelo lo ha ido aprendiendo con la base de datos. Se podría decir que es un conjunto de reglas gigantesco y es un lugar esto prácticamente que eh con esas reglas va generando el lenguaje que como abarca tan tan grande cantidad de reglas, pues sí se parece a lo que nosotros usamos en el día a día.
+
+
+00:23:16
+
+lse posgrados: Entonces ese es el primer punto de vista. si se dan cuenta, es un poco más pragmático y más específico, ¿no? Luego hay otro punto de vista más filosófico, eh, que se va un poco más por el lado del uso del lenguaje, ¿no? El significado de una palabra es su uso en el lenguaje. Entonces, eh acá hace hincapié en que eh las palabras van a variar o su significado va a variar dependiendo de cómo la estás usando. esta idea clásica de que podría haber una regla fija para una palabra en particular, sino que una misma palabra debe significar diferentes cosas en contextos diferentes. Por ejemplo, la palabra banco puede significar banco como entidad financiera, un banco como mueble o un banco de peces como conjunto de peces. Entonces sí es verdad que si hiciéramos reglas muy específicas para una palabra en particular, de repente no no se podría eh eh modelar bien el lenguaje porque las palabras también cambian, ¿no? No no no es una unidad fija, ¿no? Sino que también varían dependiendo de el contexto y de otros factores como el orden que vimos.
+
+
+00:24:37
+
+lse posgrados: Eh, sí, sobre todo orden y contexto. Para esta otra idea, punto de vista de uso está un poco más relacionada al concepto de envenis, que también lo vamos a ver, que es básicamente representar una palabra o el lenguaje por vectores, pero estos vectores construidos en base a eh al uso de estas palabras en un corpus, ¿no? Entonces, de hecho, incluso los embedings actuales son embedings dinámicos que cambian en base al contexto, que también toman en cuenta estas complejidades, ¿no?, del uso de la palabra en el contexto. De hecho, existen envelles estáticos que sí son un solo vector por palabra, pero también ahora ya tenemos en dinámicos que que van generando estos vectores en base al contexto y a mecanismos de atención. Entonces, eh estos conceptos de lenguaje en base al al contexto en sí se pueden luego eh llevar a un a un espacio latente, un un espacio denso eh que pueda representar de cierta forma el significado de del texto, que eso es el la definición de env y bueno, Ya habiendo visto el lenguaje y los retos que trae diferentes formas de verlo y de y de definirlo, qué es el procesamiento del lenguaje en sí, eh que es, digamos, la el área que vamos a estar estudiando ahora.
+
+
+00:26:23
+
+lse posgrados: Básicamente es el área de inteligencia artificial eh que desarrolla modelos para las computadoras, para que las computadoras sean capaces de eh representar, procesar y entender el lenguaje. Entonces, básicamente en palabras sencillas es enseñarle a las computadoras a entender y trabajar con el el lenguaje. dentro de NLP se se trabajan cuatro cosas. Uno es la representación que es eh la actualización en sí, transformar lenguaje a eh números o estructuras matemáticas y acá puede ser lenguaje tanto de texto como de voz. Luego está el modelado, que sería construir eh funciones o modelos que sean capaces de eh capturar patrones dentro del lenguaje y puedan ser utilizados para diversas tareas. Luego el siguiente paso es la inferencia, que es eh utilizar tanto la representación como en los modelos para realizar una tarea o una salida específica para una tarea, ¿no? Por ejemplo, eh clasificación, generación de texto, entre otros. Y el cuarto es eh el aprendizaje, que es ajustar los parámetros o entrenar estos modelos y los parámetros de estos modelos en base a textos eh o cantidad de textos masivos, ¿no?
+
+
+00:27:57
+
+lse posgrados: Que es básicamente hacer que estos modelos o funciones se eh se vayan ajustando solas, que es básicamente la definición de machine learning. Entonces, todo esto es lo que involucra el procesamiento del lenguaje natural, que es utilizar las computadoras para poder entender y procesar el lenguaje. Ahora, si bien hemos estado hablando de lenguaje en general y muchas veces hablamos de lenguaje escrito o bueno, en texto digital, la caj, no está el lenguaje hablado que es en audio y existe una rama del NLP que hace transcripción de de de habla, por ejemplo, que es el speech processing. También existe el lenguaje escrito a mano. Eh, y acá hay otras técnicas, por ejemplo, de los los OCRs o otras técnicas que que llevan de lenguaje, digamos, de caligrafía a un texto más digital. Después existen el lenguaje gestual, que es el el lenguaje no solamente es eh verbal, también existen señales no verbales que son importantes, incluso hay lenguajes específicos que son solamente señas, ¿no? El el lenguaje de señas en sí. Entonces, existen aspectos del lenguaje que son multimodales, que necesitas también eh ver una imagen para entender el contexto completo del lenguaje.
+
+
+00:29:46
+
+lse posgrados: Tanto la los gestos como la voz, el tono pueden alterar el significado de del lenguaje en sí. Entonces, son aspectos importantes también de la comunicación. M. Y por último, eh el lenguaje que estamos más acostumbrados a ver, que es el digital, ¿no? Las los textos ya digitalizados. Y de hecho nos vamos a centrar mucho más en este cuarto porque es el más avanzado y el que vamos a ver mucho más en el día a día laboral, pero sí es importante que tomen en cuenta que existe ot estas otras fuentes, ¿no?, de de comunicación o de lenguaje, el hablado, el escrito, eh digamos de caligrafía, así y y los gestos. Bien. Eh, ¿hasta aquí, ¿tienen alguna duda sobre el lenguaje y lo que abarca procesamiento del lenguaje?
+Vicky: No,
+lse posgrados: Eh, sí, Vicky.
+Vicky: no, que no decía
+lse posgrados: Ah, ya, genial. Todo bien. Bien. Entonces, eh ya habiendo visto un vistazo general de del ámbito de lenguaje y lo que vamos a a o lo que abarca procesamiento, veamos un poco la historia de eh cómo fue avanzando.
+
+
+00:31:14
+
+lse posgrados: Eh digamos que el objetivo final de de este campo se definió por allá en 1950 con el T de Tool. Desde ese entonces ya se había imaginado que eh lo que se debía hacer era eh lograr que una máquina se comunique tan bien que eh no fuera distinguible de un ser humano. Entonces, este test de Twin decía eso, ¿no? Y para pasar el test tiene que cumplirse que una máquina puede hablar como si fuera un humano y que un mismo humano, un humano, un tercero, no pueda distinguir si es que lo que está recibiendo viene de una máquina o de una persona. Entonces, de hecho, así silenciosamente en los últimos años ya pasamos esta frontera de la comunicación en la que es bastante complicado distinguir eh uno y otro, pero era una definición, un test que se definió desde hace muchas décadas atrás. Entonces, lo primero que se hizo eh los primeros intentos de hablar de que una maquinable eh eran con bots basados en reglas, ¿no? Este era más esta idea que que decíamos de que el lenguaje se basa en reglas, pero eh como eran reglas que un programador trataba un poco de imaginarse y programar, tenía sus limitaciones, ¿no?
+
+
+00:32:46
+
+lse posgrados: Un ejemplo bastante conocido es el bot Elisa, que básicamente ya tenía, digamos, oraciones o preguntas, sobre todo preguntas ya predefinidas y en base a búsquedas de palabras clave Yeah. de lo que el usuario podría ir diciendo, iba decidiendo si le hacía una pregunta o otra a la persona, pero se dan cuenta, eran preguntas bien bien genéricas, ¿no? Eh, no sé, por ejemplo, acá eh le pregunta que que le está molestando, le dice que no sabe, e le le le dice que desearía que que supieras, pero es una pregunta bastante abierta, ¿no? O sea, se podría utilizar en diferentes contextos. Entonces, de repente, no sé, en esta oración buscaba si niega algo, entonces elige esta esta oración, ¿no? Eh, si si usa la palabra es, entonces elige esta otra, ¿no? Entonces eran más reglas en base a qué palabras se encontraban en el texto y según eso poder reformular una pregunta asociada a palabras que ya había utilizado la persona. Entonces era algo bastante primitivo de cómo comunicarse y un poco complicado llegar a a un a un término específico, ¿no?
+
+
+00:34:06
+
+lse posgrados: Después eh se dejó un poco de lado las reglas a mano y se fue a un lado más estadístico. Y acá, por ejemplo, aparecieron técnicas de de traducción basadas en reglas estadísticas de lenguaje. Entonces, IBM, por ejemplo, introduce el estatistical Machine Translation, que se basaba en las probabilidades eh en probabilidades para para ir traduciendo un texto, pero también por pasos, ¿no? lo que hicieron fue todo el problema, el proceso de de traducción lo desacoplaron en etapas y lo que hacía, por ejemplo, es eh iniciaba con una oración de de un idioma y definía si es que cada una de estas palabras se deberían mantener para traducir al siguiente idioma. Si alguna no se debía mantener, se eliminaba y si de repente alguna se tenía que duplicar o o sea, se tenía que traducir en a dos palabras el siguiente idioma, se se duplicaba en C. Después, una vez que haces esta alteración, eh igual hacías otra ronda para ver si es que eh la traducción va de uno a uno, es decir, de una palabra a otra palabra en el mismo idioma.
+
+
+00:35:30
+
+lse posgrados: Se necesitaba agregar más palabras al medio para hacer ilaciones, ¿no? Porque a veces una palabra en un idioma se traduce en una palabra compuesta en otro idioma. A veces para traducir una sola palabra necesitas dos en el otro idioma. O a veces hay palabras conectores en un idioma que no se usan en el otro, entonces se elimina. Entonces, el proceso de de agregar palabras y eliminar posiciones de palabras se iba haciendo en estas eh dos primeras etapas. Eh, Y después una vez que ya tienes, digamos, la cantidad de palabras necesaria en el otro idioma, ya se traducida uno a uno. Esto que es I, esto equivalente a do not. Por ejemplo, do notoma solo es una palabra y para inglés se necesita dos, ¿no? Es por eso eh la relación de uno a uno no es igual. Entonces se se traducía de uno en uno acá en esta etapa y después se reordenaba en caso fuese necesario, que el orden también varía un poco de idioma idioma. Entonces, si se dan cuenta, un proceso que es complicado, que es traducción se dividó en procesos un poco más sencillos y en base a probabilidades de cuál es la probabilidad de que esta palabra sea dos o esta probabilidad sea esta otra palabra, no se iba decidiendo y se iba llegando a una traducción.
+
+
+00:36:52
+
+lse posgrados: Entonces eran métodos estadísticos basados en reglas y eran formas primitivas de poder eh resolver estos estos problemas de del lenguaje. Después, si se dan cuenta, saltamos más de dos décadas y ya en 2002 en adelante hubo el boom del deep learning. Eh, y ya sí hubo un salto grande porque ya reducía los esfuerzos manuales, ¿no? Seguramente ya vieron en el curso de de eh aprendizaje profundo cómo funciona una red neuronal. La idea es que sea modelos que puedan aprender a hacer tareas complejas de forma automática, simplemente eh entrenándose en base a gran cantidad de información, ¿no? Y cómo funciona pues como una red neural tiene diferentes capas. eh lo que va haciendo es las capas iniciales aprenden conceptos básicos y las capas más profundas utilizan esos conceptos básicos para ir construyendo conceptos más abstractos y complejos. Entonces, por ejemplo, en el caso del lenguaje, de repente la primera capa distingue caracteres, la segunda capa va distinguios artículos, sustantivos, verbos. La segunda capa va va entendiendo, no sé, el significado de un sustantivo versus otro y ya la última capa de repente ya entiende la combinación de estos palabras entre sí, ¿no?
+
+
+00:38:32
+
+lse posgrados: Entonces utiliza eh los conceptos básicos para construir, ir construyendo significados más profundos, ¿no? Y bueno, hay una capa output que eh traduce toda esta información en la tarea específica, ya sea clasificación, generación u otras. Entonces, ¿cuál es lo importante de estas redes? que ya no necesitabas crear estas reglas, ¿no? Estas reglas se tuvieron que definir así manualmente, ¿no? Alguien se imaginó que debía haber un fertility step, luego alguien se imaginó que debían agregar un un nulo y luego eh traducir uno a uno. No era algo que una máquina prendía sola, sino alguien lo diseñó de esa manera. En cambio, en la red neuronal defines en cierta forma la arquitectura y los parámetros, pero lo que hay dentro se se va construyendo solo en base a la gran cantidad de información que se le da para que para que se ajusten los pesos. Ahora les pregunto, e por qué creen que tardó tanto desde 1990 hasta 2012 en utilizarse más este tipo de soluciones porque las redes neuronales ya existían de antes, desde antes.
+Rodolfo Di Chiazza: por un tema de hardware.
+
+
+00:39:53
+
+lse posgrados: Sí, el hardware principalmente porque red neuronal como concepto existía desde antes del 2000. Pero no era posible llevarlo al al tamaño necesario para que comiencen a sobrepasar a este tipo de modelos, ¿no? Manuales. Entonces, para que una red neuronal llegue al al nivel que tenemos ahora, por ejemplo, los GPTS, cloud y los demás, tiene que tener un tamaño gigante y por eso justamente lo que tenemos ahora son LM, ¿no? large language models son gigantes y eso no sería posible sin los hardware que hay ahora, los GPUs sobre todo y también la forma de recolectar data digital que eh ahora tenemos mucho texto digitalizado que sirve para entrenar. Entonces, ya cuando se entró en las redes neuronales y ya se se pueden ir procesando más cantidad de texto, de ahí llegan innovaciones más de lado de cómo ordenas estas redes neuronales para que sean eficientes y pueden capturar realmente el significado. Y ahí en el 20171 salió un paper bastante conocido que es attention unit. Es un paper que sacaron empleados de Google. introdujeron el mecanismo de atención y los Transformers, que es la arquitectura base que dio lugar luego al boom de la IA y a los LLMs que usamos ahora.
+
+
+00:41:31
+
+lse posgrados: Eh, ¿cuál era la digamos la el salto? ¿Por qué eran tan importantes? porque eh podían procesar secuencias largas de texto sin que eh sin que se desvanezca el gradiente, sobre todo, porque a medida que tú tienes una secuencia muy larga de de texto, ya que el digamos el texto se se ve como se puede, se tiene que tomar en cuenta el orden, ¿no? C'est otro tipo de red neuronales, eh la la secuencia le agregaba profundidad extra, ¿no?, al a al modelo en sí y esa profundidad hacía hacía generaba este problema de desvanecimiento de gradientes, pero cuando llegaron los Transformers ya no ya no procesaban el texto secuencialmente, sino en paralel y esta paralelización hacía que la gradiente no se vanzca en eh y eso fue uno de los grandes hitos que hicieron que esto fuera el estado del arte actual y aparte también eh, por ejemplo, usaban en Bins eh para guardar la la posición de los tokens y entre otras eh formas de de organizarlo que eh llevó a buenos resultados. De hecho, luego vamos vamos a ver más a detalle, por ejemplo, el predecesor de de esto que era las recurrentes.
+
+
+00:42:59
+
+lse posgrados: Vamos a ver cuál problemas de las recurrentes y cuando estén con Fernando van a entrar más a detalle de cómo funcionan los Transformers en sí, porque son tan útiles a la hora de procesar el ¿Alguna escuchado este paper? Atención y un me pone el arriba, Matías. Sí, Nicolás, genial. Ah, bastantes. Genial. Es es una buena lectura. Si en algún momento tienen tiempo, pues es uno de los papers básicos de eh de IA actual. Y bien, a partir de ese momento, cuando salieron los Transformers, si se dan cuenta, hubo un boom grande en el desarrollo de de los modelos de lenguaje y bueno, se se fueron ramificando dependiendo de la arquitectura, ¿no? Normalmente, bueno, hay unos que son solamente encoders, otros encoder, recoders y de encoders only, que se usan para diferentes tareas dependiendo si si necesitas encoderar o hacer ambos o solo el code, ¿no? Y de hecho este gráfico está bastante desactualizado. Ahora ya estamos en el GPT 6.1, un si no si no me equivoco, Cloud ya está en 5.5, eh, y de hecho sale modelos nuevos cada semana, creo, casi cada semana.
+
+
+00:44:30
+
+lse posgrados: Entonces el boom ha sido enorme, la bifurcación de modelos ha sido grande y también hay un montón de modelos open source y a partir de esos modelos open source también se van creando eh ramificaciones y modelos entrenados especialmente para algunas tareas, ¿no? Entonces, eh actualmente estamos en una época bastante interesante de avances en IA y que ya llegamos a un punto en que la IA Right. no solo hablar, sino incluso hacer código, eh incluso que generar imágenes a partir de texto. Entonces, eh ha avanzado bastante a partir de el uso de las Transformers. En resumen, entonces en los primeros en los años 50 en adelante eh la lógica era más uso de reglas, digamos. E ese era el el enfoque original, uso de reglas. Después ya se utilizó más estadística combinada con reglas y hubo las primeras redes neuronales, pero que no llegaron a funcionar tamban bien por la limitante del hard. A medida que el hardware fue avanzando, pues se pudo utilizar más el deep learning y se fue desarrollando e evolucionando mejor las arquitecturas y optimizando hasta llegar a los Transformers, ¿no?
+
+
+00:45:57
+
+lse posgrados: Y aparte de los Transformers se crearon eh modelos preentrenados que ya eh vienen eh eh con toda una cantidad gigante de texto procesada y que ya son más generales, ¿no? que lo puedes utilizar incluso para cualquier tópico de lenguaje. Y actualmente en la parte que estamos, estamos en los eh grandes modelos de lenguaje, incluso los modelos multimodales que pueden partir no solo de texto, sino de audio e imágenes y hacer diversas tareas eh más generales. Entonces, este ha sido todo el avance de de procesamiento de lenguaje a lo largo de los años. Eh, ¿tienen alguna duda o comentario de esta parte? Todo bien, ya gen de hecho, bueno, acá faltaría un poco más, ¿no? Que a partir de los LMS ahora ya se utilizan agentes, sistemas CIA, métodos más allá del modelo para para ejemplo manejar memoria, el contexto del modelo prompting y otros. Pero bueno, eso ya está como que en el límite entre procesamiento de lenguaje y y desarrollo de de sistemas. Eh, bueno, entonces ahora vamos a las aplicaciones de de NLP para que tengan una idea de en qué se usa, ¿no?
+
+
+00:47:33
+
+lse posgrados: No solamente en chatbox, sino también en otros tareas que se pueden eh realizar con NLP. Uno de los que ya vimos en en los ejemplos históricos es la traducción. De hecho, seguramente muchos han usado Google Translate, que es un eh es un una herramienta bastante útil y común. Entonces, este es una de las aplicaciones o casos de uso más comunes para el procesamiento de lenguaje, traducir de un idioma a otro. Después están los asistentes de voz como, no sé, Alexa, Siri, incluso GPT también tiene su su versión de voz y es básicamente ayudarte a hacer tareas o a ejecutar cosas a través de de la voz. se usan para domótica y bueno, otros otros usos eh similares. Después está el de clasificación de texto, que es uno de los clásicos. Eh, y dentro de clasificación pues puede haber muchos ejemplos, por ejemplo, el de identificación de spam, ¿no? Ver según el contenido de un email eh cuál es eh malicioso y cuál es normal, cuál es benigno. o se puede clasificar, por ejemplo, si tienes eh noticias, se puede clasificar en tópicos de noticias o eh si tienes comentarios de clientes, puedes clasificarlos por por no sé, el producto que está hablando por sentimiento.
+
+
+00:49:10
+
+lse posgrados: Luego está el que todos ya usan, que es el de chatbot, que es básicamente conversacionar, hablar con con la computadora. Ahora, cuando chatb le agregas ejecución de tareas, se vuelve un agente, ¿no? Y ya eh digamos eh un agente ya te ayuda no solo para hablar y para eh preguntar cosas, sino también para, por ejemplo, realizar acciones como buscar en internet, enviar correos y otros. Y bueno, dentro de las tareas, que es algo similar a de aplicaciones, de hecho, ya vimos clasificación, ¿no? Eh, acá está el ejemplo que les decía de clasificación, que es de e, por ejemplo, el análisis de sentimiento, que es un caso de uso eh bastante común en las empresas, que es tener texto y tratar de sacar cuál ha sido el sentimiento que se trataba de expresar en ese texto. Se usa bastante, sobre todo con comentarios de clientes para saber si tus clientes están satisfechos o molestos y en qué proporción cada uno no. Entonces es básicamente analizar lo que se está diciendo y clasificarlo en no sé, positivo, neutro, negativo o algún algún intermedio entre estos.
+
+
+00:50:27
+
+lse posgrados: Luego está el tagging, que sería eh agregar etiquetas a nivel de palabras, por ejemplo, para eh identificar adjetivos, para identificar eh eh verbos eh sustantivos, ¿no? Entonces, el poder clasificar esta palabra, qué tipo clase pertenece es el el POS, que es también un tipo de clasificación, pero a nivel de palabra. segundos. No tienen eh otro ejemplo de tagging. Por ejemplo, acá se se está eh ya identificando categorías específicas, que sería, por ejemplo, identificar cuando un texto habla de una persona, de un lugar, de un eh una fecha, etcétera, ¿no? Entonces es eh clasificación a nivel de palabras. Otro uso eh que de repente uno ya ni lo nota porque es bastante común es el autocompletado, ¿no? En el celular o incluso ya en el mismo email, Gmail y los demás ya con ella puedes autocompletar tus correos. Es una forma de generación o predicción de siguiente eh carácter o palabra. es un uso eh de hay por detrás un modelo de de lenguaje en sí y la generación de texto, que es la más usada ahora dentro de los chatbots de los agentes y se puede utilizar para diferentes eh usos, ¿no?
+
+
+00:52:04
+
+lse posgrados: Ya sea conversacional, se puede utilizar para eh resumir cosas eh entre otros. De hecho, acá justamente está el ejemplo de resumen que se puede hacer con con modelos generativos, ¿no? Tener un documento más amplio y sacar los eh las partes más importantes de Y por último, algo más moderno también está la eh multimodalidad y puede ir en ambos lados, de texto a a otro tipo de archivos o al revés del archivo al texto. Y y en estos casos pues ya se trata de llevar al texto y a las imágenes y a los vídeos a un espacio vectorial común y a partir de ese de ese espacio común se puede generar incluso imágenes a partir de texto o interpretar una imagen y llevarla a una descripción de texto, entre otras aplicaciones, ¿no? Esto es mucho más común para eh modelos de generación de de imágenes, por ejemplo. Y bueno, acá está el resumen de lo que hemos visto en usos. Eh, NLP involucra entendimiento de lenguaje, uso de modelos grandes de lenguaje, clasificación, sentimiento análisis, eh topic modeling, que es un poco este clasificación de tópicos que vimos, análisisológico de entidades, por ejemplo, eh reconocimiento de entidades, que sería esto que habíamos de de reconocer cuando estás hablando de una persona, de un lugar, después corrección de texto también text image, que es la generación de imágenes y la traducción.
+
+
+00:53:46
+
+lse posgrados: Entonces, hemos visto bastantes ejemplos, seguramente hay muchos más. Eh, y ya con el con el uso de modelos eh generales de lenguaje, ya incluso se abarca a muchos más campos que es codificación, eh incluso ejecución de tareas automatizadas. Entonces parte del lenguaje se puede hacer una serie bastante grande de tareas. E bien, ¿alguna duda, pregunta, comentario hasta acá? Si todo bien, vamos a el primer descanso. De hecho, va haber, me olvidé decirles va a haber dos descansos de 15 minutos en cada clase. Entonces ahora vamos al primero y volvemos a las 8:10. Ahí nos vemos en un rato. M. Hola, ¿qué tal? Vamos regresando. Al final veo que varios ya ya volvieron vuelven a compartir. Bien. Eh, ya vimos un poco la introducción, que es el lenguaje, para qué se usa el procesamiento del lenguaje. Y ahora sí vamos a entrar más a detalle de las técnicas de cómo se eh trabaja el lenguaje para llevarlo alguno de estos casos de uso que que hemos visto de ejemplos.
+
+
+01:10:38
+
+lse posgrados: Entonces, el primer paso para cualquier caso de uso es el preprocesamiento y dependiendo de para qué vayas hacer el texto, pues puede haber más o menos preprocesamiento. De hecho, eh en los en las técnicas clásicas se decían se necesitaba mucho más preprocesamiento porque justamente los modelos eran menos inteligentes. Ahora que la IA ha evolucionado bastante, pues digamos que los pasos de preprocesamiento disminuyen, pero si hay algunos que son comunes en cualquier caso. Y ahora vamos a ver un poco lo que abarca. Básicamente para llegar de un corpus de texto o modelo hay que hacer preprocesamiento y luego feature engineering, que sería básicamente la vectorización del texto para poder convertirlo en números. ¿Qué es lo que los modelos entienden. Entonces, primero limpieza de texto básicamente y luego vectorización. Dentro de la limpieza. Acá hay diferentes técnicas que, como les decía, algunas eran más útiles para técnicas o modelos clásicos y otros ya un poco que se dejan de usar, pero igual vamos a ver eh que involucran varias de estos. M. Una una de ellas que sí se usa en cualquier modelo, no importa cuál, es la tocanización, que es básicamente dividir el texto primero y de ahí asesignarle un identificado al común.
+
+
+01:12:14
+
+lse posgrados: Entonces, eh, seguramente pedito arriba los que ya escucharon el término toque. Ah, casi todos ya. Bien, much muchas veces usamos el término token porque es muy común en el mundo de la pero eh no sabemos de dónde viene el término. Es un término que va mucho más allá de los modelos de lenguaje, que es básicamente dividir el texto en personas más chiquitas, designarle un identificador. Ese identificador es el que se denomina toque, ¿no? Y luego token se se eh vincula al vector en sí, ¿no? Digamos que el token es la unidad de procesamiento de lenguaje que vamos a utilizar y es uno de los primeros pasos que sí o sí se tienen que hacer, dividir el texto y asignarle un identificador. Después hay otras que son más de limpieza y normalización de texto. Por ejemplo, si es que no necesitas los signos de puntuación, los puedes quitar. Si no necesitas números o algunos símbolos, también se pueden eliminar para limpiar el texto. Y ahí existen dos técnicas que son más de simplificación de las palabras que son de matización, stopwatización y stem también que es el llevar la palabra a su raíz.
+
+
+01:13:44
+
+lse posgrados: Y el stopw removal es eliminar aquellas palabras que eh son muy comunes y no aporta mucho significado. Y dentro de esto, bueno, hay otras, ¿no? Por ejemplo, eh, llevar todas a a minúsculas. eh todo el texto minúscula, quitar las tiles y muchas otras cosas que se pueden hacer para limpiar el texto y dejarlo eh limpio. Obviamente entre más limpias y simplificas también pierdes detalles de del texto original, ¿no? Por ejemplo, si remueves puntos, de repente eh pierdes ciertas características específicas de de, no sé, eh pausas entre un texto y otro. en cuando termina una idea empieza la otra. Entonces tiene pros y contras y depende mucho de lo que vas a hacer y el modelo que vayas a usar posteriormente. Eh, una vez ya tienes tu texto listo, dividido y tokenizado, entra el feature engineering, que sería básicamente convertir esos tokens en un vector que luego el el modelo pueda utilizar. Y entre estos métodos para convertir el texto a números hay diferentes eh unos que son los clásicos que entran entran dentro de una categoría grande que se llama Bag of Words.
+
+
+01:15:08
+
+lse posgrados: ¿Por qué Bag of Ws? Porque metes a las palabras en un saco y básicamente representas un un un texto en base a las palabras que hay dentro del texto en un saco, en un back, porque no toma en cuenta el orden. Es como que mezclas todas las palabras y las utilizas para eh tratar de diferenciar un texto versus otro. está el de Wen que vamos a ver en la clase dos, que ahí sí toma en cuenta el significado de palabras más a detalle. Y hay tres puntos porque hay otras otras técnicas de por ejemplo las edis contextuales y otras que también se pueden usar para vectorizar. Entonces, este es el segundo punto y una vez uno tiene el el texto convertido en números, ya puede ingresar a cualquier modelo a poder entrenar modelo o a a utilizar modelo, por ejemplo, de clasificación sobre esos números. Entonces, esto es lo que abarca en general eh preprocesamiento del texto. Ahora vamos a entrar más a detalle, sobre todo a algunas de estas técnicas clásicas para que tengan más contexto de cuándo se usan y por qué eran útiles.
+
+
+01:16:24
+
+lse posgrados: Primero es eh la normalización básica, eh que es por ejemplo llevar todo a a minúsculas, el lower casing, eliminar signos de puntuación y quitar caracteres raros. Por ejemplo, en este esta oración de Docs Running, quitas el hashtag, quitas los signos de exclamación y te quedas con todo en minúsculas de Docar Running eh sin ningún símbol. Entonces, esa es una eh primera forma de simplificar y limpiar el texto. Después está el Sí,
+CARLOS AGUSTIN BERDAGUER: Una pregunta, una pregunta.
+lse posgrados: Carlos.
+CARLOS AGUSTIN BERDAGUER: El hecho de eliminar caracteres como los signos de puntuación, por más que no sea una palabra, no no introduce significado eso. Ah.
+lse posgrados: Sí, en verdad depende de lo que vayas a hacer, ¿no? Por ejemplo, cuando es útil quitar este tipo de de caracteres cuando quieres clasificar un texto, por ejemplo, no te importa mucho eh los puntos porque lo único que quieres es saber en qué categoría entra el texto y más te preocupa qué palabras aparecen, ¿no?
+CARLOS AGUSTIN BERDAGUER: Claro. Gracias. M. Yeah.
+lse posgrados: Sí. Entonces depende mucho de de eso.
+
+
+01:17:43
+
+lse posgrados: Ahora si si estás en un chatbot, si te interesa más poner puntos para que se entienda mejor, ¿no? El contexto y y lo que quieras expresar. Entonces depende mucho de de la tarea. Eso aplica para todos los las técnicas que vamos a ver, ¿no? A veces son útiles, a veces no. Eh, bueno, la siguiente es la tokenización, que les decía que sí es esta sí es obligatoria en casi todos todos los casos. Eh, básicamente, pues eh antes de tokenizar se tiene que segmentar, que significa dividir el texto en partes. Acá tienen un ejemplo de cómo se puede ir dividiendo el texto en base, por ejemplo, primero en en los espacios, ¿no? Divides por los espacios en blanco, después eh vas sacando prefijos o símbolos, ¿no? Divas este símbolo aparte. eh las palabras compuestas se dividen. De ahí puedes decidir que algunas palabras compuestas cuando deben ir juntas se queden juntas, por ejemplo, New York, ¿no? Y y estos otros símbolos que faltan, ¿no? Entonces, eh aplicando este tipo de reglas se puede ir dividiendo el texto.
+
+
+01:18:59
+
+lse posgrados: No sé, por ejemplo, como dije, primero los espacios, los símbolos, luego ves o buscas un diccionario de palabras compuestas y esa es la de y al final terminas con el texto en partes y para que se vuelvan eh tocan, se le agrega un identificador, ¿no? Por ejemplo, en cualquier parte del texto que aparezca este símbolo de comillas de apertura, se le pone el el ID1, ¿no? o cada vez que aparezca tú se le pone el ID dos, no sé, y ese ID tiene que ser igual en todo el corpus para que luego pueda ser asociado a un vector en común. Entonces, esta parte de división y y asignarle un ID es común a cualquier modelo. Lo que sí cambia es la forma como divides y ahí sí hay eh hay campo bastante grande para innovar y para hacer variaciones, ¿no? Uno puede decidir dividirlo por palabras como está acá. Uno podría decidir dividir Nueva York en dos. Uno podría decir, no dividir a nivel de palabra, sino a nivel de caracter o incluso no podría decidir tener conjuntos de caracteres, ¿no?
+
+
+01:20:14
+
+lse posgrados: De repente cada dos caracteres lo cortas. Entonces, esas reglas de cómo divides, dónde divides, es donde hay un espacio grande y de hecho es algo en lo que innovan bastante las los laboratorios actuales, ¿no? Open AI, Antropic, Google, cada uno tiene su propia forma de tocanizar y según su forma de tocanizar también han obtenido mayores o o peores resultados. Entonces es un paso bastante importante dentro de eh del procesamiento de lenguaje porque es la base, ¿no? Dependiendo de cómo lo divides es eh cómo vas a asignar el significado también. ¿Alguna duda sobre esta parte de de los tokens de bueno, tokenización así es el proceso.
+Elian Pinzas: Sí. Una una consulta. El concepto de corpus, ¿cuál sería?
+lse posgrados: Ah, Corpus es todo el texto que vas a usar para entrenar el modelo
+Elian Pinzas: Ah, perfecto. Gracias.
+lse posgrados: que sería podría ser muchos documentos, un conjunto grande de textos. Gracias por la pregunta. ¿Alguna otra duda? Okay, entonces continúo. Ah, bueno, acá hay algunas cosas que ya había comentado, no es solamente hacer split por espacios, como había dicho, se puede innovar mucho y también hay ciertas cosas que se tienen que considerar, escenarios, ¿no?
+
+
+01:21:45
+
+lse posgrados: por ejemplo, eh decidir si si cómo consideras las abreaturas como uno solo o lo deberías dividir, si estos símbolos deberían estar juntos, los nombres compuestos si los mantienes juntos o los separas, las contracciones igual eh estos otros que también son nombres compuestos y hay otros idiomas que hay tienen más nivel de complejidad, ¿no? Como los caracteres chinos que son prácticamente imágenes, ¿no? tienen eh de hecho no conozco mucho el idioma, pero asumo que partes de de de los de los trazos se podrían eh separar, pero ¿cómo lo separas? Eso también tiene un complejidad adicional. Y bueno, eh otros idiomas como el turco, incluso el quechua en en Perú hacen en una sola palabra hacen combinaciones eh o o utilizan bastante prefijos y sufijos y la palabra en sí incluso podría terminar siendo una oración. Entonces hay variaciones por tipo de vocabulario, por idioma y por incluso cultural también. Eh, de hecho, cada idioma podría meritar su propio método de tokenización. Eh, bueno, un ejemplo de tokenización rápido, utilizando tokenización por palabra sería simplemente dividir esta oración por cada una de las palabras y partiendo de una oración al final terminas teniendo cuatro elementos, ¿no?
+
+
+01:23:20
+
+lse posgrados: Y luego estos cuatro elementos se van a asociar a un vector en particular. Eh, otro método de preprocesamiento, que es uno de los métodos clásicos que ya no se usan tanto en IA, pero sí quisen procesar texto y hacer tareas un poco más simples, sí les sirve, que es el steming, que básicamente eh aplicar reglas de eliminación, es decir, cortar la palabra para poder llevarla a su raíz. Entonces, por ejemplo, si tienes studies, le quitas la última parte. y te quedas con study, ¿no? Acá también study le quitas el el prefijo o el esto fijo, perdón, y te quedas solo con la raíz igual acá en murciélago. Entonces, básicamente lo que estás eliminando sería el número, ¿no? explorar singular de repente el género se masculino femenino y estás llevando y y quedándote solamente con la raíz semántica de de la palabra en sí. Esto, ¿por qué podría ser útil o en qué casos podría ser útil? Obviamente estás perdiendo información. Cuando necesitas la información completa no lo vas a usar. Pero si por ejemplo en este caso de clasificación que dije solamente quieres saber si habla de estudiar, no te importa si dice estudiar en en verbo o en o conjugado de esta forma, eh simplemente te interesa saber cuánto menciona el concepto de estudiar como como raíz, como general, ¿no?
+
+
+01:24:59
+
+lse posgrados: O sea, en esos casos sí sirve en clasificación, por ejemplo. Y algo eh bueno, acá tengo un ejemplo, ¿no? Por ejemplo, doc le quitas la s, run le quitas el ing, ¿no? Otra técnica muy similar a esta es la lematización. También trata de llevar la palabra a la raíz. La diferencia es que esta no la corta, sino que la reemplaza. Entonces acá no buscas cortar la palabra y quedarte con sal la raíz, sino que la reemplazas en base a un diccionario ya creado. Buscas la palabra conjugada en ese diccionario y traes la raíz y esa raíz la vas a reemplazar directamente. Entonces, la ventaja de esto es que la el resultado son palabras que existen, no como la otra que al final terminaban siendo palabras cortadas. Estas sí son palabras reales que existen y bueno, en este caso, por ejemplo, es es más fácil hacer el match entre estas que son iguales, ¿no? Entonces, la diferencia sting eh quita su fijos y prefijos la matización e hace un reemplazo gramática, ¿no? Buscando en un diccionario cuál debería ser la raíz correspondiente a esa palabra.
+
+
+01:26:19
+
+lse posgrados: Entonces, en el ejemplo, eh, bueno, estas estas dos son iguales que en el steming, ¿no? D pasa d doc doc. Acá sí cambia porque en vez de se transforma en B y en ring queda en RAM. Esa es la diferencia. Acá, bueno, otra comparación para que vean. E acá todas estas conjugaciones de improve terminarían en impro palab cortada y en el improve que sería el infinitivo del ver. las ventajas. El steming es que es más rápido, no tienes que hacer una búsqueda en ningelado, sino simplemente cortas y es más simple, eh, y no necesitas un diccionario, ¿no?, para poder realizar. La desventaja es que puede haber raíces que no son palabras en sí, son palabras cortadas y puedes perder eh cierta precisión semántica. En cambio, la matización, su ventaja es que todas las palabras son válidas, son palabras que existen realmente en el diccionario y mantiene son un poco más precisas, en mantener eh la semántica en sí, la raíz. La desventaja es que es más lenta, eh, y bueno, no es tan lenta como un LLM, obviamente, eh, si les es útil cualquiera de las dos es rápida comparación en el pero este es un poquito más lenta que el steming y necesita un diccionario, que sería un recurso adicional, un diccionario ya creado para poder hacer este intercambio de palabras.
+
+
+01:28:06
+
+lse posgrados: Eh, ¿alguna duda sobre estos dos? y me avisano. Igual luego vemos algunos ejemplos adicionales. Eh, después otra técnica es el de stopws. Los stopws son palabras que son tan comunes, son muy comunes y no aporta mucho valor eh o mucho significado al lenguaje. Por ejemplo, eh los artículos, algunas conjusiones, eh o eh pronombres, ¿no? Por ejemplo, en esta en este texto eh que dice Argentina, oficialmente República Argentina es un paíso, de América del Sur. Si le quitas un D y del sigues entendiendo a qué se refiere, ¿no? Obviamente es un poco más brusco, pero se el contenido Argentina oficialmente es país saberano América Sur. el contenido lo o la semántica importante si se sigue manteniendo. Entonces es una forma un poco de eliminar ruido porque estas palabras pueden ser muy comunes. Entonces ayuda a eliminar ruido y quedarse con lo que es más importante. Y acá hay un eh luego le me voy a adelantar un poquito para para explicar bien esta parte de Star Wars con un gráfico que lo tengo más adelante.
+
+
+01:29:35
+
+lse posgrados: Acá hay un gráfico que les puede ayudar a entender mejor esto de stopws cuando uno quiere sacar el significado de de un texto y y trata de ver el conteo o las palabras que aparecen más, si no lo limpia, lo que va a aparecer como más importante van a ser estas palabras comunes de los artículos, los Yeah. eh los conectores como antes, ¿no? Pero cuando uno lo quita, lo que resalta ya va siendo las palabras importantes del texto. Entonces cuando uno va a usar un sobre todo un modelo tradicional es útil como parte eh de preprocesamiento eliminar estos ruidos, quedarse solo con las palabras eh que contienen el contenido diferenciador del texto. Entonces, vamos a ir a un colap rápido, un colap bastante simple, solo para que vean cómo se puede aplicar esto. Eh, de forma básica, hay algunas librerías que les pueden ser útiles porque ya tienen bastantes de estas funciones eh creadas. Entonces, bueno, primero la parte de tokenización. ¿Cómo podrían hacer un tokenizador RAC? Eh, algunas reglas que se podrían usar para una tokenización a nivel de palabra rápida sería primero hacer una una limpieza de minúsculas, ¿no?
+
+
+01:31:09
+
+lse posgrados: Y luego, por ejemplo, tener una lista de eh signos de puntuación que nos puedan ayudar a a hacer separaciones, ¿no? Entonces, primero se podría reemplazar ese signo de puntuación por un espacio y después simplemente un split a a utilizando el espacio para poder quedarse con las palabras únicamente. Entonces, esta lógica sería una forma de tocanizar a nivel palabras eh vasca. Entonces, hacemos un ejemplo con esto. Voy a ejecutar todo, pero va a ser lo mismo que ya está. Acá hacemos un ejemplo de eh esta oración y aplicamos estas lógicas y ya se separó, ¿no? Eh cada palabra es un eh elemento individual de de este texto. Ahora, ¿cómo se podría e cómo creen que se podría trabajar estas complejidades que dije, por ejemplo, el de Nueva York, que es una palabra compuesta? ¿Qué lógica podrían utilizar para manejar bien estos conceptos? ¿Se les ocurre alguna regla que se le podría agregar esto? Bueno, una regla podría ser, que es la que introducimos acá, tener un diccionario, ¿no?, de algunas palabras comunes. Entonces acá, bueno, hacemos un ejemplo rápido, pero asumiendo que tenemos un escenario bastante más grande que este y que digamos de forma estadística vimos un todo el texto y qué palabras normalmente están juntas, eh, y no sé, mayúscula o Okay.
+
+
+01:32:59
+
+lse posgrados: se se utilizan para para mencionar conceptos eh comunes juntas, se podría crear este diccionario y en vez de aplicar esta lógica de de split de frente se junta esto, digamos, buscamos eh las palabras compuestas en el diccionario, reemplazamos el espacio entre ellas por un, no sé, un guion bajo para poder mantenerlas unidas Y después recién aplicamos el split, ¿no? Recién se aplica el split y luego ya lo regresas a su estado original con sería una lógica básica, ¿no? Pero digamos que lo que habría detrás de esto sería este análisis de de crear este diccionario con eh palabras que uno uno podría sacar del corpus eh que uno sabe que van van juntos frecuentemente. con estos diccionarios que de hecho sí se han ido creando en en las técnicas clásicas, muchos muchas de las técnicas usan exenarios por detrás, eh se puede tener un poco más de precisión para estos casos extraños, ¿no? Entonces aplicamos lo mismo y ya podemos eh separar esto y manteniendo Nueva York eh en un solo elemento. Sería una segunda variación. Y después eh ya existen todo esto que hemos visto.
+
+
+01:34:26
+
+lse posgrados: Bueno, estas eh métodos se pueden eh utilizar ya dentro de una librería eh bastante conocida que es el NTK. Y esta librería ya tiene varias de estas técnicas de preprocesamiento eh desarrolladas. Entonces, simplemente importan eh las funciones y las pueden aplicar. Ah, el link del notebook. Eh, de hecho está en, ya lo colgué acá en clase uno, si quieren pueden verlo en en el repositorio. Entran al repo que el enlace está arriba fijado en el chat y lo descargan en la clase
+Jeraldinne Molleda: Gracias.
+lse posgrados: en ya. Entonces, eh les decía, esta librería en el etk de hecho, ya tiene varias de estas funciones ya creadas y muchos diccionarios que se pueden bajar. Entonces acá eh nos bajamos algunos diccionarios útiles y por ejemplo ya tiene la función world tokenizer y esta ya nos hace esta lógica de división a nivel de palabra ya de forma automática. Y otras cosas interesantes de NLTK es que, por ejemplo, ya tienen los diccionarios de Stop Words, eh, y otros que nos pueden ayudar, por ejemplo, a taguear las oraciones, perdón, las palabras en base a qué tipo de palabras son.
+
+
+01:35:52
+
+lse posgrados: Como les digo, utilizan diccionarios, entonces se tienen que bajar los diccionarios y recién en base a esto se hacen los eh el procesamiento. Entonces, eh importamos las funciones, bajamos diccionarios y acá veamos algunos ejemplos. Eh, por ejemplo, bueno, la tokenización que ya eh hace un poquito, perdón, la toquenización que ya vimos, ¿no? En NTK te lo hace rápidamente, lo puedes hacer a nivel de la palabra y eh también hay algunos variantes que ellos tienen a nivel de oraciones, ¿no? O frases. Entonces, te puede separar un párrafo a nivel de de frases o oraciones, que sería otro otro nivel de separación. Después, en la parte de Stop Wars también, eh, acá vemos un ejemplo, la Casa de Papel es una serie de televisión española y cuando filtramos Star Wars se le quita, ¿no? Eh, la AD es una y te quedas con estas palabras. ¿Cómo lo hace por detrás? Pues está utilizando el diccionario de las palabras a eliminar. si las encuentra las quita y te deja solamente con con el resto de palabras eh que digamos es tienen tienen más más significado.
+
+
+01:37:27
+
+lse posgrados: Ahora, ¿cuál es el problema? Eh, como ya estás usando un diccionario dado, pues uno normalmente se tiene que fijar qué hay en ese diccionario de stopws. Por ejemplo, en este ejemplo, ¿no? Dice, "No estoy tan solo, pero no es lo mismo." Le aplicamos lo mismo, el el filtrado de las palabras de stopware según el diccionario de de NLTK y terminamos con esta este texto, tan solo mismo. Eh, ¿qué qué pasó con el significado en este caso? ¿Qué ocurrió con con esto?
+Elian Pinzas: se perdó completamente.
+Hernando Scheidl: Se perdió.
+CARLOS AGUSTIN BERDAGUER: He.
+lse posgrados: Sí, se perdió sobre todo por esta palabra, ¿no? No, que le cambia el sentido al opuesto y ya casi que no se entiende. Entonces, si bien eh usar Star Wars es útil en cierta forma, sí vale la pena eh fijarse bien en el diccionario que se está usando, probar si es que vemos que que hace un filtrado excesivo, se puede cambiar diccionario. de repente eh crear serie una serie de ince excepciones, por ejemplo, en la palabra no evitar que lo que lo quite, ¿no?
+
+
+01:38:43
+
+lse posgrados: Porque es es importante eh en el significado en sí. Entonces es algo a tomar en cuenta. Después eh hay otras e otras funciones que que ya te hacen el streaming, el steming. Entonces, por ejemplo, acá vemos esta esta frase, los programadores, programa programas y programas el steming, casi todas estas eh palabras relacionadas a programar los vuelve iguales. Entonces luego si uno quiere, digamos, ver la categoría de instauración es mucho más fácil porque todo ya te das cuenta que habla de programa y digamos que para eso sirve, ¿no? para simplificar y poder acotar la categoría o el significado, algo más específico, sin ir tanto a detalle, si necesitas el detalle de lo que se está hablando, pues ahí si no no te sirve, pero para tema de clasificación sí es y y sobre todo para de repente relacionar textos que estén dentro de una categoría, por ejemplo, claser, ¿no? Y cómo funcionaría con la matización. Pues si se dan cuenta acá eh la mayoría de palabras se redujeron a la misma. En la matización si te mantuvo un poco la diferenciación entre una y otra.
+
+
+01:40:10
+
+lse posgrados: Por ejemplo, programadores lo mantuvo como sustantivo, ¿no? Lo llevo a programador. Programa lo mantuvo como verro, lo llevo a programar. Programas también sustantivo, pero es un sustantivo diferente a este, ¿no? Y programación igual. Entonces, en la matización es un poco más preciso en la semántica y sobre todo en mantener la clase de palabra. Entonces, pero como vimos, necesita un diccionario. Entonces, eh hay pras y contras entre uno y otro dependiendo de lo que uno necesite y y de las pruebas que uno vaya haciendo. Acá lo importante, por ejemplo, si es que lo estás usando para clasificar es probar, comparar las métricas, por ejemplo, el eh el acas de de confusión y otros otras métricas. Y la idea es ir probando diferentes técnicas para ver según el corpus que estés usando eh cuál te sirve más. Acá otra comparación eh entre una y otra. Por ejemplo, deportistas. Acá se queda en una palabra que no existe, porque es cortada. Así lo lleva deportista. Eh, cuentan también acá lo lleva el infinitivo y así para para las demás.
+
+
+01:41:30
+
+lse posgrados: Luego hay algunas tareas de lenguaje que son eh bastante eh sencillas de hacer sin necesidad de lenguaje eh modelos grandes de lenguaje ni nada porque ya son bastante estudiadas y incluso ya existen diccionarios que te ayudan a hacerlo fácilmente, ¿no? Por ejemplo, el po puede identificarse una palabra es un eh sustantivo, un verbo, un adjetivo determ de pronombre. Entonces, si uno quiere hacer eso, simplemente clasificar palabras, no es necesario usar un un modelo grande de lenguaje. Puede simplemente usar el NLTK con los diccionarios que ya tiene eh para descargar y simplemente utilizando eso puede generar las etiquetas correspondientes de las palabras. Entonces, hay tareas simples que no necesitan modelos tan complejos y con estas reglas básicas se pueden realizar. Y eh otra cosa que ahora vamos a ver más a detalle después es que una forma de de factorizar lenguaje básica es bien una frecuencia de palabras, es decir, contar qué palabras aparecen en un texto. Y acá en en LTK también te ayuda a a sacar esta frecuencia, esta distribución de frecuencia, ¿no? Entonces, son diferentes métodos que pueden utilizar dentro de la librería y si en algún momento necesitan hacer feature engineering de texto rápido, si les recomiendo utilizarlo para hacer un preprocesamiento rápido y y también pueden darle una chequeada a su documentación porque tienen muchos otros métodos ahí que les puede servir.
+
+
+01:43:18
+
+lse posgrados: Eso. No sé si tienen alguna duda de esta parte. Todavía me ponen deito arriba. Ya. Entonces vamos continuar. Bien, hasta ahora eh ya hemos visto la primera parte que era preprocesamiento y limpieza de texto, básicamente. Ahora vamos a ver, una vez ya tienes tu texto limpio, cómo lo podríamos vectorizar. Y en esta clase solo vamos a ver un método, métodos más clásicos, los de Back of Words, que es lo que habíamos comentado. Entonces, antes de actualizar un poco los términos que se van a usar, que justo por ahí me lo estaban preguntando, ¿no? Pero corpus básicamente es el concepto que vamos a usar para todo el conjunto de texto, se va a usar de entrenamiento. Entonces, el corpus normalmente involucra una gran cantidad de documentos, pueden ser artículos, eh, incluso oraciones, conversaciones, eh no sé, páginas web, código, cualquier cosa que sea el texto que vas a usar para eh para entrenar. Y el conjunto de palabras que hay adentro de este corpus es el que te va a definir tu vocabulario final.
+
+
+01:44:44
+
+lse posgrados: Si es que en tu corpus no existe una palabra, entonces tu modelo no va a tener esa palabra en su vocabulario. Corpus tiene que abarcar todo el vocabulario que tú necesitas para luego tú utilizarlo en tu tarea. Por ejemplo, si necesitas que tu que tu modelo entienda eh español, inglés y otro idioma. tu corpus tiene que incluir texto de todos esos idiomas para poder tener el vocabulario de de todos, ¿no? Entonces, eso es el el cuerpo, básicamente es tu entrenamiento. De ahí el documento es eh una unidad eh de texto con un contexto común o con eh una temática común. Podría ser eh su largo es variable. Puedes definir que tu documento sea un artículo completo a nivel de párrafo o a nivel de oración. Eh, pero básicamente es una unidad más pequeña que guarda un significado eh un significado completo, ¿no? Ese sería el documento. Y luego está el término que ya es digamos la unidad que luego llevarías a un token, ¿no? Podría ser una palabra, símbolo, o podría ser un conjunto de caracteres.
+
+
+01:46:05
+
+lse posgrados: Entonces, ya es la unidad mínima en la que vas a dividir tu texto. En la clase de hoy vamos a usar término como símbolo de palabra porque lo vamos a hacer a nivel de palabra, pero así tomen en cuenta que hay hay otras dependiendo de los modelos, hay modelos que lo incluso lo dividen más pequeño que la palabra. Ah, incluso. Entonces, una vez uno tiene su corpus y ya tiene sus sus división hasta el nivel de término, eh no lo puede ingresar, o sea, no no le podemos dar el término al modelo, eh, ya que eh los modelos utilizan números. Entonces, el siguiente paso es transformar estos unidades de texto a un vector. Eh, y puedes transformarlo a nivel término o a nivel documento, pero tienes que transformar alguno de estos elementos a un a una serie de numeros, ¿no? Y los vectores, como les dije, pueden ser a nivel palabra, a nivel término, carácter o a nivel documento completo. Lo que vamos a ver en esta clase específicamente va a ser a nivel de documento. Vamos a ver cómo se puede crear un vector para un documento completo.
+
+
+01:47:26
+
+lse posgrados: Y ya en la próxima clase vamos a ver cómo se pueden crear vectores a nivel de palabras. Por eso es la temática de Word. De acá est este glasario. ¿Alguna duda o todo bien? Me pone un dedito arriba. Todo bien. Genial. Bien. Entonces, comenzamos con el primer método de vectorización a nivel de documento, que es el eh los vectores de frecuencia o conteo. Básicamente, Por cada documento que haya en el corpus se eh representa el documento en base a cuántas palabras aparece dentro de este documento. Entonces, por ejemplo, si tienes asumiendo que tú defines tus documentos con una frase y tienes en tu corpus solamente tres documentos, que serían estos tres, este sería tu corpus para el ejemplo es chiquito, ¿no? Obviamente nadie va a entender un modelo con tres. haces, pero suponiendo si sacas un disney o un lista de palabras únicas, te sale tu vocabulario y en este caso el vocabulario está confirmado. ¿Por qué? Bueno, está muy y excelente. Ese es el vocabulario de tu corpus.
+
+
+01:48:48
+
+lse posgrados: Ahora, para poder vectorizar estas palabras, lo que haces es un conteo. Hay una función que que se llama un vectorizer, que es toma estas oraciones y las convierte en un conteo de palabras como este. Entonces, tienes tu vocabulario, que en este caso son solo cinco palabras. Cada una de estas palabras del vocabulario van a ser tus columnas, ¿no? Tus dimensiones. Cada palabra va a ser una dimensión y el vector eh va a estar conformado por el conteo de esa palabra en específico, ¿no? Entonces, por ejemplo, para la primera oración, la palabra que aparece dos veces, la palabra bueno una vez y la palabra está uno. Y las otras palabras no aparecen en ninguna ocasión, entonces se le pone cero. Ese es tu primer vector que va a representar este documento. Para el segundo, pues eh dice, está muy bueno, le pones uno, esas dos palabras y está si la tienes está excelente. Ya restos ceros. Entonces, con esto ya tienes cada vector que representa cada uno de los documentos de tu corpo.
+
+
+01:50:01
+
+lse posgrados: Ahora, eh lo interesante es que los vectores van a ser tan grandes como tu vocabulária, ¿no? Y en este caso, ejemplo sencillo, son solo cinco, cinco dimensiones, pero en un vocabulario real van a ser miles miles de de columnas. Entonces, eso es algo a considerar. Eh, ¿por qué se llama este? Este es un método que entra dentro de la categoría back of words o bolsa de palabras, que es lo que les comentaba. ¿Por qué? porque estás básicamente definiendo el vector en base a qué palabras aparece y eh no te interesa mucho el orden. Porque si se dan cuenta acá cuando poníamos eh está muy bueno, pues aparece, lo estamos colocando acá primero y el muy acá y no importa si estaba al revés, va a ser el mismo vector. No te importa en qué orden está la palabra. El Dr. va a ser el mismo. Entonces, por eso es bolsa, no no guardas el orden, solo te importa si aparece y cuántas veces aparece o o bueno, o si aparece o no, dependiendo de del método que estés ha usando.
+
+
+01:51:18
+
+lse posgrados: Entonces, eh otro ejemplo de Back of Words sería ya con eh bueno, con este corpus en inglés igual, ¿no? Tienes un corpus inicial, divides el corpus, en este caso los documentos están a nivel de oración, lo divides y obtienes tres documentos. Luego estos tres documentos lo divides por palabra y obtienes los elementos unitarios, ¿no? Los tokens. Luego haces el conteo por palabra de cuántas veces aparece, eh, y luego estas estas palabras lo ordenas en columnas que sean comunes a todos los documentos y con eso defines el vector. Y la representación final que vas a usar para tus modelos o cálculos va a ser esta columna de acá con el vector. Entonces estamos ignorando nuevamente en estos métodos ignoramos el orden de la palabra. Bueno, acá un un zoom y este es, digamos, el primer método. Ahora existe otra eh variante de este método que es simplemente hacer eh ya no tomar en cuenta la frecuencia, es decir, cuántas veces aparece la palabra, sino simplemente eh saber si aparece o no, sin importar si aparece dos, tres, cuatro veces.
+
+
+01:52:44
+
+lse posgrados: Solo te importa si es que aparece. Esto se llama binary back of words o es un similar a un oneehot encoding, ¿no? Donde solo usas un cero y un uno. Entonces, en esta otra versión, si no te importa la cantidad o la frecuencia, eh, por ejemplo, en esta palabra que era que aparecía dos veces, ya no le pones dos acá, sino simplemente le pones uno. Y esa es básicamente la diferencia, usar solamente ceros y unos en vez de conteo. Eh, las columnas eh son una por palabra de todo el vocabulario y no se toma en cuenta el otro. Eso en ese sentido es es bastante parecido. Hasta acá alguna duda todo bien. Ya. Entonces, en este tipo de de técnicas, eh, si bien son bastante sencillas, puede influir eh mucho el estas palabras comunes, ¿no? Los stops. Por eso volvemos a este a este concepto. Uno va a hacer conteo de palabras y hay palabras que aparecen muy frecuentemente, entonces estas palabras, digamos, van a agregar ruido a todo tu análisis, ¿no?
+
+
+01:54:08
+
+lse posgrados: Porque te van a sumar más que el resto, pero eh o sea, en tu representación van a van a tener mucho peso, pero en verdad no te permite distinguir un texto de otro, ¿no? Porque la mayoría de textos van a tener un montón esta palabra y esta también. Entonces, cuando tú quieras distinguir si un textos de una clase u otra y estas estas palabras te jalan mucho, digamos, eh tu modelo, eh va a fallar, ¿no? Y muchas veces cuando eliminas estas palabras y haces esta técnica de stopws de limpieza, lo que vas a terminar teniendo va a ser esta otra representación que, digamos, ya no tiene tanto ruido y comienza eh a tomar mayor relevancia a palabras que sí te permiten definir de qué trataba el texto, ¿no? Por ejemplo, acá no sabemos de qué estaba hablando, viéndolo así rápido y en cambio acá podemos decir rápidamente que habla de cambio climático, ¿no? Entonces, eliminaste ruido y por tanto un texto o si usas un corpus así procesado con esta limpieza de stopws, eh normalmente los modelos de clasificación mejoran su sus metrics de desempeño solo por esta técnica de stops.
+
+
+01:55:33
+
+lse posgrados: Entonces, eh si usan vectorización por frecuencia, stopws es normalmente una buena técnica para aplicar. Y algo interesante eh que se toma en cuenta es normalmente las palabras más comunes, es decir las que están en el top de ranking uno, por ejemplo, de mayor aparición, que tienen mucha más frecuencia, estas son las que entran dentro de la categoría stopwan, ¿por qué? porque son comunes a todos los documentos y no te permiten diferenciar. Sin embargo, también existe el otro lado, que son las palabras muy poco frecuentes y raras, que también si que tratas de buscar similitudes, eh, no sé, categorías comunes, v repente poco útiles porque capaz que solo aparece en un texto, ¿no? Y en ningún otro más. Por ejemplo, no sé, me eh algo que podría aplicar aquí sería el código o tu DNI, tu código de DNI es único para ti. Entonces, si en un texto aparece un código de de tu identificador, tu DNI, eh o tu pasaporte, no sé, el que utilicen, no te va a permitir relacionar ese concepto con ningún otro documento porque no va a aparecer probablemente en otro lado, ¿no?
+
+
+01:56:50
+
+lse posgrados: Entonces, muy real tampoco sirve. Ese es el mensaje de acá. Lo que normalmente te es útil es las palabras del medio, ¿no? Las que ni son tan comunes que no distingues nada entre un documento y otro, ni son tan raras que casi nunca las vas a ver. un un punto medio es normalmente el que guarda el valor interesante para clasificación y clastering de de texto. Entonces, esto sí tómenlo en cuenta para por si en algún punto quieren hacer preprocesamiento y y mejorar eh las metricas de sus modelos. Bien. Eh, otra forma de limpiar estas palabras muy comunes, eh, sin necesidad de tener un diccionario para limpieza de stopws es con un término de ajuste que es el inverse document frequency. Entonces, al utilizar este término, pues surge est otro método que se llama TFC. La parte de term frequency es lo mismo que ya hemos visto. Esto no cambia es lo que hemos visto. Es decir, sacamos cuántas veces aparece una palabra, una palabra n dentro de un documento. Esta es la frecuencia que ya vimos, pero esta frecuencia la alteramos por un factor de ajuste que es el término IDF.
+
+
+01:58:19
+
+lse posgrados: Y como su nombre dice, básicamente la frecuencia inversa. Eh, tienes eh la frecuencia inversa eh de en documentos. tienes el número de documentos en los que aparece el término, ese es tu eh tu denominador y arriba tienes el número total de documentos de la colección, ¿no? Entonces, entre más eh entre más veces se aparezca, por ejemplo, se aparece en todos los documentos, el el IDF va a ser cer, ¿no? que va a ser el n sobre n va a ser uno y el logaritmo eso es c. Entonces, eh entre más veces aparezca una palabra, o sea, entre una palabra sea más común a todos los documentos, este término va a ser más chiquito y por tanto le va a restar el peso a la frecuencia original de esa palabra, ¿no? Entonces, lo que estamos haciendo aquí es restar o disminuirle el volumen o disminuir el ruido de estas palabras. muy frecuentes a todos los documentos del corpus. Entonces, ¿cómo se vería esto? Cuando volvemos a usar el ejemplo que vimos antes eh tenemos que cómo se calcularía el IDF, pues básicamente eh ves la palabra que en cuántos documentos aparece.
+
+
+01:59:50
+
+lse posgrados: En este caso solo aparecen uno, entonces sería el total de documentos tres sobre un documento. En cambio, la palabra está aparecen los tres, ¿no? Aparece acá, aparece acá y ya no. Es común a los tres documentos. Entonces, no nos interesa mucho esta palabra, no nos va a permitir diferenciar un texto de otro. Y bueno, y esta de acá pues aparecen solo dos, entonces es un punto medio entre ambos. ¿Cómo resultaría el término de ajuste del IDF? pues esta palabra la va a volver, o sea, el término de va a ser cero, entonces la va a apagar por completo. En cambio, la palabra que eh va a tener un un peso mayor y la palabra bueno un peso intermedio, ¿no? Entonces, de esta forma se prende lo lo importante, o lo más diferenciador y se apaga lo muy común entre documentos. Y bueno, eh luego este IDF se multiplica por el TF que ya habíamos visto antes, ¿no? Que es simplemente el conteo lo multiplicas y según eso se obtiene el valor final de el este de esa parte del vector, ¿no?
+
+
+02:01:06
+
+lse posgrados: Esta dimensión del vector. Este está va a terminar siendo cero y esta va a tener terminar siendo un poco más alta que el resto de de palabras. ¿Alguna duda sobre sobre este TFIDF? Este finalmente va a ser el que vamos a ver ahora en el desafío un, así que si tienen dudas me me avisen. Federico dice que sí, todo bien. El resto también. Genial. Bien, entonces quedó claro. Ahora, ¿cuál es la desventaja de estos de estos métodos? Es uno de esos, aparte de lo que ya hemos comentado, que que el orden no se guarda, ¿no? Pero uno de esos es que eh la esparcidad de los vectores es muy grande. ¿Qué significa la esparcidad? Que hay muchos ceros, ¿no? O sea, la las dimensiones, las columnas que terminas utilizando son pocas. Que, por ejemplo, si tienes un idioma de inglés, por ejemplo, el inglés tiene más de 180,000 palabras, vas a tener 180,000 columnas. O sea, la dimensión de tu factor va a ser 180,000.
+
+
+02:02:19
+
+lse posgrados: Y de esos 180,000, si tienes esta oración, por ejemplo, esta oración tiene ocho palabras, vas a usar ocho columnas de 180,000, o sea, ocho columnas van a tener un número y el resto va a ser cero. Entonces, digamos que no es óptimo, no es no es muy eficiente el uso de las dimensiones de estos vectores, son vectores muy grandes para guardar muy poca información. Y es por eso que lo que lo que prima ahora son representaciones más densas que utilizan mucho mejor el eh las dimensiones. Ahora, obviamente para crear estas estas crear esto es mucho más fácil, ¿no? Porque simplemente cuentas las palabras, pero para crear estas representaciones de esas que vamos a ver aparte de la clase dos, eh requiere un poco más de trabajo y entrenamiento de de modelos. Ya, este es digamos uno de los contras y el otro contra que dijimos es eh el orden se pierde porque eh prácticamente eh la misma oración con un orden inverso va va a terminar en el mismo vector. Y otro contra importante es que si se dan cuenta, ¿qué pasaría si es que cómo sería el vector de perro y el vector de can?
+
+
+02:03:54
+
+lse posgrados: ¿Sería igual o sería diferente? ¿Qué piensan? Una oración que dice el perro, el perro comió y otra oración dice el can comió. Eh, sería sería diferente,
+Hernando Scheidl: distinto. Yeah.
+lse posgrados: ¿no? Porque no tienen las mismas palabras, pero nosotros sabemos que en verdad está diciendo lo mismo, o sea, en significados es lo mismo. Entonces, otro contra de esta este tipo de técnicas es que los sinónimos los considera eh como si no tuvieran relación alguna y eso es porque solamente está considerando las palabras y no está considerando el significado que hay detrás de la palabra. Entonces, ese es algo más a tener en cuenta. Ahora, independientemente de la técnica que uno use, cuando ya tiene un vector, eh, hay que ver la forma de encontrar qué vectores son parecidos entre entre ellos, ¿ya? Y para eso se eh se se usa normalmente cuando ves parecido entre vectores se usa una distancia, ¿no? Eh, distancia similitud. Ahora hay dos opciones, una es la distancia euclidiana, que mide la distancia absoluta entre espacios, y la otra sería la similitud coseno que mide la distancia, pero del ángulo, ¿no?
+
+
+02:05:17
+
+lse posgrados: Entre entre los dos vectores. ¿Cuál creen que se debería usar en lenguaje? La clidiana o la o la cosen la semilitos.
+Hernando Scheidl: coseno,
+lse posgrados: Sí. Y y ¿por qué sería la cosente?
+Hernando Scheidl: porque la dirección eh en el es como que en el fondo codifica el significado.
+lse posgrados: Eh,
+Hernando Scheidl: como que documentos parecidos que dicen cosas parecidas,
+lse posgrados: sí, tal cual.
+Hernando Scheidl: apuntan en la misma dirección o parecidas.
+lse posgrados: Sí, tal cual. lo que te importa en estos vectores de de texto es más la dirección, ¿no? No tanto la la magnitud del vector, ¿no? La magnitud muchas veces se se bueno, depende del largo del documento y las palabras, la frecuencia de las palabras, por ejemplo, ¿no? Pero eh no te importa mucho si un un documento es más largo o más chico, te importa que estén hablando de lo mismo. y esta semántica, como como bien comenta, está más representada por la dirección, no tanto por la magnitud. Entonces, por eso es que en la mayoría en casi todos los casos que vamos a ver, vamos a usar es la similitud coseno que te indica que tan tanta diferencia había entre las direcciones que apunta el vector eh uno versus otro.
+
+
+02:06:51
+
+lse posgrados: Ahora, e cómo cómo funciona la similitud coseno es básicamente una forma de medir que tan cerca está una frase de otra en base a su dirección. Entonces, por ejemplo, este documento que dice, cada equipo en el campo tiene hasta 11 jugadores y el otro digamos que es un más largo, pero habla de algo similar, ¿no? El equipo argentino presentar todos sus jugadores titulares en el campo, tal. Los dos hablan de de jugadores, hablan de de juego en sí, de equipo, ¿no? Dice equipo acá también. Entonces, si bien van a tener magnitudes distintas, probablemente este, digamos, suponiendo que este documento fuera representado por este vector y este otro, si viéramos la distancia euclidiana, pues probablemente sería alta, ¿no? Pero sus direcciones son parecidas y eso es porque sus significados o su sus dimensiones en sí son apuntan a direcciones eh similares. Entonces, es por eso que la similit coseno que es este ángulo que hay entre uno y otro, es el que nos va a servir. En este caso, eh si tenemos eh una similitud coseno muy cercana a uno, significa que los vectores apuntan a la misma dirección.
+
+
+02:08:11
+
+lse posgrados: Las ceras significa que son ortoganales, es decir, que que no hay relación entre entre los textos y eh la de -1 es que los vectores apuntan en sentido contrario. Ahora, algo interesante es que -1 no significa necesariamente eh antónimus. Normalmente los antónimos sí tienen relación entre sí porque tienen significados parecidos pero opuestos. No es algo similar a como que entre el amor al odio y un solo paso, algo así. Eh, normalmente el están más cerca o están relacionados semánticamente, pues normalmente tienen una una similitud coseno alta. Y en cambio los que tienen cero si son eh palabras que o o textos que hablan de cosas muy diferentes, no necesariamente antónimos, sino simplemente textos muy muy diferentes. No sé, por ejemplo, uno cocina, uno habla de cocina y el otro de matemáticas, cosas muy diferentes que no tiene muchas cosas de Entonces es un poco eh cómo interpretar esta similitud. Eh, bueno, acá eh tienen un detalle de la fórmula. Luego si es que quieren ampliar un poco eh la parte de matemática, pero no sé si hasta acá sobre todo la intuición quiero que se lleven.
+
+
+02:09:38
+
+lse posgrados: ¿Tienen alguna duda o todo todo? Todo bien. Ya. Genial. Entonces, ya vimos un poco esta parte de actualización, vimos la similitud coseno. Vamos a un break eh rápido antes de continuar hasta las eh son las 9:10, vamos hasta las 9:25 y ahí continuamos. un rato. Okay. Hola, ¿qué tal? Me avisan si ya está. está arriba. Dos, tres. Ya voy compartir. Entonces, retomando, ya vimos preprocesamiento, vimos una vectorización de documentos en base a frecuencia o aparición de palabras y vimos una forma de ver la similitud una vez que tienes los vectores, ver cómo ver cómo calcular si se parecen o no, que es la similitud coseno. Ahora, una vez que tienes los vectores, también puedes ya comenzar a utilizarlos dentro de modelos incluso de machine learning clásicos. Vamos a hacer un ejemplo con un modelo simple para que puedan luego en el desafío van a profundizar más, pero para que puedan ver que con una vectorización simple y un modelo también simple se puede llegar a resultados eh rápidos con procesamiento de de texto.
+
+
+02:25:35
+
+lse posgrados: Entonces, el ejemplo que vamos a ver ahora es de clasificación de texto. Básicamente vamos a tener una serie de noticias y eh tenemos la etiqueta de a qué categoría pertenecen estos artículos o noticias, ¿no? Eh, son 20 categorías en total diferentes. Entonces, vamos a tener un data de entrenamiento. Vamos a procesar estos estos documentos y llevarlos a vectores por estos conteos de palabras. Y utilizando los labels de de este set de entrenamiento, vamos a entrenar un modelo de machine learning e machine learning clásico. Y ahí con una parte del dataset que nos va a servir de de test de testing, vamos a eh ver qué también predice el modelo estos estas categorías, ¿no? Básicamente con esto ya tenemos un modelo de clasificación eh de texto, ¿no? simplemente llevando el texto a vectores y luego utilizando esos vectores dentro de un modelo de mach lo demás que son las categorías son labels comunes de cualquier modelo de machin clase. Eh, ¿qué modelo vamos a usar? Eh, vamos a usar eh modelo de nave, que básicamente ente eh te ayuda a clasificar utilizando el teorema de byes, ¿no?
+
+
+02:27:03
+
+lse posgrados: El teorema de e utilizando estas probabilidades condicionales para poder determinar una clase, ¿no? Entonces, para entender mejor cómo funciona esta fórmula de vallas aplicada a clasificación, acá tengo eh bueno, primero vemos el la definición y luego tengo un ejemplo específico, pero básicamente se llama ingemo porque eh estás asumiendo en este caso que las palabras son independientes, ¿no? si recuerdan de de sus clases pasadas eh para que eh se pueda aplicar eh el teorema de valles eh tiene que eh cada elemento tiene que ser independiente, ¿no? Su probabilidad no debe estar relacionada a la probabilidad del otro elemento. Entonces, obviamente no se cumple en el texto, ¿no? Las palabras tienen relación entre sí y se afectan entre ellas y, incluso se cambia su significado como vimos. Pero es una simplificación eh para poder aplicar un un modelo rápido que eh si bien no es tan preciso, porque justamente estamos simplificando, eh igual puede ser útil en algunos casos. Entonces, ¿cómo funciona? Eh, básicamente calculas la probabilidad de que un texto pertenezca a cierta categoría basándonos en las palabras que contiene, ¿no?
+
+
+02:28:33
+
+lse posgrados: En base al corpus de de texto que tengas de entrenamiento, vas haciendo conteos de palabras y en base a esos conteos sacas las probabilidades condicionales eh de las palabras dado una categoría, ¿no? Básicamente eh eso es lo que lo que vas haciendo acá. la probabilidad de la categoría y la probabilidad de es el contenido de ese documento dada esa categoría. multiplicando ambas te da la probabilidad eh de una categoría dado ese ese contenido, ¿no? Entonces, básicamente así funciona el denominador. Es común a todas las clases, por eso es que se ignora en este caso, no no ayuda en la distinción porque todas las las probabilidades de todas las clases van a tener el mismo denominador. Entonces, lo que nos interesa son estas probabilidades de arriba, ¿no? Probabilidad de clase y la probabilidad de este contenido para ese clase. Eh, entonces vemos el ejemplo que les comentaba. Suponiendo que uno quiere eh clasificar correos y tienen una serie de correos que son normales y otras que son spam. Para poder aplicar est modelo de Ves, lo primero que habría que hacer es en base a tu dat de entrenamiento sacar la frecuencia de estas de las palabras que aparecen en los correos para cada una de las clases.
+
+
+02:30:06
+
+lse posgrados: Entonces, si se dan cuenta, también termina siendo un conteo de frecuencia de palabras, ¿no? Pero acá lo estás usando para calcular una probabilidad de la palabra dada a la clase, ¿no? Entonces, cuentas, ¿cuántas veces aparece una palabra en correos normales? Por ejemplo, la palabra de cuántas veces aparece en correos normales y según eso eh eh saca su probabilidad. Igual en la parte de spam ves cuántas veces aparece la palabra de en correos con spam y saca su probabilidad para esa clase. Entonces aquí ya estás sacando la probabilidad condicional de todas las palabras de que aparezcan en tu datas, en tu corpus, que al final va a ser tu vocabulario completo. Tienes tu probabilidad para todo el vocabulario dada a la clase. Y por otro lado, cuentas cuántos correos son spam y cuántos correos son normales. Y con eso sacas la probabilidad de la clase en sí, ¿no? Eh, no sé si siete correos de 10 son buenos y tres de 10 son spam, entonces la probabilidad de spam va a ser 30% algo así. Y con eso ya tienes los ingredientes necesarios para aplicar el teorema de B. Eh, entonces si es que te llegase un correo que lo único que dice es dear frame, entonces tienes que sacar eh la probabilidad de de ese de esa oración para esa clase en particular, o sea, tomas la probabilidad de de y la probabilidad de friend lo multiplicas y ahí ya tienes tu eh verilitud o tu probabilidad de ese contenido dada a la
+
+
+02:31:44
+
+lse posgrados: casa y simplemente Solamente queda multiplicar la la probabilidad de la clase general y con eso ya tienes la probabilidad de que este correo sea normal. Lo mismo se aplica para el spam, ¿no? Simplemente utilizando las las probabilidades de de spam y con eso multiplicando tienes la probabilidad de que este correo sea spam. Y finalmente lo único que se hace es comparar, ¿no? ¿Cuál es la probabilidad más alta? En este caso la de acá y clasificas este correo como normal. Ahora si viene otro correo, por ejemplo, que tiene la palabra money, no sé, eh que te van a dar mucho dinero y eh la palabra money es muy frecuente en correo de spa, ¿no? y multiplicado por las otras palabras, pues se se obtiene una probabilidad alta de que se corra ese spam y en ese caso comparado si es que le gana la probabilidad del normal va a ser clasificado como spam, ¿no? Entonces más o menos así funciona eh este model. Ahora, ¿qué creen que pasa si viene una palabra? que no estaba acá, una palabra que no estaba en tu vocabulario inicial, ¿qué pasaría?
+
+
+02:33:07
+
+lse posgrados: ¿Qué qué saldrá de probabilidad?
+Hernando Scheidl: cero.
+lse posgrados: cero. Claro, ese es digamos si usara si usáramos el teorema de valles tal cual tendríamos este problema, ¿no? Una palabra que no estuvo en tu datas de entrenamiento tendría cero y te anularía por completo esa clase. Entonces, sobre esto, sobre esta lógica se le aplica un ajuste que es se llama suavizado de la PL, que básicamente eh sumarle un alfa un un constante chiquito para que esta este conteo esta frecuencia no sea cero o n, ¿no? O sea, por ejemplo, la palabra lunch nunca apareció en los correos de spam, pero para que la probabilidad de lunch no te anule toda la multiplicación, le sumas este valor chiquito y y por tanto ya no te va a salir cero, ¿no? Eh, entonces se usa sobre la lógica que les comenté, se usa el suavizado de la place, que es este eh valor adicional. Y algo importante es que hay hay dos variantes, ¿no? El que les estoy comentando que calcula la frecuencia y según eso la probabilidad de ser el na multinomial.
+
+
+02:34:29
+
+lse posgrados: Tome en cuenta cuántas veces aparece una palabra. Y hay otra variante de night by es vernuli que simplemente toma en cuenta la aparición o la no aparición. Es más binal. Entonces, hay eh diferentes variantes, pero la más común es la multinomial, la que toma en cuenta la cantidad de apariciones. Eh, ¿alguna duda sobre este modelo o si es este modelo que es ya utiliza probabilidades de estadísticas? Todo bien y pueden ver. Entonces, eh si se dan cuenta, pues es una forma de utilizar eh frecuencia. De hecho, este modelo entra dentro de la categoría Back of Words, bolsa de palabras, porque usa frecuencia y no toma en cuenta el orden, ¿no? Eh, no, el resultado no depende del orden de las palabras. Entonces, todo el el categoría Back of Wars involucra la vectorización por TF y DF que vimos, el one encoding, el conteo de de frecuencias y también eh este Niveas también entra dentro de la categoría eh backws. Bien, dicho esto, ya tenemos digamos todos los ingredientes para ver el desafío uno.
+
+
+02:35:55
+
+lse posgrados: Eh, ya ya está colgado también en el el GitHub, cuando van a a las carpetas, van a ver va a haber una carpeta por cada clase y aparte hay una carpeta de desafíos. dentro de esto ya ya colgué el desafío uno que es tiene una plantilla que la vamos a ver básicamente un ejemplo que es lo que vamos a ver en clase toda esta solución y al final la consigna que es para que ustedes continúen el análisis y acá la idea es que acá lo continúe. Entonces vamos a ver los ejemplos arriba ahorita en la clase y ya la parte de la consigna es lo que se llevarían de tarea para el desafío uno. Entonces esto ya lo corrí. Ah, no, este es el de corras. Eh, ya corrió, ya corrí todo el desafío, entonces vamos a ir revisando. Eh, como les había dicho, para este desafío vamos a utilizar un dataset que es de noticias, se llama 20 News Group y eh como dice el nombre tiene 20 categorías y la idea es categorizar estas noticias en una de estas 20. Este, bueno, este es un dato bastante conocido, se puede descargar learn y ya tiene una división de training test.
+
+
+02:37:30
+
+lse posgrados: Entonces, e simplemente nos bajamos los dos grupos, el train y el test, y eso es lo que vamos a usar para eh nuestros nuestros ejercicios. Para la parte de vectorización tenemos ya el TF y DF. De hecho, e ya hemos visto que hay por detrás, pero no es necesario construirlo desde cero. Ya cit learn ya lo tiene implementado. Eh, tanto el count vectorizer, que es, digamos, el conteo simple sin ningún ajuste por IDF. Y también tiene el TFIDF, que es este ajuste que les comenté, que es eh apagar un poco el ruido de las palabras que aparecen en todos los documentos. También vamos a usar la similitud coseno que ya vimos y el N vies. Acá está el multinomial. Y hay otro una variante que es el complement que también va a quedar para que ustedes experimenten con él. Y bueno, la métrica que vamos a estar usando en común para todos los experimentos que hagan, siempre calcul un mejor para poder comparar lo que lo que les vaya saliendo. Entonces, eh vamos nuevamente para este ejemplo de TFDF.
+
+
+02:38:46
+
+lse posgrados: Si se dan cuenta, no estamos colocando eh ningún parámetro, que en el ejemplo de la clase vamos a hacerlo tal cual. Luego en la consigna sí, la idea es que ustedes vayan experimentando y y si quieren le pueden ir cambiando y agregando otros parámetros. Por ejemplo, si no me equivoco, hay un parámetro que que aplica el stopws, la limpieza stops. Pueden aprender prender ese parámetro. Y acá un poco en la documentación o buscando dentro de cycle learn pueden eh investigar un poco qué otros parámetros tienen disponibles. Pero bueno, para el ejemplo lo usamos así tal cual. Y vemos un ejemplo de eh del datas. Eh vemos, por ejemplo, un elemento que es eh una parte de de una noticia. Y bueno, con eso podemos ir eh en consulta. Simplemente le damos el fit, transforma a este vectorizador y con eso ya se va a ir a a armar los vectores en base a al dataset que tenemos. y eh algunos, bueno, acá tenemos algunos ejemplos de las clases, ¿no? Eh, se tienen las etiquetas, por ejemplo, eh no, perdón, este es este es un ejemplo de la matriz.
+
+
+02:40:10
+
+lse posgrados: Eh, podemos ver la forma de la matriz que eh vemos que es muy esparsa, ¿no? E el la cantidad de documentos es solo 11,000, pero la cantidad de de vocabulario que hay es 101,000 palabras. Entonces, eh son muchos muchas dimensiones que van a ser puro ser, que es lo que habíamos visto justo en la clase, una matriz muy grande llena de ceros. Y bueno, lo que nos interesa solamente es algunas columnas, que es eh las palabras que aparecen dentro de los documentos. Eh, luego eh algo interesante es que bueno, como está todo cuando ustedes le dan a fit acá al vectorizador, ya inmediatamente te saca, ¿no?, eh las palabras únicas que hay y te las asigna a un a una ubicación en la dimensión de de la matriz, ¿no? esta matriz que tiene eh 100,000 palabras, puedes utilizar algunos métodos para poder sacar eh cuál es el índice o a qué columna pertenece cada palabra. En este caso, en esta matriz gigante, la palabra car es la eh la columna 25775. Entonces, así si es que quieran analizar un poco qué hay dentro de la matriz, es posible examinarla buscando la palabra en la ubicación que corresponda dentro.
+
+
+02:41:45
+
+lse posgrados: Bien, ahora vamos a ver e qué pasa si es que hay una palabra que no estaba en tu set. En este caso para este método en particular y bueno, este este vectorizador arrojaría error. ¿no? Entonces, solo van a poder procesar palabras que hayan estado dentro de su datas de entrenamiento. Cualquiera que esté eh por fuera te va a arrojar error. Es algo que deben tomar en cuenta. Eh, y bueno, pueden utilizar un diccionario también para para ir de identificadora para la ver acá. Bueno, se los lo tienen ahí por por un helper si es que quieren ponerse a investigar. Entonces, guardamos los targets y le damos un vistazo a las 20 clases. Como ves, como ven, hay hay temas de política, eh de tecnología, e, no sé, autos, motocicletas y computadoras y otros. Entonces, lo que hay que hacer es eh primero en base a estos vectores que ya hemos creado arriba, vamos a tratar de ver cuáles qué documentos son similares entre sí. Entonces, se toma un documento al azar.
+
+
+02:43:07
+
+lse posgrados: Eh, la idea es ver su contenido para poder saber de qué trata. En este caso, este documento es eh una conferencia de la Casa Blanca, o sea, del presidente a través de radio y bueno, eh da da su discurso, ¿no?, el presidente a través de de la radio. Lo que podemos hacer es sacamos la similitud coseno de este documento que hemos elegido en base al resto de el corpus y podemos ordenarlo en base a los que son más similares, ¿no? Obviamente el primero va a ser el mismo documento contra sí mismo, que tiene una similitud idéntica, uno. Pero a partir de acá vamos a poder ver los otros documentos que son eh más similares. Entonces, calculamos su similitud coseno, eh lo ordenamos y traemos el identificador de todos los documentos y tomamos los cinco más similares. Con esto lo podemos ver a qué categoría corresponde. El documento que habíamos elegido era de política y nos damos cuenta que el resto de documentos también eran de política. Entonces, acá podemos concluir que eh si bien es un método bastante eh inicial, digamos simple, sí te te trae ciertos resultados buenos a la hora de poder eh capturar eh categorías o o documentos que son similares, al menos que hablan de lo mismo, ¿no?
+
+
+02:44:42
+
+lse posgrados: En este caso político. Entonces vemos que nos salió bien para este documento en particular. Ahora, al igual que este ejemplo de acá, la primera consigna justo va a ser eh hacer la vectorización, que es lo que ya está arriba. K. jueguen un poco con los parámetros, como les había dicho, y la idea es que tomen cinco documentos al azar, igual que que con el que hemos hecho arribe, vean su similitud coseno con con otros cinco documentos, los cinco más similares, y traten de analizar por qué salieron esos documentos y si estaban bien o si o si estaba mal clasificado o mal relacionado. Esa es la primera parte de la consulta. Entonces, en caso, por ejemplo, eh no les haya salido así todos iguales, eh la idea sería que ustedes entren y y investiguen un poquito qué hay dentro de estos documentos más similares y vean, ¿no?, por qué se se asemejar, no sé, de repente todos hablan eh o tienen la palabra presidente o de repente eh no sé, habla mucho de Washing. Entonces, traten de analizar un poco por qué es que eh la similitud coseno los los ha emparejado o los ha relacionado.
+
+
+02:46:04
+
+lse posgrados: Y en casos, sobre todo los casos en los que no lo lo relacion correctamente, eh lo importante ahí es que comenten cuáles son las deficiencias del método y por qué está fallando en ciertos casos. Esa es para la consigna. Eh, ¿alguna duda de esta partecita de la primera consigna y este ejemplo? Todo bien. Ya. Gra. Bien. Eh, luego la segunda consigna es construir un modelo de clasificación para prototipos. Ahí sí no hay un ejemplo arriba, porque este esto sí lo tienen que construir ustedes desde cero, pero básicamente es un modelo de clasificación eh que no necesita entrenamiento, simplemente utilizando la similitud coseno, comparando un documento versus cuál es el más similar a ese documento, le asignan esa categoría, por así decirlo, ¿no? Entonces, eh ven su conjunto de test, lo comparan con los documentos de entrenamiento y le asignan el label del documento con mayor similitud. Y con eso, simplemente haciendo esa comparación, ya tienen un modelo de clasificación básico, eh, que se le llama zero shot porque estás asignando la categoría de un de un documento nada, del más cercano.
+
+
+02:47:32
+
+lse posgrados: Entonces, la idea de la consigna dos es que construyan este documento y tratan de concluir si es que está capturando información que también hace la clasificación, en qué falla, por qué falla, ¿no? en cada experimento, tanto en este desafío como en los siguientes más que el código, porque el código la idea es que lo hagan ustedes Yeah. Incluso con IA uno se ayuda y es se puede ayudar con IA, pero incluso si usan IA porque sí está permitido eh pueden utilizarla, pero lo más importante es que ustedes analicen los resultados y escriban sus conclusiones, ¿no? La interpretación y la explicación es lo más importante en estos ejercicios. Entonces, cuando hagan est este este modelo de clasificación, agreguen sus comentarios y concluyan por qué sirve. Eh, ¿por qué no? Si es igual, por ejemplo, a elegir al azar o si en verdad sí se diferencia una selección aleatoria. Eso es para la segunda. ¿Alguna duda de este punto de acá? El segundo. Todo bien.
+CARLOS AGUSTIN BERDAGUER: Yo eh lo si entendí bien,
+lse posgrados: Sí,
+
+
+02:48:47
+
+CARLOS AGUSTIN BERDAGUER: cada documento del set de T se compara con todos los del set de entrenamiento y se queda con él de mayor similitud.
+lse posgrados: sí, sí,
+CARLOS AGUSTIN BERDAGUER: Eso es.
+lse posgrados: sí. Tal cual. Ajá.
+CARLOS AGUSTIN BERDAGUER: Okay.
+lse posgrados: Con eso la signa es una categoría,
+CARLOS AGUSTIN BERDAGUER: Bueno,
+lse posgrados: ¿no? La categoría del más cercan.
+CARLOS AGUSTIN BERDAGUER: claro, claro. Pero es así, uno, todo contra todos, o sea, todo lo de contra todo.
+lse posgrados: Sí.
+CARLOS AGUSTIN BERDAGUER: Listo. Gracias.
+lse posgrados: Ajá. Y de ahí obviamente hacen su predicción para todo el test y sí importante calculen su F1 score para que puedan comparar versus otros métodos.
+Elian Pinzas: Eh, una consulta, el conjunto de test es el que está definido ahí arriba.
+lse posgrados: Sí, el datas es este mismo.
+Elian Pinzas: Ah, okay, okay,
+lse posgrados: Utilizan el que ya está en el noda.
+Elian Pinzas: gracias. M.
+lse posgrados: General. Bien. Entonces, ese es el punto eh dos. Ahora, el punto tres, un segundo que le gustó.
+
+
+02:49:45
+
+lse posgrados: El punto tres está relacionado a ya crear un eh modelo de clasificación bytes. Acá ya tienen el ejemplo, un ejemplo sencillo. Nuevamente acá no hay ningún parámetro. La idea es que ustedes investiguen los parámetros y jueguen con con los parámetros para mejorar el modelo, pero básicamente eh definen su modelo, le hacen fit al bueno, con el dataset de entrenamiento y simplemente ya con esto e eh hacen su clasificación, ¿no? Eh, un segundo. Sí. hacen hacen su clasificación y obtienen el F1 score de eh de este modelo. Entonces hace sus predicciones a el datas de test y con el test sacan su F1 Score. La idea es que comparen. Este es el baseline, digamos, el el este F1 SC es el baseline que está en el en el en la plantilla, pero la idea es que eh ustedes lo mejoren cuando vayan comparando con eh agregando acá los parámetros. M. Y también cuando comparen, por ejemplo, con el e este de acá, ¿no? El complement, entonces eh jueguen con con diferentes eh combinaciones de parámetros y saquen la conclusión de por qué uno es mejor que otro.
+
+
+02:51:20
+
+lse posgrados: Esa es eh la parte de eh la consigna tres, entrenar modelos de clasificación NY para maximizar el desempeno. Eh la métrica para poder comparar todos en común va a ser el F1 Score sobre el los datos de el F1 Score macro sobre los datos de test. lo comparan, lo pueden comparar también con su eh con su modelo ser shot para poder ver cuál es mejor. Y la idea es que eh cambi los parámetros, por ejemplo, la parte del vectorizador pueden mejorar, por ejemplo, aplicando el stopw o cambiando el modelo. Hay otros parámetros como el alfa. Entonces ahí eh jueguen con eso, mejoren el score y saquen las conclusiones. Esa es y punto tr. ¿Alguna duda? Me interrumpen. Todo bien. Ya. Genial. Entonces, eh, hasta ahí va va el tercer punto. Y así, bueno, no cambien este parámetro, no. Ese sí no lo toquen. Los demás eh sí, los otros parámetros sí. Este este no lo no lo no lo modificamos. Eh, y el cuarto punto es poco cambiar, transponer la matriz de documento término que es la de acá arriba que habíamos visto, esta matriz de acá, ¿no?, que te que te dice por cada documento qué palabras aparece.
+
+
+02:52:59
+
+lse posgrados: la es que la transpongan para que en vez de tener vectores por documento, tengan vectores por palabra. En vez de de decir para este documento aparecen tales palabras, vas a tener para esta palabra o esta palabra aparecía en tales documentos, ¿no? Con esa eh bueno, esa matriz transpuesta, vas a tener un vector a nivel de palabra y la idea es que usen ese vector de palabra para hacer también una similitud coseno. Entonces toman igual que en la consigna, en el punto de la consigna uno, toman cinco palabras y en base a esos vectores de esa matriz transpuesta, sacan las cinco palabras más lá y utilicen como una especie de vector a nivel de palabra y vean si es que funciona, si no funciona y en qué caso hace sentido y en qué caso ese es el cuarto punto. M. Eh, la idea, bueno, eh, la idea es elegir palabras manualmente y eh traten de seleccionar eh ejemplos que que les sean interesantes para poder sacar conclusiones. Bueno, entonces eso es esos son los cuatro puntos. Como les dije, lo este desafío tienen hasta la semana tres.
+
+
+02:54:25
+
+lse posgrados: Significa que el jueves de la semana 3 ahora estamos 1, dos tres es cinco. O sea, tienen hasta el cinco al final del día para tener el puntaje completo. Ya si se retrasan a partir del seis se baja un punto y así se va descontando. Entonces, eh más o menos es así. Y si es que lo hacen en parejas, como les había dicho, se entrega a través de este enlace, eh, que igual se los voy a pasar por correo, pero también está en la diapositiva. Eh, lo envían acá, ponen su nombre, su correo, su código, sí, es el que aparece en la en el Excel de las notas, es un código de alumno y con este código es el que con el que yo voy a hacer el match entre, bueno, entre ustedes y la nota y la fecha de entrega. Y en caso decidan hacerlo en parejas, que es opcional o individual en parejas, ponen el el segundo integral. El formulario sí es igual para todos los desafíos, así que si seleccionan qué desafío están entregando y ponen su enlace de GitHub o de color y bueno, pues normalmente si quieren comentar algo lo agregan.
+
+
+02:55:36
+
+lse posgrados: Entonces, eso es alguna pregunta antes de acabar esta parte de desafíos.
+CARLOS AGUSTIN BERDAGUER: En caso de entregar un colab, ¿a quién hay que compartirlo? ¿Hay una dirección de mail?
+lse posgrados: Eh, ah,
+CARLOS AGUSTIN BERDAGUER: Cuenta lo que aparece en la primer diapositiva,
+lse posgrados: sería a mí y a Fernando. Eh, sería Sí,
+CARLOS AGUSTIN BERDAGUER: me parece.
+lse posgrados: sí, sí.
+CARLOS AGUSTIN BERDAGUER: Puede ser los dos.
+lse posgrados: Acá, acá están los correos.
+CARLOS AGUSTIN BERDAGUER: Listo. Muchas gracias. Yeah.
+lse posgrados: Sí. Genial. Eh, bien. Entonces, ¿alguna otra duda? Todo bien. Ya. Pasa que hay dos láminas que me faltan. Un segundo. Y entonces, solamente para cerrar la clase eh y ubicarnos en en lo que hayamos visto hasta ahora, hay diferentes formas de hacer una representación vectorial, es decir, vectorizar el texto. Como les había dicho ahorita lo que hemos visto en esta clase es la basada en frecuencia que incluye back of words, TF y DF. Hay otra que es matriz de conocurrencia que lo vamos a ver la próxima clase también.
+
+
+02:56:52
+
+lse posgrados: Y la próxima clase vamos a sobre todo a verbedings a nivel de palabras. Y esto ya no usa tanto la frecuencia, sino que eh trata de capturar sentido semántico. Son representaciones más densas y dentro de estos hay diferentes métodos. Ahí vamos a ver sobre todo eh estos tres son los los métodos más conocidos y posteriormente ya cuando entren al al tema de de Transformers y mecanismos de atención ya van a entrar a contextuales. ¿Qué son dinámicos que cambian en base al contexto del texto sensivo de la palabra? No, estos son fijos porque una palabra siempre va a tener el mismo embeding y estos de acá eh son dinámicas porque la misma palabra podría variar su vector en base a las palabras que lo acompañan. Entonces son diferentes eh familias en formas de vectorizar entre más clásicas a las más modernas. Obviamente estas son las más usadas actualmente y un poco para que sepan la diferencia entre NLP clásico, que es lo que estamos viendo estas primeras palabras y lo que se usa ahora, pues como les había dicho, el procesamiento va cambiando y los pasos cambian porque los modelos también funcionan diferente.
+
+
+02:58:18
+
+lse posgrados: Entonces, en el en el EP clásico sí tenemos que darle mucho más énfasis al a la limpieza porque estos modelos como solo pueden eh digamos noan tanta información, necesita simplificar el texto para que eh estos modelos performan mejor. Entonces, entre más simplificación mejor les sirve a estos modelos. Parece que se limpia, se normaliza, se quita stop, se usa streamización. Esto sobre todo hace que más palabras hagan match entre documentos, ¿no? Entonces por eso servía en estos métodos clásicos y la vectorización que se usaba en ese entonces será más tipo back of words, como hemos visto. Luego cuando se va más a a deep learning antes de el Transformers y los LMS, pero solamente deep learning, eh, ya no se hace tanta esta limpieza como vemos, pero tokenización sigue así en en los tres, tokenización siempre, pero lo que va a ir cambiando es la forma en que divides, ¿no? Puedes hacer divisiones subword, es decir, la palabra dividida más eh de forma más atómica. Y acá ya se comienza a vectorizar ya no por frecuencia, sino por semántica o por entrenamiento de de de vectores densos que tratan de capturar sentido semanal y se usa modelo de deep learning, ya no un modelo de machine learning.
+
+
+02:59:47
+
+lse posgrados: Y por último, ya más cercano al estado del arte actual, se hace tanto organización, se le asignan los identificadores a los tokens y Yeah. vectorización va enlazada al modelo. De hecho, cada modelo tiene su forma de vectorizar eh propio. Entonces, si uno quiere trabajar con unos GPT4, tiene que usar el el vectorizador, el tocenizador de GPT, ¿no? Porque ha sido entrenado con esa ese método en específico. Eh, igual y si se dan cuenta, ya entra el texto, digamos, con todas sus sus variantes de puntuación. incluso con con eh no sé, con errores, si si te equivocas, eh no sé, errores de tipeo, errores de ortografía, todos esos entran al modelo y este modelo como es más inteligente es capaz de sacar todo eh todo el contenido. Y bueno, eso es un un vistazo rápido para que luego se se orienten en las en las próximas clases y métodos. Eso sería, chicos. Si no hay dudas, con eso concluimos la primera clase. Muchas gracias. Ya nos vemos la próxima semana. Buenas noches.
+Rodolfo Di Chiazza: Chao.
+Nicolás Moguilner Reh: Gracias.
+Rodolfo Di Chiazza: Gracias.
+Nicolás Moguilner Reh: Buenas noches,
+Gonzalo Rodriguez: Buenas noches,
+Nicolás Moguilner Reh: Yes.
+Rodolfo Di Chiazza: Yeah.
+lse posgrados: M.
+Gonzalo Rodriguez: Yeah.
+
+
+La transcripción finalizó después de 03:36:14
+
+Esta transcripción editable se generó por computadora y puede contener errores. Los usuarios también pueden cambiar el texto después de que se cree.
