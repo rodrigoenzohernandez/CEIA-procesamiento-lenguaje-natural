@@ -4,7 +4,7 @@ Cuatro desafíos de código, individuales o en pareja. La nota de la materia es 
 
 | # | Tema | Se presenta | Nota 10 hasta | Consigna | Estado |
 |---|------|-------------|---------------|----------|--------|
-| 1 | Vectorización de texto | Clase 1 (22/10) | Jueves 05/11 (clase 3) | [01-vectorizacion](01-vectorizacion/README.md) | Pendiente |
+| 1 | Vectorización de texto | Clase 1 (22/10) | Jueves 05/11 (clase 3) | [01-vectorizacion](01-vectorizacion/README.md) | Resuelto, falta entregar |
 | 2 | Word embeddings | Clase 2 (29/10) | Jueves 12/11 (clase 4) | | |
 | 3 | Generación de secuencias | Clase 4 (12/11) | Jueves 26/11 (clase 6) | | |
 | 4 | Modelos seq2seq | Clase 6 (26/11) | Jueves 10/12 (clase 8) | | |

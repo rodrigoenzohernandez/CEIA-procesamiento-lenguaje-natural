@@ -3,9 +3,9 @@
 - **Se presentó:** clase 1 (jueves 22/10/2026).
 - **Nota 10 hasta:** jueves 05/11 (clase 3), a última hora de Argentina. Desde el 06/11 baja un punto; ver la [tabla de notas máximas](../README.md#nota-máxima-según-la-fecha-de-entrega).
 - **Entrega:** por el [formulario](https://forms.gle/wsWkQJWAFeh6g6qv5), con el link a este repo o a un Colab. Individual o en pareja.
-- **Plantilla:** [`desafio-1.ipynb`](desafio-1.ipynb), copia de `Desafíos/Desafio_1.ipynb` del repo de la materia. Arriba tiene el ejemplo de la clase y al final la consigna, con una celda `# TÚ CODIGO AQUÍ`.
+- **Resolución:** [`desafio-1.ipynb`](desafio-1.ipynb). Es la plantilla de la materia (`Desafíos/Desafio_1.ipynb`: el ejemplo de la clase y la consigna) con los 4 puntos resueltos al final, cada uno con su análisis.
 - **Teoría:** [resumen de la clase 1](../../clases/01-introduccion-vectorizacion/resumen.md): TF-IDF (§18), similitud coseno (§20), Naïve Bayes (§22) y el ejemplo de la plantilla (§24).
-- **Estado:** pendiente.
+- **Estado:** resuelto, falta entregar.
 
 ## Lo que ya hace la plantilla
 
@@ -31,12 +31,20 @@
 - **Punto 4:** con la matriz transpuesta cada palabra queda representada por los documentos en que aparece. Elegir 5 palabras interesantes, buscar sus 5 más similares con similitud coseno y analizar en qué casos tiene sentido y en cuáles no.
 - **Sobre la evaluación:** se puede usar IA para el código, pero lo más importante es el **análisis**: interpretar los resultados y escribir las conclusiones de cada experimento.
 
-## ✎ Ideas para resolverlo
+## Resultados
 
-- **Punto 1:** fijar la semilla (`np.random.default_rng(seed)`) para que los 5 documentos sean reproducibles. Mostrar el texto (recortado), la clase y la similitud de cada vecino. Las confusiones esperables son entre clases cercanas: los `comp.*` entre sí, las de religión (`alt.atheism`, `soc.religion.christian`, `talk.religion.misc`) y las de política. Revisar también documentos muy cortos: con `remove=(...)` algunos quedan casi vacíos y su vector es pobre.
-- **Punto 2:** es un **1-NN** con similitud coseno. Como `TfidfVectorizer` normaliza las filas con L2, alcanza con `X_test @ X_train.T`. Hacerlo por lotes (la matriz densa completa es de 7.532 × 11.314) y tomar el `argmax` de cada fila. Comparar con el azar (F1 macro ≈ 0.05 con 20 clases) y con el baseline de Naïve Bayes.
-- **Punto 3:** elegir los parámetros con validación cruzada sobre el train (`Pipeline` + `GridSearchCV` con `scoring='f1_macro'`) y medir el test una sola vez al final, para no sobreajustar al test. Candidatos:
-  - En el vectorizador: `stop_words='english'`, `min_df`, `max_df`, `sublinear_tf`, `max_features`, `use_idf`, `norm`.
-  - En el modelo: `alpha` en `MultinomialNB` y en `ComplementNB`, que además tiene `norm`.
-- **Punto 4:** `X_train.T` da 101.631 términos × 11.314 documentos. Antes de calcular, normalizar las filas (`sklearn.preprocessing.normalize`) o usar `cosine_similarity`. Por la ley de Zipf, conviene elegir palabras de frecuencia media y de temas distintos (por ejemplo, *car*, *god*, *space*, *encryption*, *hockey*). Las palabras raras dan vecinos que solo comparten uno o dos documentos.
-- **Conclusiones:** cerrar con una tabla que compare el F1 macro de cada enfoque (azar, prototipos, baseline, mejor Naïve Bayes) y con las limitaciones de BoW que se vieron en la clase: sin orden, sin sinónimos, vectores esparsos.
+| Modelo | F1 macro (test) |
+|---|---|
+| Azar | 0.049 |
+| Prototipos 1-NN (TF-IDF de la plantilla) | 0.505 |
+| Prototipos 1-NN (sin stopwords, `sublinear_tf`) | 0.545 |
+| `MultinomialNB(alpha=1)`, baseline de la plantilla | 0.585 |
+| `MultinomialNB(alpha=0.01)` con `stop_words='english'` | 0.684 |
+| `ComplementNB(alpha=0.3)` con `stop_words='english'` y `sublinear_tf` | **0.698** |
+
+- **Punto 1:** 13 de los 25 vecinos son de la misma clase. La similitud falla con documentos cortos o vacíos, cuando el sentido depende del orden (*program manager*) y cuando el parecido lo explican las stopwords.
+- **Punto 2:** el 1-NN es diez veces mejor que el azar, pero queda por debajo de Naïve Bayes. Decide un solo vecino, los 224 documentos de test vacíos caen todos en `rec.autos` y confunde grupos de temas cercanos (religión, política, hardware).
+- **Punto 3:** lo que más importa es `alpha`. Con `alpha=1` el suavizado suma 26 veces el peso TF-IDF de cada clase, y el modelo casi no predice las clases chicas. Las variantes de TF-IDF cambian el F1 en ±0.01; sin IDF ni normalización cae unos 0.07. Los parámetros se eligieron con validación cruzada en train (≈ 0.76), que da optimista frente al test (≈ 0.70) porque el test es de fechas posteriores.
+- **Punto 4:** los vecinos de cada palabra son del mismo tema, no sinónimos, y cada palabra tiene un solo sentido (*key* → criptografía, *drive* → discos). Las palabras muy raras (ley de Zipf) arruinan los vecinos de *encryption* y *apple*; sin stopwords y con `min_df=10` se arreglan.
+
+**Para entregar:** el link a este notebook en GitHub (el repo es público) o una copia en Colab compartida con los dos docentes.
