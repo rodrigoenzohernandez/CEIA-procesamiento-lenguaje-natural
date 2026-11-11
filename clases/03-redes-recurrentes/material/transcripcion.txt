@@ -1,0 +1,486 @@
+nov 5, 2026
+Procesamiento del Lenguaje Natural I (3/8) - a264b26 - Transcripción
+00:00:03
+
+lse posgrados: ¿Qué tal? Buenas tardes. Empezamos en 2 minutos. ¿Qué Voy compartiendo. A ver. Exacto. Bien. Eh, antes de empezar les mandé un correo hoy sobre eh sobre las entregas de las entregas de los desafíos, más como recordatorio para que tengan el cronograma, el enlace del formulario y también he habilitado unas columnas nuevas en el Excel de notas, el que usan en la corte, para que puedan tener también el desglose por desafío. Entonces ahí van a ver, les puse el enlace en el correo, pero e ese esa hoja del Excel está enlazada con el formulario, así que cada vez que entregue un desafío se va a actualizar ahí automáticamente la fecha. Entonces, si es que por alguna razón tienen duda si entregaron o se si se envió bien el formulario o no, pueden validarlo ahí mismo. Si llegó el formulario correctamente con su código, entonces lo van a poder ver ahí eh apenas la envíen o unos minutos después. De hecho, ya hay bastantes que han enviado su desafío uno, así que ya ahí pueden revisar la fecha de entrega y ya la nota la voy a ir colgando conforme vaya avanzando con la revisión.
+
+
+00:04:35
+
+lse posgrados: E sobre ese correo, ¿tienen alguna duda antes de empezar la clase? Todo bien. Arriba. Bueno, si no hay dudas, empezamos la clase de hoy. Eh, la clase de hoy eh vamos a entrar un poco más a deep learning y a ver algunas arquitecturas de redes neuronales que sirven para trabajar con eh con con lenguaje, que son básicamente estas arquitecturas que que tienen toman en cuenta la secuencia. la red neuronal recurrente y sus derivados. Seguramente ya han visto eso o me parece que vean un poco de RNN en aprendizaje profundo. Me confirma si lo han visto con dedito arriba. Sí, genial. Entonces va a ser más un repaso. Eh, no sé si ven el STM, pero en caso no lo hayan visto igual lo vamos a ver acá. hacer un repaso y ver cómo se aplica eh como algunos ejemplos dentro de de procesamiento de lenguaje. En esta clase vamos a usar más la teoría de la red y en la siguiente vamos a usarlas para hacer un modelo de lenguaje.
+
+
+00:06:01
+
+lse posgrados: Entonces esta clase y la siguiente están enlazadas. Bien, antes de empezar con el tema nuevo, un repaso de lo que vimos la vez pasada. En la clase pasada vimos una nueva forma de vectorizar texto, que es ya tomando en cuenta el significado semántico y son los embedings. Específicamente vimos en edadings para palabras a nivel de palabras y vimos tres eh métodos que se introdujeron entre 2013 y 2016, que son métodos para entrenar específicamente los inbase, ¿no? El primero es Word to Bec, que lo introdujo Google y este método fue el que introdujo las arquitecturas de Sibo y Skipbram. Estas dos fueron las que profundizamos la clase pasada, que básicamente ven las palabras en el contexto alrededor de una misma palabra, es decir, qué palabras aparecen juntas en el mismo contexto y eh viendo eh haciendo un recorrido a un corpus grande y viendo cuáles son las palabras más frecuentes eh relacionadas a una central, se puede llegar a a crear un embeding. que más o menos describa la palabra en sentido semántico. Y vimos que ayuda bastante a agrupar palabras de contextos similares.
+
+
+00:07:25
+
+lse posgrados: Por ejemplo, se agrupaban temas de tecnología juntos, otras que eran números, otros saludos. Entonces, ya vemos que se está tomando en cuenta el sentido semántico de las palabras. Luego en 2014 vino GL y hace algo similar, solamente que no usa estas arquitecturas de SO y Skip Skipgram, sino que usa una matriz de concurrencias. Y básicamente también viene una ventana de contexto, cuenta cuántas parámetras aparecen juntas y según esos conteos crea un una especie de vector. Entonces, eh la hipótesis es similar, conocer una palabra por las que la acompañan, solamente que acá es más un conteo y utiliza estadísticas globales porque toma en cuenta eh todo el texto para crear estos vectores. Y luego vimos Fast Tex, que en verdad se parece mucho porque usa lo mismo que acá, usa Sibo y Skimer, las mismas arquitecturas. la diferencia de la forma como toqueniza, ¿no? Vimos que ya no divide a nivel palabra, sino que hace enegrama de caracteres, ¿no? Una subdivisión de la palabra y eso le permite poder vectorizar palabras que no conocían, que no estaban en el corpus de entrenamiento.
+
+
+00:08:48
+
+lse posgrados: variable. Eh, si bien ahora tenemos embedings, es decir, vimos algunas técnicas de embedings, lo cierto es que eh con estas técnicas Aún no estamos considerando el orden en sí, ¿no? Estamos viendo una ventana de contexto chiquita, pero al final estamos mezclando la información de las palabras sin considerar el orden. Porque si recuerdan, por ejemplo, en CBO tomabas, no sé, unas cuatro palabras de contexto y las promediabas y eso te daba un vector que te ayudaba más o menos a definir la palabra del medio, ¿no? Pero en ese promedio se pierde el orden, el orden en que vinieron las palabras. Entonces, hasta ahora no hemos considerado el orden en ninguna de las técnicas que hemos visto. ¿Y por qué es importante e el orden? Porque cuando uno promedia podría igualarse cosas que son distintas. Por ejemplo, ¿qué pasaría si estas dos oraciones le reemplazamos por su embeding? y promediamos. ¿Nos saldría lo mismo, el mismo vector o diferente?
+Gonzalo Rodriguez: el mismo.
+lse posgrados: El mismo vector. ¿Sí, verdad? Miren, dice el perro morri al hombre.
+
+
+00:10:14
+
+lse posgrados: El hombre morrió al perro. Exactamente las mismas palabras. Entonces, si reemplazamos serían los mismos vectores y el promedio sería igualito. Pero sabemos que no, el significado no es igual. No, que eh la persona que morre y la que fue morrida se invierte en en estas oraciones. Entonces, eh hasta donde hemos visto, con las técnicas que tenemos, estas diferencias no se podrían eh eh considerar, ¿no? Sería una misma mismas palabras, misma bolsa y el invedan igual y su similitud coseno sería uno. Entonces, lo importante es que si hay que considerar el orden y e una forma de considerar el orden es utilizando este tipo de redes neuronales recurrentes que eh va analizando la oración en secuencia. Entonces, eh cómo dónde se ubican en la historia estas redes? De hecho, eh, tienen bastante tiempo, se introdujeron en 1990 y y la LCTM, que es su versión avanzada en el 97, eh se introdujo de hecho cerca a las a los métodos Back of Wars que vimos eh y incluso vinieron antes que eh que las técnicas que hemos visto de Glob y de World tobe, Pero recién se hicieron conocidas en el mundo de lenguaje más adelante, más en la época de los 2000, fue que se comenzó a usar mucho más estas técnicas.
+
+
+00:11:59
+
+lse posgrados: a pesar de que ya existía y en parte es también e bueno, acá sobre todo el 2016 la LCTM específicamente es la que se convirtió en el estado del arte para traducción. ¿Se dan cuenta? Hay un gap bastante grande entre que sale y se vuelve conocida en en lenguaje de texto. Y eso es básicamente por lo que conversamos en una de las clases, ¿no? La necesidad de un hardware que pueda soportar el tamaño de una red. es suficiente para que se pueda usar el lenguaje, porque eh normalmente un modelo de lenguaje sí requiere una buena cantidad de parámetros para que funcione bien y le gane a otros modelos tradicionales. Entonces es por eso que eh a partir de 2016, incluso un poquito antes, es que se se comenzaron a usar mucho más las redes neuronales e el lenguaje y es que vino el boom, ¿no? Ya luego con el Transformers fue un mucho más acelerado, pero antes de que lo destronara los Transformers, esta era la red más usada. Entonces es super importante a pesar de que no la vayan a usar directamente ahora, porque ya hay modelos mejores, eso importante que lo conozcan porque les va a dar una idea de cómo fue avanzando el cómo fue avanzando el campo y qué problemas se fueron solucionando en en el tiempo y sobre todo porque de vez en cuando salen algunas versiones y modificaciones de estas que también puedan ser útiles en algunos casos particulares.
+
+
+00:13:35
+
+lse posgrados: Em, bien. Entonces, ¿qué son las redes neuronales recurrentes? Básicamente es un tipo de neurona que guarda un estado interno como una especie de memoria y eh va va analizando la información en en secuencia, ¿no? Va ingresando un input, se se procesa, se actualiza la memoria, que es este estado interno y se pasa al siguiente input. Y ese input actualiza nuevamente la memoria y así se va recorriendo en orden una secuencia. Entonces, eh se utiliza para problemas de secuencia por la forma como está construido y y esto va más allá del lenguaje, ¿no? Porque problemas de secuencia no solamente es lenguaje, sino también hay otras variedades que ahorita vamos a ver. En teoría, permite construir eh tamaños de secuencia arbitrarios, aunque si tiene ciertas limitantes que hace que a más grande sea la secuencia, peores su desempeño. Y ahora también lo vamos a ver. Y básicamente cuando se usa para eh implementar modelos de lenguaje eh se se utiliza para modelar una especie de probabilidad de la siguiente palabra dadas todas las palabras anteriores. No, toda la secuencia pre.
+
+
+00:15:04
+
+lse posgrados: Entonces, antes de pasar a esto para que participen, aparte del lenguaje, ¿qué otros problemas de secuencia existe o o se podrían resolver con las redes neuronales recurrentes? Aparte del lenguaje que es digamos
+CARLOS AGUSTIN BERDAGUER: audio.
+Nicolás Moguilner Reh: es de tiempo.
+lse posgrados: series de tiempo, audios y tal cual.
+CARLOS AGUSTIN BERDAGUER: Bueno, video también.
+lse posgrados: Video dijiste, Carlos.
+CARLOS AGUSTIN BERDAGUER: Sí, sí, claro que tengo una componente así temporal.
+lse posgrados: Sí, claro. Video también. todo lo que tenga, digamos, un espacio temporal, ¿no?, eh entra dentro de esta categoría. Entonces, por ejemplo, lo que mencionaron, ¿no? Audio entra eh como una serie de tiempo también porque hay señales o frecuencias que que van cambiando a lo largo del tiempo y dentro del audio está, por ejemplo, speech text, ¿no? Convertir de audio de de frecuencias a texto, que también es es un campo que entra dentro del procesamiento de lenguaje. Lo otro que mencionaron series temporales, por ejemplo, para crear proyecciones de, no sé, de ingresos o de ventas o de capacidad productiva de una planta, no sé, por ejemplo, o de temperatura a lo largo del tiempo, ¿no?
+
+
+00:16:36
+
+lse posgrados: Diferentes eh métricas o magnitudes que vayan evolucionando a lo largo del tiempo se pueden proyectar con ayuda de estas redes. Después está ya dentro de de la parte de lenguaje los bots conversacionales, porque los bots también son secuencia de palabras y básicamente lo que se hace es ir generando un una palabra o un token a la vez, ¿no? Entonces vas completando la secuencia un token a la vez, que es lo que vamos a ver luego en eh no tanto el bot, pero la generación de texto la vamos a ver la siguiente clase. Luego también está temas de clasificación, por ejemplo, en entity recognition, que lo vimos en la primera clase, este, eh tipo de casos en los que tienes que asignarle una etiqueta a las palabras. También son problemas de secuencia porque tienes que tomar en cuenta el orden en el que van apareciendo las palabras para poder eh clasificar o sacar la información necesaria para para asignarle una etiqueta. Después traducción también eh es necesario ver el orden para ver entender el significado y poder eh transmitirlo en un idioma diferente. Y por último, las imágenes también son problemas de secuencia, ya no en una dimensión, sino en dos dimensiones, tal vez.
+
+
+00:17:57
+
+lse posgrados: Eh, y también se podrían eh desarrollar con este tipo de redes, no son el estado del arte para imágenes, pero eh sí se pueden modelar de cierta manera como secuencias también. Excelente. ¿Alguna pregunta hasta acá antes de entrar al detalle? Todo bien. Ya. Gel. Bien. Entonces vemos primero la intuición de cómo podríamos eh hacer un símil de cómo funciona una red neuronal recurrente. Eh, podríamos poner el caso de de una cajera en un supermercado, ¿no?, que va pasando los productos en orden para ir eh viendo cuánto cuánto tiene que pagar el cliente. Entonces, digamos que hay un estado interno, una memoria que tiene que ir actualizándose, que sería el total, la suma total de productos o el precio total que se tiene que pagar. Y los elementos que van ingresando en secuencia son eh, por ejemplo, los precios de los productos, ¿no? Cada cada producto ingresa con su precio y dentro se eh calcula y se actualiza el estado interno que va acumulando e la información, en este caso la suma de los precios, ¿no?
+
+
+00:19:21
+
+lse posgrados: Entonces entra precio por precio, se va acumulando y se va actualizando y cada vez se va aumentando el valor de el valor total, ¿no? Entonces al final cuando se termina de pasar toda la secuencia de productos, te quedas con la memoria del del T final. Digamos que son 10 productos el la memoria del T10. Eh, esa sería tu salida y esa es, digamos, el output que necesitas para decirle al cliente cuánto tiene que parar al final. Entonces, básicamente eso es lo que hace una red neurona recurrente de forma simplificada. Eh, básicamente va pasando por elemento tras elemento y va actualizando la información que necesita en una memoria. Y finalmente la memoria actualizada es la que se utiliza para hacer la tarea que se que se requiera, ¿no? En este caso de los cajeros sería una tarea de regresión, por ejemplo, del tener un monto y cuánto se tiene que pagar. En otros casos, pues va a ser de repente la la última estado de la memoria te va a dar la información de de la oración, eh, digamos un vector de la oración final y ese vector luego lo puedes pasar por una siguiente capa para poder clasificar eh el texto, por ejemplo, o para determinar cuál es la palabra que continúa.
+
+
+00:20:45
+
+lse posgrados: Entonces, cada celda de la RNN es recibe un input, que sería el elemento del tiempo T. recibe la memoria del tiempo anterior. Luego hacer un un eh una combinación lineal, después una función de activación y así obtiene la memoria, pero del tiempo actual. De esa forma lo actualiza con la información del paso previo y con la información nueva del nuevo elemento que está entrando. Entonces, básicamente se ve de esta manera. Ya en la anterior lámina estaba el eh la fórmula, pero básicamente una celda básica de la RN se llama celda del man y esta celda es la que hace esta combinación. obtiene el h estado interno o la memoria del t - 1 del tiempo anterior lo multiplica por unos pesos y el x que es el nuevo elemento de la secuencia que está entrando en este turno, también se multiplica por su propia matriz de pesos. Luego se combina, es decir, se suman los dos vectores y se le suma un byes. Y así ya tienes una eh una combinación lineal preactivación. Después se le se le aplica una función de activación, normalmente es la tangente hiperbólica, y con eso ya se tiene la nueva memoria y esa nueva memoria es la que vuelve a ingresar para el siguiente eh siguiente turno, ¿no?
+
+
+00:22:24
+
+lse posgrados: Esto por eso tiene esta representación compacta que es autorregresiva, ¿no? esta memoria vuelve a pasar al siguiente elemento y y ingresa nuevamente el otro X y así se repite la secuencia hasta obtener el resultado final. Ahora, cada celda puede tener su propio output, que sería este Z. El Z es igual al H, es decir, la memoria en este tiempo. O también podrías usar solamente el H, ¿no? El H al final de la secuencia. Bueno, en ambos casos el Z en este caso es igual al H. de esa memoria, de esa celda en particular. Em, ¿alguna duda aquí? Esto es esta es la base de todo lo que vamos a ver hoy, así que es importante que que lo que lo tomen en cuenta. Ya, genial. Entonces, eh acá tengo un me ayudé con con Cloud. A ver, para probar sus capacidades de generación de de gráficos, una animación a ver si nos sirve para entender cómo va procesando la eh la información. Luego igual les paso este HTML que que está interesante para que lo exploren, pero básicamente en este ejemplo que es de una una un texto, ¿no?
+
+
+00:23:52
+
+lse posgrados: Tenemos esta oración. Vivo en Francia desde hace 6 meses, pero me cuesta comunicarme porque antes de mudarme no sabía nada de y hay que adivinar la palabra. Entonces es una secuencia, una secuencia de palabras. Y acá la idea es pasarla por eh una red eh neuronal recurrente para que se vaya eh analizando la información y poder determinar al final qué palabra eh debería ir. Entonces, ¿cómo funciona? Primero uno tiene el acá el vector de la palabra, la primera palabra que sería vivo. Acá, bueno, se están como unas dimensiones nombradas, pero en la realidad no vamos a saber qué es cada dimensión, solamente de ejemplo. Entonces, tenemos un vector, un embeding de la palabra de tres dimensiones, por simplificarlo, que va ingresando a la primera cel. Entonces, se le pasa por una matriz de pesos. Estos pesos son los que son entrenables. Lo multiplicas por esta matriz que es 4 * 3. ¿Por qué 4ro? Porque cuatro es la dimensión que se ha elegido para la memoria y tres es la dimensión del embeding.
+
+
+00:25:02
+
+lse posgrados: Entonces, lo multiplicas por esta matriz y conviertes este embeding al tamaño de la memoria. Termina convirtiéndose en eh un vector de cuatro de de dimensión cuatro. y el estado interno de la memoria que se inicializa en cero, porque es la primera palabra, eh bueno, en cero o en un aleatorio, en verdad, eh, se multiplica por la matriz, podría ser cero, podría ser aleatorio. Y según eso, bueno, podría ser cero o un número aleatorio acá también. Y la siguiente es eh sumar ambos vectores que son de dimensión cuatro para eh poder tener un vector final pre activación. Se suman los dos y se le suma el vallas. También hay un vallas acá que también es entrenable. Entonces con eso tenemos un vector final que si se dan cuenta tiene información de eh en este caso como es la primera palabra, sobre todo información de acá. Después, eh, se le aplica la función de activación para que no sea lineal, para darle no linealidad y con eso ya se obtiene el estado de la memoria de este tiempo, del tiempo uno en este caso.
+
+
+00:26:24
+
+lse posgrados: Y de ahí este estado de la memoria se pasa a la siguiente palabra. Entonces, vuelve a empezar. La siguiente palabra en este caso es N. Acá estamos usando la memoria. que que salió de de vivo, es decir, esta vector de acá tiene toda la información de la palabra vivo y la información de la palabra en está acá en este otro envering de la palabra. Entonces, igualmente se multiplica por la matriz que son es la misma matriz que se usó para esta palabra anterior. Esta matriz no varía, es la misma. M. se tiene el nuevo vector igual con la memoria del tiempo t - 1. Se multiplica ahora sí con la matriz y ahora sí ya no es cero y se obtiene un eh otro un vector de de cuatro dimensiones con eh multiplicado por los pesos. Igual se hace la combinación, se suman los dos, se suma el varas y se obtiene esta esta combinación lineal y luego se le aplica la función de activación. Y así se tiene la el HT en el tiempo dos.
+
+
+00:27:32
+
+lse posgrados: Entonces, si se da cuenta, este vectorcito de acá ya no solo va a tener la información de vivo, sino va a tener también la información de pero mezclado, ¿no? Se está mezclando en cada paso la información de toda eh de toda la secuencia. Entonces, esto se sigue haciendo por toda la oración. Entonces, la idea es cuando termine esto, en este punto de acá, cuando se tenga este este Hal, eh este H guarda la información de toda esta secuencia que se ha procesado y por tanto como tiene la información de toda la secuencia se pueda utilizar en una capa adicional una Sofmax que te pueda decir eh la probabilidad idea de cuál es la palabra con más probabilidad de ser la que la que continúa. Entonces, se aplica la Smax y con eso se decide la palabra fino. Sí, Hernando.
+Hernando Scheidl: No, mi pregunta es cuando se entrena esto, no estoy pensando en el back propagation, eso se hace, se hace todas las pasadas de toda la frase y recién ahí se calcula la pérdida, se hace el backagation y se vuelve a hacer toda la toda la pasada de todas las palabras.
+
+
+00:28:57
+
+Hernando Scheidl: Así es, ¿no? Porque finalmente el se calcula.
+lse posgrados: Sí,
+Hernando Scheidl: Okay,
+lse posgrados: sí, sí, sí.
+Hernando Scheidl: gracias.
+lse posgrados: Tal cual. De hecho, eso es algo que vamos a comentar ahora, pero justamente uno de los puntos débiles de esto es toda esta secuencia que se ha hecho tantos tantas operaciones van diluyendo el gradiente, ¿no? O bueno, dependiendo de de la magnitud, pero lo más común es que se vaya diluyendo. Incluso podría explotar el gradiente. cualquiera de las dos podría ocurrir porque estás haciendo multiplicaciones de gradientes eh durante una secuencia muy grande, ¿no? Entonces, de hecho, ese es uno de las el principal eh punto débil de esta de esta arquitectura. Tal cual. ¿Alguna otra pregunta de esto? Bien, entonces quedó claro. Eh, ahora, ¿cómo se ve esto? En diferentes tipos de problemas. Hay diferentes e hay diferentes configuraciones que uno decide hacer con estas celdas de Elman dependiendo del problema que uno quiere solucionar. Por ejemplo, el que hemos visto ahora, como estábamos generando una secuencia a la vez o una sola palabra, perdón, una sola palabra al final de la secuencia.
+
+
+00:30:24
+
+lse posgrados: Lo que nos interesaba era el resultado de la celda final. Entonces, este es un merito to one porque tienes varios palabras input. En este caso erá más de 10, no me acuerdo cuántas. Y solamente te interesa eh la memoria del del estado final, la H3 en este caso. Y con esa H final vas a decidir qué palabra es la que vas a vas a elegir para completar la oración, ¿no? Entonces el caso que hemos visto cómo es completar una sola palabra es un many to one y no te interesa en las memorias de las celdas anteriores. ¿Qué otros ejemplos se les ocurre de many to one en el que solo te importa el resultado final?
+Gonzalo Rodriguez: el precio de una acción, por ejemplo.
+lse posgrados: El precio. Sí, claro, porque solamente quieres decidir el momento continuo, ¿no? Entonces, tú ves un precio pasado y decides el siguiente. Sí. Otro ejemplo de Many to One. Por ejemplo, cuando vimos clasificación de las noticias, ese dería un many to one, ¿no? Okay. Tú procesas todo el texto, digamos, procesas todo el artículo que quieres clasificar, eh, y se y cuando ya está procesado, te quedas con el la memoria final que tiene toda la información condensada y ahí recién decides la clase, ¿no?
+
+
+00:32:04
+
+lse posgrados: Entonces, solo necesitas el estado final para decidir qué clase le le vas a asignar a ese texto. Entonces también es un menit to varios tokens de input y una sola salida que se diga la clase final o bueno, la información con la que decidirás esa clase. Y otro caso también es el sentimental análisis que vimos, ¿no?, que también es una especie de clasificación en el que tendrías que recorrer e el comentario o el texto que quieres eh definir o del que quieres sacar su sentimiento, ¿no? lo recorres todo y de ahí con la celda final, con la que tiene toda la información de las palabras, recién eh decide si es que es un comentario positivo, negativo o neutro, ¿no? Esos son problemas many to one. Ahora existen otros que son un many to many en el que si necesitas sacar la información de cada una de las células. Y acá, por ejemplo, está el caso de eh del etiquetado de palabras, ¿no? El el nameic recognition, que es el que vimos el ner. ¿Por qué?
+
+
+00:33:15
+
+lse posgrados: Porque tú quieres etiquetar cada una de las palabras, no solamente quieres asignar una etiqueta a toda la frase o a todo el texto. Entonces, tú necesitas la información de cada uno de los puntos para poder según esto, cada uno de estos te va a permitir definir qué etiquetaba acá, qué etiquetaba en este punto y qué etiqueta en el otro, ¿no? Entonces, en este caso sí necesitas eh los outputs de cada una de las celas. Esta sería el segundo caso que es el many to one aplicable a perdón many to many aplicable a name recognition o o tag. Y por último, cuando ya no quieres generar solamente una palabra, sino una oración, por ejemplo, un chatb que genera respuestas completas, eh igual procesas eh la secuencia de input que tienes y después comienzas a generar una secuencia eh nueva que va a tener una longitud distinta a la original, ¿no? Entonces, en este caso, por ejemplo, bueno, en este caso se llama Sequ se sequence y se utiliza, por ejemplo, para generación de texto, por ejemplo, traducción porque vas a generar una secuencia nueva que no necesariamente debe tener la misma cantidad de de elementos que que tu input.
+
+
+00:34:43
+
+lse posgrados: Entonces, dependiendo de lo que quieran resolver y la lógica de de lo que desean como output es que se debe usar alguna de estas tres configuraciones de la red neuronal recurrente. ¿Alguna duda aquí? Todo bien, me pone un dedito arriba. Bien, los demás están por ahí atentos. Bueno, en medi one ya brindé los ejemplos. Predicción de una próxima palabra, análisis de sentimientos y eh otra cosa que hay que considerar es que normalmente no se usa una red neuronal recurrente como una única capa. También se pueden apilar capas de redes neuronales recurrentes. Entonces, ¿cómo funciona en este caso? Lo que hemos visto hasta ahora es básicamente es solamente esta partecita, ¿no? Donde tú recibes los inputs. Esta partecita en rojo sería los inputs o los en las palabras. Y acá las celdas de alma donde vas actualizando y transmitiendo el estado. al siguiente punto. Pero como hemos visto lo lo interesante de las redes neuronales es que a mayor profundidad puedes capturar eh conceptos mucho más abstractos, ¿no?
+
+
+00:36:10
+
+lse posgrados: Y normalmente necesitas varias capas para poder procesar temas complejos como el lenguaje. Entonces, normalmente una sola capa no bastaría y para eso lo que se hace es conviertes esta primera capa como un many to one, perdón, un many to many, ¿no? Cada celda arroja un output, le permites arrojar un output de cada celda, que sería eh la memoria en cada punto y esta memoria es la que se transmite a la siguiente capa. Entonces, la capa dos, en vez de recibir el input, que sería por ejemplo el eding de la palabra, recibe como input la memoria de ese tiempo del de la capa previa. Entonces esa memoria de cada punto se transmite a la celda siguiente, de la capa siguiente y esta se procesa igual, ¿no? Como como la primera capa. Se actualiza la el la memoria de acá con la nueva memoria que va a generar y ambas se pasan. eh o la nueva memoria se pasa al siguiente punto y se va actualizando. Igual cuántas capas se puedan apilar pasaría lo mismo, ¿no? La nueva memoria se se transmite a la siguiente.
+
+
+00:37:24
+
+lse posgrados: Y finalmente lo que resulta como output final sería eh la última capa la las memorias o resultados que que se salgan de la última capa, ¿no? Y en esta última capa si podría ser un many to many como está acá graficado. O podrías por ejemplo no tener todo esto, que no haya estos de acá y tendrías un un many to one, ¿no? Entonces se puede hacer un many to one con varias capas apiladas. Simplemente la última capa es la que determinaría qué tipo de eh de escenario estarías haciendo, si un many to one, many to many o bueno, un sequence. Entonces, esa es la diferencia de una sola capa de RN y una multilayer RNN. Ahora, eh lo siguiente también que hay que considerar es justo lo que habían preguntado, ¿no? ¿Cómo se hace el back propagation? En este caso, creo que en el HTML se vio mejor, ¿no? Pero básicamente ya vimos que va ingresando cada elemento, se va multiplicando por la matriz y se va actualizando, ¿no? La matriz de del estado interno y del input.
+
+
+00:38:47
+
+lse posgrados: Y esta matriz de pesos es la misma para cada una de las etapas de la secuencia. Eso se se comparte. Entonces vimos el paso forward, ¿no?, que es la multiplicación y luego generar los outputs. Y en este caso, cuando ya se llega al final, cada output eh tiene su loss, ¿no? En el caso de un many to many se calcula la los para cada uno de los outputs y la los final es la suma de todas, ¿no? Si fuese un many to solamente sería obviamente la la final y no habría nada más acá, pero en el caso de que haya un se suma. y eh según esto se regresa. Entonces, como decían ahí comentában lo eh uno de ustedes, para volver el back preparation se tiene que regresar todo el camino. Entonces, todo toda la secuencia que se ha hecho por cada una de las palabras se tiene que regresar y sacar la derivada hacia atrás. Entonces, lo que origina aquí es una multiplicación de derivadas bastante gran que obviamente como habrán visto en su clase de aprendizaje profundo, entre más multiplicaciones haya o más distancia haya entre el peso que se tiene que corregir y la los final, pues más probabilidad de que la el gradiente se desvanezca o explote.
+
+
+00:40:13
+
+lse posgrados: Entonces, e por qué se comparte la matriz de pesos, dice Carlos. Eh, pues básicamente esta esta matriz es la que se determina cómo se combina la información. Entonces, no es necesario tener una matriz por cada etapa, sino es la forma como se combina la información del input y y de y de la de la memoria. Y esa forma de combinación es igual para todos, porque hay algo interesante que del RNN es que eh puede procesar diferentes tamaños de secuencia, ¿no? No necesariamente necesitas eh tener fijos tres tres inputs, sino puedes procesar varias secuencias, varias cantidad de inputs. Genial. Eh, entonces, como les comentaba, eh, un tema de de este tipo de redes es que eh no solamente tienes la profundidad de la de la red neuronal, ¿no? Porque normalmente cuando uno trata este problema de vanishing gradient le le preocupa cuántas capas le estás metiendo a la red. Acá no solamente es las capas, sino que también otra dimensión que sería el tamaño de la secuencia, ¿no? De hecho, creo que acá tengo un gráfico que no sé si lo tengo, creo que no.
+
+
+00:41:40
+
+lse posgrados: Bueno, básicamente este es el el que ayudo. Sí, básicamente acá están las flechitas, ¿no? No solamente la profundidad de de la red. lo que te va lo que te podría causar van gradi, sino en este caso también el tiempo o la cantidad de de de elementos que hay en tu secuencia van a incrementar la cantidad de de derivadas que se tiene que que multiplicar. Entonces, eso es algo que que considera, ¿no? Eh, propag es un poco más complejo y eh digamos que sobre todo en los elementos iniciales la información se va perdiendo un poco más. Entonces, volviendo e volviendo un poco a este ejemplo que les había puesto, acá tengo como en el ejemplo Daming, si se dan cuenta, en esta secuencia, para determinar esta última palabra, la que faltaba aquí, ¿cuál creen que era la palabra más importante? O bueno, una de las palabras más importantes para poder determinar con qué palabra se se continúa esta oración.
+Hernando Scheidl: Francia.
+lse posgrados: Francia, claro, porque acá, bueno, eh sería Francia y de repente comunicarme, ¿no?
+
+
+00:43:11
+
+lse posgrados: Entonces tienes que relacionar una comunicación con un país para poder determinar un idioma. Entonces, Francia era super importante para definir esto. Pero, ¿qué ocurre? Como Francia estaba al inicio, eh esta información de Francia en este punto de acá es superalta, ¿no? Es decir, eh cuando recién ingresa el input, pues tienes la digamos la información fresca, por así decirlo, y tiene bastante relevancia. su peso es bastante grande. Por ejemplo, en este en este suponiendo que tienes esta dimensión del lugar, está bastante activado en este punto, pero a medida que vas pasando por las demás palabras y como vas multiplicando y actualizando, esa multiplicación eh va a disminuir el efecto de de Fran, ¿no? Entonces, se va a ir actualizando con las nuevas palabras y entre más lejos esté del final, es decir, las palabras del inicio, que está muy muy lejos de del final, son las que más se van a perder eh al final en en el estado final, ¿no? Entonces, cuando llegas acá, lo que normalmente ocurre es eh cuánto queda de Francia en este punto es bastante alto y poco a poco va disminuyendo la información de Francia y lo que pasa es que cuando llegas al final tienes información de comunicar, ¿no?
+
+
+00:44:44
+
+lse posgrados: Pero no te llegó mucha información del país y al final termina ganando capaz que un idioma más genérico como inglés. Entonces, eh esto sí ocurre bastante con las redes neuronales. recurrentes, sobre todo en secuencias muy largas y cuando la información que necesitas para completar o para decidir está al inicio, ¿no? Sobre todo las palabras del inicio son las que se eh van perdiendo a medida que va avanzando en la red, ¿no? solamente por eh bueno, en este caso se pierden el paso forward porque vas multiplicando la información de Stben Ben y se va diluyendo en las multiplicaciones, sino también en el backward, porque cuando vayas a hacer los ajustes de los pesos hacia atrás, el efecto de esta palabra en los ajustes va a terminar siendo menor. Entonces estos pesos no van a aprender mucho de las palabras iniciales, ¿no? Entonces, no van a saber cómo procesar eh esa información tampoco. Entonces, son dos efectos que juegan en contra de la secuencia. Eh, ¿alguna duda hasta acá de sobre todo del los defectos de la RNM?
+
+
+00:46:03
+
+lse posgrados: ¿Todo bien? Ya, G. Entonces, de acá vamos a eh tomar un breve descanso y de ahí entramos al notebook, que va a ser un ejemplo inicial de cómo se construyen, en qué horas estas redes. Eh, pero volvemos a las bueno, 15 minutos serían a las 8:5. Ahí nos vemos a las 8:5. Hola, ¿qué tal? Me ponen dedito arriba si ya están por acá. Dos, tres, ya. Comparto. Ya. Entonces, ya vimos eh la teoría de cómo cómo se estructuran las las redes neuronales recurrentes. Así que vamos a hacer un pequeño ejemplo con un caso de para ver cómo se se crean en quereras. De hecho, es bastante sencillo crear los conquas porque ya están eh las celdas dentro de la librería ya configuradas. Entonces, el caso que vamos a hacer va a ser uno dami porque es sencillo y normalmente no usaría una red para hacer esto. Básicamente tenemos una secuencia de tres y queremos obtener la suma de los tres números. Entonces vamos a crear unos datos sintéticos con números del 1 al 45 y los agrupamos en tres para tener una secuencia de tres.
+
+
+01:04:54
+
+lse posgrados: Y el i que queremos eh definir es la suma, ¿no? En este caso, por ejemplo, 6 4 + 5 + 6 15 y así con cada uno de ellos. Entonces se generan estas secuencias de tres con su respectivo resultado y esos son los datos que tendremos en en la base de entrenamiento. Em y bueno, en este caso tenemos unos 15 ejemplos solo para eh para probar. El input va a ser de eh compuesto por un vector de tres elementos. Ese sería el input de la red. ¿Y cómo se crea la red eh neuronal recurrente con en este caso que era? Como les había comentado en una de los de las diapositivas, pues básicamente quedas tiene esta clase sequential que se utiliza cuando quieres crear redes neuronales con filas secuenciales. Yeah. con con capas secuenciales, una detrás de la otra. Entonces, simplemente inicias la clase y le vas agregando con este método las las capas que quieres. Y en el caso de la eh celda de Elman, la la RN simple, se utiliza esta clase, simple RN y lo que se define es el tamaño del H, es decir, eh el tamaño de este vector de acá que vimos, este vector H. Eh, en este en el ejemplo que vimos era de cuatro, ¿no?
+
+
+01:06:33
+
+lse posgrados: En este en este ejemplito chiquito y pero normalmente es un poco más grande. En el caso de de esta de este notebook le estamos poniendo una dimensión de 64, es decir, va a ser un vector con 64 elementos. La definición y el input shape es el que definimos acá arriba, ¿no? Que era de tres elementos. Entonces, como ya tenemos la la primera capa, la capa que va a procesar la secuencia, que es la la de el la RNN, tal cual. Y después el output final eh lo vamos a utilizar como input dentro de una última capa, una capa de salida que en este caso va a ser una capa densa y esta es la que nos va a dar el resultado final, que sería el número que queremos calcular. Eh, esta capa densa va a recibir el estado interno de la el último elemento de la secuencia se sirve un vector de 64 y por eso es que tiene 65 parámetros, ¿no? El 64 más un var. Entonces, e esa esa es la forma como eh cómo se se construye con KS.
+
+
+01:08:01
+
+lse posgrados: Ahora, la cantidad de parámetros eh básicamente se se calcula en el ejemplito que teníamos acá abajito. Pueden ver cómo se calculan los parámetros de este tipo de redes. Normalmente es la dimensión de del estado interno, que en este ejemplito chiquito era cuatro por la dimensión de los empellings. 4* 3. Esa sería la primera matriz de pesos que hay que entrenar. Y luego está la matriz que va a multiplicar el estado interno, que sería eh 4* 4, que sería el tamaño de del estado interno al cuadrado y el vallas que también es el tamaño del estado interno. cosas traducido a al ejemplo que estamos viendo, que es de una dimensión mayor, en este caso sería en M. de 4 tenemos esta dimensión de 64, ¿no? Entonces sería 64 * 64 la primera matriz. La segunda matriz es eh el input tiene tres y eh sería de 3* 64. Esa sería la segunda matriz de de vectores y finalmente el varia sería de 64 más. Entonces es la diferencia de parámetros versus. El ejemplito chiquito que vimos, que este ejemplito tenía nada más 32 parámetros porque tenía un estado interno chiquito de solo cuatro y este estado interno como lo estamos aumentando a a dimensión 64, pues tiene eh un poco más de 4000 parámetros.
+
+
+01:09:42
+
+lse posgrados: Entonces, más o menos para que sepan de dónde salen esos números. Entonces, con esto ya está. Eh, bueno, pueden pueden hacer este gráfico de los parámetros y cómo se se construye la la red con est método de summary. Te te grafica esto y te calcula los parámetros. Y con esto ya tenemos el modelo definido. Entonces, simplemente le damos fit, se entrena. Esto ya lo lo ejecuté. Y bueno, es un ejemplo de Ami que rápidamente ya llega a eliminar o disminuir bastante los errores y haciendo un e un test rápido con una secuencia nueva de 50, 51 y 52, predecimos la suma y vemos que está bastante cerca al número que es, ¿no?, que es eh 153. Entonces, como verán, es es bastante simple la construcción de de este tipo de eh de redes. ¿Alguna pregunta de esta parte de de código de los parámetros? ¿Todo bien? Ya.
+Hernando Scheidl: Una consulta, el den es una es una capa de que public conect o
+lse posgrados: Sí, sí, sí. Es una capa adicional en verdad, ¿eh?
+
+
+01:11:07
+
+lse posgrados: Obviamente la arquitectura que estamos viendo es solamente esta de acá, ¿no?
+Hernando Scheidl: Ah, Sí.
+lse posgrados: Pero normalmente como esto te arroja un vector final, entonces tú necesitas una capa adicional para traducir ese vector a lo que quieres, que en este caso era el número de de sum. Pero sí, eso es una una f****. Genial. Y bueno, esta es la versión básica, pero no podría acá hacer diferentes e eh otra otras estructuras diferentes. Entonces, por ejemplo, ¿qué pasaría si es que tienes un problema más complejo y necesitas hacer eh el multilayer, no? la versión multiler. En ese caso igual se hace secuencia, se le agrega una capa, pero la diferencia es que se tiene que e agregar este return sequen true. ¿Qué hace esta este parámetro? Básicamente, si se dan cuenta, en el ejemplo simple, no estaba esto y el default de este parámetro es false. ¿Qué pasa cuando está en false? Básicamente lo que le estamos diciendo es que eh que nos devuelva solamente el último, ¿no? Como el que vimos en el many to one.
+
+
+01:12:33
+
+lse posgrados: Entonces si si no le pones ese parámetro, por default está en false y te arroja nada más el output de el final de la secuencia, que estaba bien en el ejemplo primero porque el mismo output eh lo usamos para definir el el resultado final, que es un solo número, ¿no? Entonces, era un manit one. Pero, ¿qué pasa cuando qué pasaba cuando agrupábamos varias capas? ¿Qué pasaría si no le ponemos ese ese output? ¿Alguno lo ve viendo este gráfico? Estamos en esta capa, la primera y no le hemos puesto ese output, eh, ese return sequence. Entonces lo que está haciendo es básicamente solo te está dando este elemento, ¿no? El de acá, porque no le has no le has activado ese ese return s. ¿Qué pasa cuando cuando solo tienes el elemento final y estás estaqueando capas?
+Hernando Scheidl: Es que la la capa siguiente necesita la secuencia anterior. Toda la secuencia no.
+lse posgrados: Claro, claro. O sea, esta capa no tendría con qué calcular, no le vendría un, no le debería nulos.
+
+
+01:13:56
+
+lse posgrados: Entonces, por ejemplo, si yo lo quito y lo ejecuto, me sale ese. Ah, bueno, me faltó me faltó uno de estos. Gracias. Ya saldría un error, ¿no? Sale input zero with name, o sea, en esta celda de acá le vino un como input, entonces no puedo hacer ningún cálculo y falla. Entonces, cuando nosotros le agregamos el return sequence, lo que estamos haciendo básicamente es diciéndole que necesitas que te arroje un elemento por cada una de las células. Entonces, te arrojan estos elementos de acá. Entonces, eh por eso es que se le agrega este campo a las capas de abajo, ¿no? Ahora en esta capa. ¿Por qué no no tiene en esta tercera? ¿Por qué creen que no? Ahí si no se le agrega ese return sequence.
+Hernando Scheidl: Porque es many to
+lse posgrados: Ajá. Sí, tal cual. Estamos haciendo un problema de bueno de suma, ¿no? Entonces solo es un to one. Por tanto, no necesitas estos elementos finales, ¿no? Los de acá no los necesitas.
+
+
+01:15:22
+
+lse posgrados: Entonces solo vas a usar el Así que en la última etapa si es un many to one no le activas return. Si fuese un many to many man ahí sí le tendrías que poner acá y la capa de recibiría el eh todos los inputs completos. Em esa es la forma como como se hace el stack de de capas. Y bueno, en cada una le puedes definir eh obviamente el estado interno, no puedes variar. En este caso le hemos puesto mismo. Eh, y básicamente la primera capa como tiene eh el input de de tres elementos e tiene menos parámetros y a partir de la segunda capa ya recibe como input ya no vectores de solo tres, sino vectores de de 64, ¿no? Entonces, por eso tiene un poco más de parámetros acá en las siguientes. Muy bien, ¿alguna duda de esto? Duda, comentario. A ver, Diego dice, "¿Puede ser que haya una capa menos?" Sí, obviamente acá tú puedes poner cuántas quieras. Eh, en la ¿A qué te refieres lo último, Diego?
+
+
+01:16:48
+
+lse posgrados: No entendí. ¿En dónde?
+Diego Vazquez: Notebook está puede ser que esté diferente en
+lse posgrados: Perdón.
+Diego Vazquez: la notebook está subida.
+lse posgrados: Ah, la nodo que subí, eh, ah, la que está en GitHub, dices.
+Diego Vazquez: Claro.
+lse posgrados: Puede que no recuerdo. Lo lo ves con menos capas porque en verdad lo podrías eliminar, podrías jugar, podrías quitarle y va a seguir funcionando. Sí. Entonces puede que haya que haya colgado una versión con más o menos capas, pero eso ya es decisión de la arquitectura de de la arquitectura que uno que uno quiera eh crear, ¿no? En este caso, pues suma, obviamente no es necesario tres capas, ni siquiera una red eh neurolonal, pero en una en un caso de lenguaje normalmente sí es necesario más capas y uno puede ir probando, ¿no?, para ver si es que mejora con más capas. o no, de repente haces un overfeitting y más bien tienes que quitarlos Bien, ahora e ya hablamos un poco del problema y acá está, bueno, un ejemplo parecido al que vimos en en el en el gráfico dinámico eh que les mostré, ¿no?
+
+
+01:18:18
+
+lse posgrados: Eh, cuando hay una oración que tiene al inicio una palabra que necesitas para definir cuál es la palabra final, ¿no? Por ejemplo, está del idioma francés. Eh, el problema con las RN es que hay muchas palabras al medio y la palabra del inicio se pierde. Se funciona como un teléfono malogrado porque justamente la información de de esta palabra inicial se va eh promediendo prácticamente con todas las demás palabras que se van e procesando. Entonces está este problema en el paso forward que se va perdiendo la información en la memoria, en el estado interno de la memoria. Y aparte está el vanish ingredients, que cuando haces el back propagation y tratas de ajustar los pesos, pues el efecto de del inicio es muy pequeño porque el gradiente termina acortándose mucho, entonces casi que no mueve o no termina prendiendo con la información de del inicio. Es por eso que se crea una variante a las RN que se llama la LCT, que es la siguiente arquitectura que vamos a ver, que básicamente es eh las siglas de long short termy.
+
+
+01:19:35
+
+lse posgrados: Entonces, eh como dice su nombre, ya no solamente tienes una memoria de corto plazo, sino que agregas un nuevo elemento, que sería una memoria de largo plazo que te permita almacenar esta información. necesaria eh por por digamos una secuencia más larga, por más tiempo. Entonces, como habíamos visto, la línea temporada se crearon en el 97, pero eh recién en el 2014 se volvieron más conocidas y se volvieron el estado del arte antes de ser destronadas por los transform. Y cuando eh ocurrió este cambio, pues desplazaron completamente a la RNN porque estas eh arquitecturas con el STM, si bien tienen más eh más parámetros entrenables, eh resuelven este problema que era tan crítico de del olvido, ¿no?, de la información del inicio. Entonces, básicamente se basan en eh igual tienen sus pesos que ponderan las palabras, pero tienen pesos que deciden actualizar tanto una memoria de corto plazo como eh una de eh largo plazo. Entonces igual volvamos con un ejemplo cotidiano para poder introducir más o menos cómo funciona y tomamos el ejemplo de cuando uno apunta o toma apuntes en una clase.
+
+
+01:21:05
+
+lse posgrados: Entonces, suponiendo que uno está tomando apuntes y tiene un cuadro eh y eh en la clase se va diciendo información nueva. Entonces, cada vez que se da información nueva, hay digamos información de entrada, pero suponiendo que tienes eh un cuaderno limitado, es decir, no tienes espacio infinito para para guardar. Eh, tú tienes que decir cuánta información debes eh ingresar de la nueva y cuánta información de la pasada quieres mantener. Entonces, para eso hay esta decisión, ¿no? ¿Qué apunte viejo vas a eliminar para poder incluir dentro de de este cuaderno información nueva? Entonces, de la viejo tienes una comporta de olvido que te calcula los pesos de qué parte de esa información olvidar o eliminar. Y eh de lo nuevo tienes una comporta de entrada, ¿no? Que es qué tanto de lo nuevo vas a notar. Y aparte eh cada vez que tienes que resolver un problema, necesitas identificar el cuaderno qué información vas a utilizar de de esa memoria para poder resolver el problema. por ejemplo, la pregunta de un profesor o algo que tienes que responder.
+
+
+01:22:24
+
+lse posgrados: Para eso hay una comporta de salida, ¿no? Que te determina de esta información que tengo, cuánto me sirve para la tarea y el cuaderno en sí sería como una especie de memoria de largo plazo. Lo que tienes en mente, digamos, es el estado interno, el estado oculto que ya existía desde la red neuronal recurrente simple. Y ahora tienes un cuaderno que vas actualizando eh con la información y dependiendo de estas compuertas que te van definiendo qué incluir y qué no. Entonces las compuertas son las que decides qué incluir y que no ya no es solamente una matriz con la que con la que eh multiplicas eh la información. Entonces, digamos que esta es la intuición que nos sirve de ejemplo para entender cómo funciona. Y básicamente eh ya entrando al tema matemático sería así, ¿no? estos dos inputs que son los mismos que ya tenías en en la celda del que es el X que es el elemento de la secuencia del tiempo T y el estado interno que también ya existía, que sería ahora como la memoria de corto plazo.
+
+
+01:23:40
+
+lse posgrados: Estos dos elementos ahora no solo pasan por una sola, no solamente por un un una sola combinación, sino ingresan cuatro veces, se procesan cuatro veces por cada compuerta. Hay digamos cuatro compuertas en sí. Okay. Entonces van a a la comportada de olvido, que es la la que vimos, ¿no? ¿Cuánto de la información pasada? En este caso la C, que es la memoria a largo plazo, cuánto de esta información quieres olvidar. Entonces se utilizan estos dos inputs para decir cuánto olvida y se obtiene un unos pesos. Después eh los utilizas para definir cuál cuál es la información nueva, que sería como tu nueva memoria. candidata. La memoria a largo plazo candidata se calcula en esta otra eh compuerta o subelda, por así decirlo. En una tercera subscelda decides eh de esta nueva información cuánto quieres mantener. Se calculan otros pesos y una vez que ya tienes estos tres elementos, ya lo puedes combinar, ¿no? La nueva información multiplicada por sus pesos, la antigua información, la memoria anterior multiplicada por sus propios pesos, se combinan, se multiplican y se suman, ¿no?
+
+
+01:25:01
+
+lse posgrados: Una combinación ponderada, digamos. Y con esto se obtiene la nueva eh el nuevo la nueva memoria eh de largo plazo. Y ahora esta memoria pasa al siguiente turno, pero también se utiliza para definir el output de la celda. Entonces, para definir el output, es decir, la Z, ahí pasa por una última compuerta, la cuarta compuerta, que sería la eh la de output. Y está lo que hace es básicamente definir cuánto de esta información necesita para resaltar la tarea. Multiplicas por esos otros pesos y se determina la Z o también el estado interno, ¿no? El estado interno que se va a pasar al siguiente elemento. Entonces, ¿qué es lo interesante acá? Aparte, bueno, de las compuertas en sí, que esas compuertas lo que te permiten es crear un camino para eh este elemento C que no se ve afectado por las derivadas. Si se dan cuenta, uy, este elemento C eh simplemente está haciendo está pasando por operaciones aritméticas, ¿no? Está multiplicándose, sumándose y por tanto tiene una vía libre de actualización de información que no se ve afectada por las derivadas.
+
+
+01:26:23
+
+lse posgrados: Y aparte como tienes estas compuertas que deciden qué información queda eh se queda o no, es eh digamos que se se selecciona de forma más específica eh qué información es importante mantener y qué información nos sirve tanto para eh la tarea que que tienes. Entonces, este caminito que se crea acá es el eh digamos la innovación de este tipo de redes. ¿Alguna pregunta aquí? That's un poquito más más eh compleja, así que si tienen dudas me van diciendo. Ya, genial. Entonces, vemos si es que ayuda un poco este HTML nuevo que que tengo acá. A ver, el ejemplo, pues básicamente la información entraría parecida como teníamos antes, ¿no? Tenemos eling de la palabra. Eh, voy a ponerlo al inicio. Tendríamos el enveding de la palabra que se combinaría. Bueno, en este caso el estado interno inicia en cero, así que solamente la información del embeding. Se pasa por la puerta de de olvido y se obtiene unos pesos que te van a decir cuánto cuánto de la información pasada se olvidará.
+
+
+01:27:54
+
+lse posgrados: En este caso es irrelevante porque estás inicializando en cero. En la entrada, si decides cuánto de lo nuevo vas a vas a obtener y luego en esta otra que es la de candidato, eh creas la información de la nueva memoria de largo plazo. Entonces ya con estos tres elementos, como les había dicho, se combina, ¿no? La información de la memoria anterior se multiplica por los pesos, el candidato se multiplica por los pesos de la entrada y se combina. Ya tiene la nueva memoria. Ahora, esta memoria pasa así tal cual al siguiente elemento, al siguiente turno, pero también se reutiliza para calcular el estado interno de la memoria de largo plazo. Entonces, aquí entra la cuarta la cuarta subscelda y eh para crear los pesos que van a definir cuánto de esa información se utiliza en en la salida. En el siguiente paso, aquí ya se tiene la memoria. eh ya actualizada la memoria de largo plazo pasada y la memoria interna pasada. Entonces se vuelve a calcular, eh se pasa por la celda, se obtiene eh la memoria de largo plazo nueve y esta se se utiliza también para calcular la memoria de corto plazo.
+
+
+01:29:12
+
+lse posgrados: Entonces, de esa forma, lo importante es que ya cuando llegas a Francia, que era el problema que que vimos, estos pesos eh como están entrenados para detectar qué es importante mantener y qué no, deberían eh ayudar a que este esta memoria de largo plazo conserve la información de Francia y no se elimine, ¿no? Porque los pesos van a determinar que esa información es relevante mantenerla. Entonces, a lo largo de todo eh el proceso, esta información de país, que digamos es este elemento primero, se decide mantener y al final cuando se llega en la última parte eh digamos Okay. llegó completo por esta vía rápida la información de Francia y se puede definir con con mucha más información el idioma que que debe completar la oración. Entonces, básicamente ese es el funcionamiento. Ahora, e acá hay un desglose adicional que si quieren lo repasamos rápido, pero es lo mismo. Los cuatro elementos que vimos, estas cuatro operaciones, cuatro subceldas, acá están un poco más desglosadas para que vean e que cada una de estas operaciones, de estas cuatro operaciones, la de input, output y la de olvido, y la de la nueva memoria, tienen sus propios pesos, ¿no?
+
+
+01:30:49
+
+lse posgrados: Entonces, acá cada uno va a tener sus matrices. E entonces ahora se tienen ya no solo dos matrices, sino se tienen en total ocho, ¿no? Por cuatro. Se multiplica un por cuatro la cantidad de parámetros que van a van a estar eh siendo utilizadas en cada una de las celdas de de esta red neuronal. Entonces, si bien son más parámetros que entrenar, es un por cuatro. son eh las matrices multiplicadas por cuatro. Eh, como solución este problema del vídeo de la información, en verdad eh sirve, o sea, tiene vale la pena incrementar la cantidad de parámetros en este caso para poder solucionar mejor los problemas de secuencias largas. ¿Alguna duda hasta aquí? del tema. ¿Quedó claro la lógica por detrás de la actualización? Olvido. Carlos me dice que sí, los demás no pueden deito arriba si los demás también entendieron o se perdieron. Si alguno no entendió y quiere que repita, también puede decir
+CARLOS AGUSTIN BERDAGUER: RN es más intuitiva. En este cuesta un poco más entender qué es lo que se logra con esas operaciones.
+
+
+01:32:24
+
+CARLOS AGUSTIN BERDAGUER: El otro prácticamente era como que iba armando una combinación lineal de salvo la capación, la combinación lineal de los términos que iba encontrando. Acá la memoria es difícil entender cómo con esos productos, o sea, qué trata de funcionar o funciona a nivel intuitivo. explicado.
+lse posgrados: claro. O sea, en la otra era una sola operación y los únicos que definían cómo combinar la la nueva información y la antigua eran las dos matrices que existían, ¿no? Pero en cambio acá e la parte que tienes las compuertas que deciden qué mantener y qué olvidar, Lo más importante es este camino de este camino de acá donde tienes un vector de de memoria que solamente eh se se guarda con con multiplicación y suma. Es decir, estos de acá no son afectados por el back propagation, entonces no se van a desvanecer cuando hagas el el cuando hagas el back preparation a lo largo de todas las secuencias, no les afecta el vanishing gradi, ¿no? Porque no pasan por ninguna función de activación ni nada, simplemente se es una combinación.
+
+
+01:33:37
+
+lse posgrados: Entonces, digamos que este es es digamos este caminito es el más importante. Todavía no han visto visión por computadora dos, pero no sé si alguno ha escuchado de, si no me equivoco, la resnet la red que que usa skip connections entre capas. ¿Alguno la ha escuchado de los Skip Connections? ¿Alguien lo ha escuchado?
+Hernando Scheidl: que conecta una capa con una poster se saltea capas. Eso.
+lse posgrados: Sí, sí, tal cual. Manda información de una capa que está abajo hacia una posterior. Se saltea.
+CARLOS AGUSTIN BERDAGUER: aprendizaje profundo algo de conectarlas todas saltea un
+lse posgrados: Ya. Genial.
+CARLOS AGUSTIN BERDAGUER: par de capas por bloques. Salteando.
+lse posgrados: Ajá. Eso es más o menos lo que se hace acá. No está salteando esta capa o parte de la información. se saltea a la siguiente, ¿no? Y viaja a través de de esta memoria y eso se hace para evitar que se pierda eh en la profundidad de de la red, ¿no? Entonces, toda la información que se decide recordar en esta memoria de largo plazo es básicamente le estás haciendo como un skip a la siguiente capa y lo estás está perdurando a lo largo de la secuencia.
+
+
+01:35:03
+
+lse posgrados: Entonces es algo similar a esos skip connections que seguramente luego van a ver en visión por computadora si es que no la han visto ya. Entonces sí, eso básicamente. Y eh que hay algo más que debo mencionar. Bueno, la parte de los pesos antes habíamos visto, ¿no?, que eran dos dos matrices y la de vallas. Ahora, como hay eh digamos cuatro subsceldas, están las matrices tienen las mismas dimensiones, pero son cuatro diferentes para cada una de estas. Son más parámetros. Ahora, ¿cómo se ve dentro del notebook? De hecho, acá tengo, si quisiéramos hacer un ejemplo con una LSTM, es muy similar a lo que ya vimos, lo único que cambia es en vez de ponerle el simple RNN, acá le pones M. el STM que ya viene tal cual eh procesado, le defines el tamaño de de las memorias y si se dan cuenta, bueno, acá la diferencia es en los parámetros por cuatro, ¿no?, que es lo que estábamos comentando. Entonces son más parámetros, pero eh valen la pena en casos de secuencias muy muy grandes.
+
+
+01:36:28
+
+lse posgrados: ¿Qué más? Este es un un gift parecido, pero como ya lo hemos ya lo hemos visto, no lo voy a repetir, que lo vimos en el otro gráfico. Y acá está la comparación final entre las dos. Eh, básicamente la RN era solamente una única operación con estos dos inputs. Ahora, en este caso, los dos inputs pasan cuatro veces y se utilizan para generar las compuertas y actualizar la memoria de largo plazo, ¿no? Que esta no existía en la versión anterior. Ahora, ¿qué desventaja creen que podría tener la la LSTM? Sí, si uno le tiene que encontrar ahí algún defecto. ¿Se les ocurre alguna desventaja? El costo. Sí, sí. Básicamente antes era algo bastante simple, ¿no? Ahora estás agregando muchos otros cálculos y cuatro veces los parámetros. Entonces es un poco más costosa en cantidad de parámetros que hay que entrenar. Entonces surgió una tercera versión que es parecida, pero en vez de multiplicar por cuatro los parámetros optimiza un poco y solamente eh lo usa por tres veces, que es la gated recur unit, la gru.
+
+
+01:38:02
+
+lse posgrados: Entonces es una versión reducida, por así decirlo, del LCTM que muchas veces funciona bastante bien. En algunos casos incluso superar el CM dependiendo del caso de uso y siempre vale la pena probar ambos. ¿Cómo funciona? Pues básicamente acá ya no ya no introduce una C, es decir, ya no un nuevo elemento C, sino que reutilizan el estado H. El estado HD sigue siendo el la única fuente de memoria de de esta red y solamente utilizan tres compuertas. En este caso eh está el la comporta de reseteo que es la que la que te indica cuánto de de de la información se se va a resetear para actualizarse y luego se reutiliza una misma compuerta Так. de update, eh, que es estos pesos se utilizan tanto para definir cuánto va a entrar de de la memoria anterior como para definir su opuesto es cuánto va a entrar de la nueva memoria que se calcula, ¿no? Entonces, la celda que sí se mantiene es esta que calcula el candidato. Esta calcula la nueva la nueva memoria candidata, pero estos pesos de acá de la celda de update se reutilizan tanto para la memoria anterior como para el nuevo candidato.
+
+
+01:39:29
+
+lse posgrados: Y con estos pesos se multiplican y se hace la combinación igual eh lineal. Entonces, eh básicamente está optimizando un poco la la cantidad de de operaciones que se realizan e y está reutilizando también el estado interno, ¿no? Le está creando igual un camino sin funciones de activación y un camino directo para poder propagarse esta información al siguiente paso. Pero también está aprovechando las celdas para identificar qué información se se actualiza y y qué información se resetea. Entonces, esta es la diferencia de Hreu. Eh, acá, bueno, un poco su detalle, ¿no? Eh, tienes la el gate de reset que te determina cuánto de la memoria anterior vas a vas a resetear y cuánto vas a mantener. Esto se utiliza dentro de la memoria del cálculo del del de la memoria candidata y luego está la comporta de update que te determina cuánto de la memoria pasada de la nueva se combina para crear la la el nuevo estado de interno. Entonces, esta es la diferencia de el Ahora, si vemos en otra vez el ejemplo, pues básicamente similar, ¿no?
+
+
+01:40:58
+
+lse posgrados: Tienes el ening de la palabra, tienes el estado interno. Voy a comenzar por la segunda palabra en un inicio. Eh, ingresa el embeding de la palabra. Eh, termines cuentas se tiene que que actualizar de de eso el reinicio y el candidato. Con la comporta de actualización se multiplica tanto eh la memoria anterior como la nueva. Se determina eh con eso un una memoria eh interna nueva. Entonces esa memoria se traslada al siguiente paso y nuevamente el proceso. Entonces es algo similar a lo que a lo que hayamos visto, solo con menos comportas y con una memoria menos. en términos de de qué era. Pues igual tiene una función gru, creo que acá no le puse. Déjame no sé por qué no hice un ejemplo con eso, pero si no me equivoco, ya lo puse arriba o no. E mejor me acordar si está el cual. Ahí está. Entonces, simplemente le reemplazan acá el tipo de de celda que están usando en este caso RU y ya se puede crear con eso la red neurolonal, ¿no?
+
+
+01:42:53
+
+lse posgrados: Acá igual la original tenía 4224, con LSTM era un por 4 y con GRU solamente es un por 3. Entonces aumenta los parámetros, pero ya no tanto como la LCTM y también soluciona este problema de eh de la vanish gradients, ¿no? Le da un camino al a la memoria interna para poder traspasarse de capa en capa sin que eh sin que tenga que verse afectado por por el desvanecimiento de la gradiente. ¿Alguna pregunta de de esta de acá? ¿Alguna duda de esta del todo bien? Me ponen dereita arriba el linkando. Ya, perfecto. Bien, entonces casito más que hay que Ah, Carlos me pregunta acá todos los componentes son afectados por back propagation. En la gru te refieres en la gru también hay un camino que es libre, ¿no? De si acá tengo el gráfico, creo que acá se ve mejor, que sería este, ¿no? Entonces tienes este camino de memoria libre que solamente se hace con multiplicación y suma de elementos. Sí, tal cual. Entonces utiliza el mismo truco de la LSTM, ¿no?
+
+
+01:44:32
+
+lse posgrados: Que crea este camino para poder transmitir información sin que se desvanezca. Ya, luego hay un último caso que deben tomar en cuenta cuando utilicen estas redes al al hacer diferentes casos de ¿Qué pasa, por ejemplo, en estas dos oraciones que e Hoy escuché que Victoria terminó su bot para NLEPEC y la segunda dice, "Hoy escuché que Victoria cambió de intendente." Y lo que tienes que definir es eh a qué clase pertenece Victoria. En este caso, eh, ¿qué problema hay con las RNS tradicionales? ¿Por qué tendrían dificultades para para definir la clase o la etiqueta de esta palabra en una en una persona y en la otra ciudad? ¿Qué pasaría si aplicamos la las RN tradicionales en esto y tratamos de definir eh la clase de la palabra de acá? Algo no se le ocurra. ¿Qué información se necesita para definir si Victoria es persona o ciudad? ¿En qué parte de la oración se ubica?
+Hernando Scheidl: Al final tendente
+lse posgrados: Ajá. Acá hay tendente. Claro. Y bueno, acá de repente no su no su de que pertenece de repente es eso.
+
+
+01:46:25
+
+lse posgrados: Eh, entonces, ¿qué pasa con las RN tradicionales que van de izquierda a derecha? Entonces, cuando lleguen acá no van a tener la información del futuro, de la de la oración como continúa, porque van solamente en este orden. Entonces, cuando llegues acá y obtengas el output de esta palabra específicamente, solo vas a tener la información del pasado y no vas a tener la información de la del de la continuación de la oración. Entonces, en estos casos, cuando la información está al medio, eh se necesita una variante de la RN, que es la bidireccional, que es esta. ¿Y cómo funciona? Básicamente procesas laaboración de las dos direcciones, ¿no? Procesas procesarías de acá y procesarías y procesarías de derecha a izquierda y ambas ambas la información de ambas direcciones se combinaría en un solo lugar y se arrojaría un output con la combinación de ambos. Entonces, esto es lo que hace este tipo de variantes de de redes neuronales, que es la bidireccional. Eh, entonces se tiene un unas celdas que son igualitas a las que ya vimos en una dirección, pero en paralelo se tiene eh las celdas que comienzan desde desde el último elemento y van hacia atrás.
+
+
+01:47:58
+
+lse posgrados: Entonces, esto van procesando en el en el sentido opuesto. ¿Y qué es lo que se usa de output? En el output sale la información de de de la de una dirección y sale la de la que viene de la otra dirección y se combina. Entonces, acá en esta parte recibes dos vectores, ¿no? La el estado interno de acá y el estado interno de arriba. Y eso se combina, se puede o concatenar o sumar o promediar, cualquiera de esas combinaciones. La cuestión es que acá debería terminar un output con la información completa de las dos direcciones. Entonces acá se tiene, digamos, eh dos estados internos, ¿no? El que viene de una dirección y de otro. Y al final el output es la combinación. Si se dan cuenta, esto se calcula en paralelo, es decir, el resultado de acá no va al siguiente como si fuesen dos capas, ¿no? Sino que van de frente al al output final. Y acá es donde recién los dos resultados se confluyen en un solo elemento.
+
+
+01:49:08
+
+lse posgrados: E ahora, ¿alguno sabe cómo cuál es la diferencia entre concatenados o cómo se hace la concatenación, por ejemplo, de vectores? En el caso de las redes neuronales, si de acá viene un vector de cuatro números y acá viene otro de cuatro, en caso de que se concatenen, ¿cómo cómo terminaría acá el vector final?
+Hernando Scheidl: y de Ocho.
+lse posgrados: De ocho. Sí, tal cual. Entonces, viene cuatro. Viene cuatro y simplemente se unen y termina haciendo uno grande de ocho. Esa es una opción. Otra opción es que se suman, entonces sería elemento elemento y terminaría un vector de cuatro y promedio igual, ¿no? Se promedio elemento elemento y termina un vector final de cuatro. Entonces, esta es la variante que se necesita solamente en el caso de que tengan un ejemplo, un caso de uso en el que eh la información esté a la mitad y necesiten considerar la información de futuro. En algunos casos, como por ejemplo la generación del siguiente token o el elemento siguiente, no es necesario porque simplemente vas y sigues generando futuro.
+
+
+01:50:22
+
+lse posgrados: tú necesitas una bidireccional, pero en casos, por ejemplo, como etiquetado de palabras, si es si es útil tener este tipo de arquitecturas. Entonces, volviendo al eh volviendo al notebook, acá justo debería ponerle más abajo, pero acá había un ejemplo de bidireccional, si no me equivoco, acá es parecido a lo que tenemos. Nada más quieras te permite hacerlo agregando esta clase bidirectional. Lo único extrae es la parte del input afuera. Eh, y englobas eh las la celda que estás definiendo la pones como un parámetro interno y luego la la bidireccional engloba todo todo esto eh toda la definición de la cela, ¿no?, con el input final. Entonces, así de forma fácil se está creando ya una capa eh de red neuronal recurrente bidireccional. Y si se dan cuenta, viendo los parámetros nuevamente, en este caso es eh 1 por 2, ¿no? Porque estás creando estados internos y matrices para calcular esos estados eh en ambas direcciones. Entonces es un por dos en los parámetros que se necesitan. Bien. Eh, acá tocado un intervalo, pero antes eh hay alguna pregunta antes de algunos al descanso.
+
+
+01:51:55
+
+CARLOS AGUSTIN BERDAGUER: En caso de usarse en vivo o algo así, la única forma de usarlo es en diferido
+lse posgrados: Sí, sí. Si si tienes que procesar elementos a futuro, pues obviamente si es en vivo no vas a ver la información a futuro, ¿no? Tendrías por eso es muy es dependiente mucho del caso de si es que ya tienes el texto completo y lo único que quieres es etiquetar información medio, pues ya tienes todo la información necesaria y ahí sí la puedes usar en generación de secuencias. Por eso eh comentaba que no se necesita o no se usa, ¿no? Porque ahí quieres generar a futuro información. Tal cual.
+Hernando Scheidl: Esto en el caso de un texto grande igual que se usa para un única pasada para un texto gigante en realidad se para oraciones No.
+lse posgrados: Eh, dependiendo de lo que quieras hacer. Eh, o sea, normalmente si quieres, por ejemplo, clasificar una palabra dentro de un texto, o sea, entre más texto abarques, pues vas a tener más contexto, ¿no? Entonces, depende. Normalmente podrías generar una oración y con una oración, si es que quieres determinar nada más si es sustantivo, si es verbo, lo puedes hacer con solamente la oración sin necesidad de ver un párrafo completo, ¿no?
+
+
+01:53:22
+
+lse posgrados: Entonces va a depender de cuánta información necesites para la tarea que que determines. No sé si con eso respondo tu pregunta, ¿no?
+Hernando Scheidl: Sí, sí. Gracias. Yeah.
+lse posgrados: Ya. Perfecto. Entonces vamos a un segundo break y volvemos a las eh ya son las 9, ¿no? Ah ya son sería 9:10. A las 9:10 continuamos. Hemos Yes. Hola, ¿qué tal? Me avisan con deita arriba si ya están. Linda, está Diego. Los demás volvieron. Emiliano, ya, ya veo a gente. Bien, entonces ahora vamos a ver un segundo notebook como último ejemplo ya para cerrar la comparación entre los tres tipos de arquitectura que hemos visto. Listo. ¿Estás hacer mi pantalla? Sí. No, ya. Eh, en el notebook pasado vimos un ejemplo de que era solamente la suma de tres números y como es una secuencia de tres, no se ve tanto la diferencia entre una eh una arquitectura y otra. Así que ahora vamos a hacer un ejemplo que de hecho era, si no me equivoco, el ejemplo original del paper que introdujo la la LCTM.
+
+
+02:11:19
+
+lse posgrados: Luego pueden leerlo acá e en el paper eh original. Y básicamente lo que se tiene que hacer es se tiene una serie de tiempo en la que se tiene eh dos elementos, dos features. El primero es un marcador, no, perdón, el primero es un número aleatorio entre cer y un y el segundo es un marcador que te dice de todo ese elemento cuáles van a ser los dos números que tú quieres sumar. Entonces, vas a tener una secuencia de longitud que tú definas. Y de toda esa secuencia son los dos números te interesan. Y cómo vas a determinar cuáles? Pues este segundo feature te va a marcar con cero y uno cuál eh vas a sumar y cuáles no no sumas. E entonces y el target final lo que la R tiene que aprender a calcular es la suma de esos dos únicos números, los que hayan quedado marcados. Entonces, para poder resolverlo, el modelo tiene que recordar el primer número de eh la primera marca, memorizar el valor de ese número eh y y guardarlo hasta que encuentre el siguiente número, ¿no?
+
+
+02:12:38
+
+lse posgrados: Que tenga la segunda marca y finalmente sumar ambos. Entonces tiene que recordar los valores de los dos números. Eh, obviamente para que se vea más la diferencia entre una una red y otra. Eh, vamos a poner uno de los números a la primera mitad de la serie y la del otro número al final. Entonces, para que estén separados y podamos ver los efectos de es que las redes recuerdan o no, sobre todo el primer elemento. Entonces, inicializamos, nos importamos las clases necesarias de vamos a comparar la simple RN, la LSTM y las R y bueno, una campa al final para poder hacer la la suma. Acá generamos los datos sintéticos. Esto ya lo lo corrí antes de acá en el descanso. Uno de los marcadores va a ser aleatorio en la primera mitad de de la secuencia y el segundo marcador va a estar en la segunda mitad. Entonces, vamos a tener cada elemento input, cada x de tiempo va a ser un un eh un vector de dos valores, ¿no? El el eh va a tener la marca y el valor del del numerance.
+
+
+02:13:57
+
+lse posgrados: Eh, para el primer ejemplo vamos a definir la secuencia de 50. Entonces, ahora estamos hablando de una secuencia mucho más larga de elementos y eh bueno, generamos acá los datos. Vamos a generar 6000 muestras. Cada elemento es una secuencia de 50 y cada es eh y cada uno de de estos tiene dos dos valores, ¿no? El valor del número y el marcado binal. Entonces, ¿cómo se ve? Acá hay un gráfico que ayuda a entender mejor el problema. Tienes los la serie de 50 y nada más se marca uno y otro. Entonces, al cuando estos elementos entran a la red, tienen que identificar cuál es el primero, ir procesando los siguientes, identificar el segundo, terminar de procesar y después con la información de ambos se tiene que calcular la Entonces esa It's Este es el caso de ejemplo que vamos a hacer para probar las diferentes eh redes. Eh, ¿se entendió de qué trata este elemento? De este ejemplo, perdón. Me pueden dedito arriba si se entiende lo que se busca hacer.
+
+
+02:15:24
+
+lse posgrados: Si no se entendió también me pregunto. Se entendió de qué trata la secuencia y bueno, cómo se suman los valores. Está arriba abajo.
+Jeraldinne Molleda: ¿Podría repetir, profe?
+lse posgrados: Repito. Ya. Sí, no hay problema. Entonces, para este ejemplo vamos a tener una secuencia de x cantidad de números. De hecho, vamos a variar un poco para ver el tamaño de la secuencia. En este caso, en este gráfico, tenemos 50 números. De esos 50, 48 no nos interesan, son ruido. Y dos son los que sí nos importan porque queremos sumar. Entonces, lo que queremos pedirle a la red neuronal es que sume únicamente dos números de esta secuencia. Eh, para eso le vamos a dar el valor del número y también la marca. Cuando la marca sea uno significa que ese es el número que queremos que su cuando sea cero significa que es
+Jeraldinne Molleda: Okay,
+lse posgrados: ruido.
+Jeraldinne Molleda: okay, okay. Se entendió. Yeah.
+lse posgrados: Genial, genial. Entonces, eh es lo mismo suma como en anterior ejemplo, lo que ahorita le estamos agregando ruido y una secuencia larga para ver el efecto en las redes.
+
+
+02:16:44
+
+lse posgrados: Ahora, ¿cuál es el baseline para poder compararlo con algo? Eh, básicamente el sería eh e que sea un aleatorio, ¿no? La suma de eh si tomamos la media y la varianza, el baseline más o menos de de error saldría aproximadamente esto. Entonces, este valor de de error lo vamos a a tomar como veis para poder comparar lo que nos arrojen los elementos. Eh, los tres modelos de comparar van a ser los que ya vimos, la simple RNN, la LCTM y el JU. Y bueno, acá pueden ver los parámetros e como habíamos visto, ¿no? El STM por 4 y R es un por 3. Entonces la entrenamos. Esta parte es la la parte de entrenamiento de de las tres que ya definimos arriba. Y acá vemos los resultados. Entonces, eh, ¿qué podemos ver? Este es el baseline. esta esta rayita de acá es el baseline de del error, si es que fuese aleatorio, simplemente promediéramos todo y fuese esa lo que lo que damos como resultado, eh, sería esto. Eh, y vemos que la simple RN casi que no aprendió, ¿no?
+
+
+02:18:15
+
+lse posgrados: Al final un poco que disminuyó el error ligeramente, pero no fue capaz de retener la información de suficiente para poder calcular la suma de esos dos elementos. ¿Y por qué? Pues básicamente por por el problema que vimos, ¿no? Cuando un elemento está muy al inicio, esta red no es capaz de retener esa información para utilizarla eh al final de la secuencia, sobre todo cuando la secuencia va incrementándose. En este caso le hemos puesto 50 elementos, que es bastante, esta red performa eh mal. Y sin embargo, el LZU sí han logrado disminuir el error mucho mejor, ¿no? En este caso ha ganado la GR. Entonces sabemos que hay una gran diferencia entre la RNN simple y las otras e las otras dos. Ahora vemos algunas predicciones. Por ejemplo, acá hay algunos targets que tenían que adivinar las redes, ¿eh? Y vemos lo que cada uno arrojó, ¿no? En este caso pues el punto95, está mucho más cerca la Gru y la siempre RN se eh se fue muy por encima. Acá en este segundo número también eh gana en este caso la LSTM.
+
+
+02:19:40
+
+lse posgrados: Acá eh gana, la RNM se desvía, no es muy inferior al número. Entonces vemos la diferencia y como en secuencias más grandes eh es más importante la RN, perdón, la LGO. Eh, acá, bueno, lo comparé con diferentes longitudes, es decir, estos de acá son los los valores del t, el tamaño de esta secuencia. Habíamos iniciado con 50. Acá vemos qué pasa si que hubieran sido menos. E vemos acá el error en eh con una secuencia de 10 era menor, ¿no?, que eh con una secuencia de 50. En una secuencia de 50 está en 0.14 o casi 15 y acá está con 10 en 0.01. Entonces, la diferencia del error que genera la simple RN en una secuencia chiquita es bastante grande conforme vas incrementando la secuencia. En este caso, en secuencias mucho más grande se nota mucho más la diferencia en ambas. Ahora, no es que tampoco la LSTM sean perfectas, si se dan cuenta, obviamente en secuencias más chiquitas también tienen menor error, en secuencias más grandes se incrementa, pero no es tanto como en la RNN normal.
+
+
+02:21:16
+
+lse posgrados: Acá el error ya es bastante grande. Entonces, eh con este ejemplo podemos ver un poco más en los efectos y si quieren en casa pueden ir probando con 100 con más para que vean como esta ya comienza a equivocarse demasiado y prácticamente ya llega a bienar la información. ¿Alguna duda aquí? ¿Se entendió el ejemplo y la diferencia? Genial. Bien, entonces con esto ya hemos dado un buen vistazo a tres tipos de redes que, como les decía, eran el estado del arte antes de eh los Transformers. Entonces, para esta primera mitad del curso ya tenemos los elementos necesarios ya para ver cómo se podría generar texto. Entonces, ahora vamos a ver nada más la parte inicial porque, bueno, esta clase es pesadita, así que no da para terminar de ver lo de todo lo de proyección de texto, pero voy a hacer nada más una introducción de lo que vamos a ver la siguiente clase y ahí ya ya profundizamos. Entonces, básicamente, h cuando nosotros queremos generar texto, lo que queremos es eh predecir la siguiente palabra.
+
+
+02:22:41
+
+lse posgrados: Entonces, queremos saber la probabilidad de que una palabra sea la la que completa una oración, ¿no? Dadas todas las palabras pasadas. Entonces, básicamente eh para poder saber la probabilidad de que una palabra continúe, hay que entender la estructura estadística del lenguaje. Necesitas eh entender más o menos cómo se se componen o se se juntan las palabras para poder saber eh cuál es la más probable que continúe. Entonces, tenemos que crear un modelo que logre capturar esta estructura de lenguaje y poder predecir las palabras más apropiadas en una oración. Y lo que hace básicamente el lenguaje es eso, ir generando una palabra a la vez. Entonces se tiene un una secuencia de palabras incompletas, una oración incompleta y el modelo lo va completando, ¿no? Va agregando una un token a la vez. Entonces, por ejemplo, seguramente han visto cuando cuando usan un modelo de lenguaje Gemini, Cloud, GPT, Yeah. Muchas veces se ve cómo va generando el texto, ¿no? Entonces, cuando uno lo pone en versión streaming, va viendo cómo va generando token por token.
+
+
+02:24:08
+
+lse posgrados: Entonces, básicamente lo que está haciendo por detrás es simplemente eso, viendo las probabilidades y decidiendo cuál es el siguiente token que continúa y va generando uno a la vez. Ahora, eh, ¿qué consecuencias prácticas tiene esto? Por ejemplo, cuando tú le haces una pregunta de signo a a un modelo de lenguaje, no sé, le preguntas, eh, bueno, cualquier pregunta de sí, ¿no? Y te respondes sí y luego su justificación, ¿qué creen que qué está haciendo? O sea, está decidiendo la respuesta y después encontrando una forma de sustentarlo o razonó primero y después te preguntó qué qué normalmente ocurre si es que usas el modelo tal cual. Te arroja la respuesta de sí y no y luego se intenta justificar o primero razón no y luego uso eso para responderte. ¿Qué es lo que normalmente ocurre con modelo de lenguaje? Si lo usas así, tal cual viene de caja,
+Jeraldinne Molleda: Primero razona,
+lse posgrados: ¿eh? Ah, dijiste que no o que sí, pero no escuché esa parte.
+Jeraldinne Molleda: ¿no? Que primero razona, ¿no? O sea, no estoy segura.
+
+
+02:25:38
+
+lse posgrados: Ah,
+Jeraldinne Molleda: Me parece que sería esa la respuesta. M.
+lse posgrados: ya. eh los modelos de lenguaje tal cual, o sea, como están creados, primero responde y luego justifica. Justo ahí como dice Emiliano es decir, no es no razonan para responderte. Entonces, si si tú lo usas tal cual, te va a decir sí y después va a intentar encontrar las palabras para justificar ese sí. Eh, y esto genera un poco eh digamos que se autojustifica, ¿no? Eso eso ocurría mucho con los modelos iniciales cuando le dejabas darte la respuesta de frente y es porque están haciendo prácticamente solamente esto, ¿no? Generando la la el siguiente toque. Entonces, si le haces una pregunta sí o no, primero va a decidir qué es más probable, un sí o un no. de repente decide un sí y después si le has pedido justificarte va a decir, "¿Qué es más probable que continúe? aún sí va a ser una justificación relacionada al sí, ¿no? Entonces, va a crear una historia que va a ser bastante eh plausible, lo va a decir con bastante confianza de del sí, pero podría estar equivocado.
+
+
+02:26:55
+
+lse posgrados: Entonces, justo por eso también ocurren las alucinaciones, porque te responde y luego se autojustifica y hasta podría inventar algo que suena verdadero cuando no es no es cierto. Eh, originalmente así funciona. Ahora, ¿qué ocurrió después cuando fueron evolucionando los modelos? pues se dieron cuenta de esto y decidieron que en vez de arrojarte la respuesta directamente convenía que el modelo haga una especie de generación de razonamiento, entre comillas porque los modelos no razonan en sí, sino que son generadores de tokens, es decir si están generando tokens, pero como procesan más de información antes de darte una respuesta final, entonces hay ahí margen para que se puedan corregir en caso la respuesta no sea la correcta. Entonces, cuando uno utiliza un modelo actual, eh normalmente como está construido el sistema del chat, ya no te arroja las respuestas directamente, sino que hace que el modelo eh razone previamente antes de responderte. Entonces, en ese caso ya están entrenados para razonar antes de dar la respuesta. Esa es la diferencia y surge por este problema que había de alucinaciones con con las justificaciones.
+
+
+02:28:16
+
+lse posgrados: Pero bueno, esto es esto es más para ilustrarles eh porque es importante saber cómo funcionan los modelos, ¿no? Los modelos solamente generan tokens en base a probabilidades, por tanto tienen estos eh problemas y sesgos de alucinaciones para seguir completando la eh el texto. Entonces, eso es lo que vamos a hacer. Vamos a construir un modelo que adivine tokens en secuencia. Para poder hacer esto, hay diferentes pasos que seguir y muchos de estos ya los vimos. vimos, por ejemplo, las primeras eh en la clase uno y dos, la segmentación, ¿no?, que es dividir el corpus en en documentos, después tocción que es dividir esos documentos en unidades, ya sea en palabras o en caracteres o en gramas y asignarles un identificador. Y después vamos a ver unos dos pasos adicionales que es para homogeneizar el tamaño de las secuencias. Vamos a usar truncado y pading y utilizando ambos entre ambos operaciones se va a poder también generar aumentado de datos. Entonces de un mismo cuerpo vamos a sacar un montón de ejemplos de oraciones incompletas y con esas se va a ir entrenando el modelo para que aprenda esta estructura del lenguaje en sí.
+
+
+02:29:43
+
+lse posgrados: Entonces, cada uno de estos pasos eh ya lo vamos a ver en la próxima clase, ya en el notebook directamente y vamos a poder crear un pequeño modelo de lenguaje basado en estas eh redes Yeah. a las recurrentes y ya vamos a llegar desde el corpus hasta generación de de algunas oraciones. Entonces, eso es como introducción nada más a lo que vamos a ver la próxima clase. ¿Alguna pregunta de esto? Curiosidad que tengan. Genial. Bien. Bueno, si no hay preguntas, eh, estos son los temas de ahora para no saturarlos. Eh, terminamos acá un poquito antes. Si tienen alguna otra duda del desafío también podemos aprovechar. Sí, Jeraldinne, ¿Ibas a comentar algo?
+Jeraldinne Molleda: Sí, igual, o sea, creo que en la otra vuelta en otra clase le habían preguntado, o sea, hay una una materia que nos nos dijo que era la de como la continuación de esta, ¿no?
+lse posgrados: Sí.
+Jeraldinne Molleda: que como que en esa materia capaz podemos llegar a ver los algoritmos que están detrás, por ejemplo, de un e de un capaz un Llilo Chat GPT, eh, o sea, como que como que un proyecto para crear eso eh nosotros lo podríamos llegar a ver en la en pensamiento de lenguaje natural.
+
+
+02:31:29
+
+Jeraldinne Molleda: Dos. Puede ser que eso lo había confirmado ya.
+lse posgrados: Eh, sí, de hecho, no solo ahí, o sea, en este curso también vamos a ver Transformers, mecanismos de atención y LLMs. Entonces,
+Jeraldinne Molleda: Ah,
+lse posgrados: sí lo van a ver.
+Jeraldinne Molleda: okay.
+lse posgrados: Solamente que en esta primera parte de la clase eh vamos viendo los las técnicas pasadas y cómo se fueron evolucionando y resolviendo los problemas del lenguaje.
+Jeraldinne Molleda: Sí, vamos como paso como más. Sí, vamos como de a pasos precisamente para entender desde las bases. Es lo que es lo que veo,
+lse posgrados: Claro,
+Jeraldinne Molleda: pero sí eventualmente más más adelante vamos a poder llegar a ver el algoritmo que están como detrás de un chaval pt, por ejemplo.
+lse posgrados: sí, sí. De hecho, en la próxima clase, cuando vemos predicción de texto, que generación de texto, muchos de todos estos pasos que están acá se usan en cualquier modelo de lenguaje.
+Jeraldinne Molleda: Ok. Ok.
+lse posgrados: Lo que va a cambiar va a ser la arquitectura de la red neuronal, ¿no? Nosotros vamos a usar redes recurrentes, pero ya ahora se utilizan los Transformers y otras variantes.
+Jeraldinne Molleda: Ah, okay. Se entiende. Okay, profe, muchas gracias. Okay.
+lse posgrados: Sí, ¿verdad? Gracias. ¿Alguna otra duda? Bien, si no hay dudas terminamos un poquito antes. Igual aprovechen los que todavía no termin su desafío uno, eh, tienen ahí un tiempito para todavía está final del día para poder entregar. Así que no se olviden de eso también y ya nos vemos la próxima semana. Gracias, chicos.
+Jeraldinne Molleda: Gracias.
+lse posgrados: Gracias. Nos vemos.
+Rodolfo Di Chiazza: Gracias.
+lse posgrados: No.
+
+
+La transcripción finalizó después de 03:01:05
+
+Esta transcripción editable se generó por computadora y puede contener errores. Los usuarios también pueden cambiar el texto después de que se cree.

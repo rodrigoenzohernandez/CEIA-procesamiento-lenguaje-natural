@@ -1,0 +1,607 @@
+oct 29, 2026
+Procesamiento del Lenguaje Natural I (2/8) - a264b26 - Transcripción
+00:00:04
+
+lse posgrados: Hola, ¿qué tal? Buenas tardes.
+Gonzalo Rodriguez: Buenas, Sí.
+lse posgrados: Buenas, buenas. Hasta las 7 empezamos. Yeah. Listo. Eh, vamos empezando la clase. El tema que vamos a ver hoy es el de Word and Bedings, es decir, es una forma diferente de representar las palabras en vectores, ahora sí tomando en cuenta la semántica. Y bueno, creando vectores densos. Antes de entrar un poco al tema, primero hagamos un mini repaso de lo que de algunas cositas que vimos la la clase pasada. E primero la parte, bueno, la clase pasada vimos la importancia de preprocesamiento de texto, introdujimos algunos conceptos como el de corpus, ¿no? Corpus, que es eh toda la cantidad de texto que vamos a usar para entrenar un modelo. Y bueno, dentro del corpus se divide por documentos y dentro de los documentos están los términos. Uno eh comienza por el corpus y el corpus hay que pasarlo por un proceso de preprocesamiento. Entonces, la clase pasada vimos que hay diferentes técnicas, eh no todas se usan para todos los modelos.
+
+
+00:05:00
+
+lse posgrados: De hecho, vimos que dependiendo si vas a usar un modelo clásico o uno de Deep learning o un LM, pues va a ir cambiando un poquito cuáles eliges, ¿no? Pero vimos eh, por ejemplo, que la tocanización era el proceso en común a todos, que es básicamente dividir el texto en partes y luego asignarles un identificador. Después vimos algunas técnicas de normalización, por ejemplo, remover los puntos, remover números, símbolos y luego otras técnicas que llevan a la raíz de las palabras como laización stemi y algunas otras que simplifican el texto quintando, por ejemplo, las palabras muy comunes que no agregan significado. Entonces, todo esto lo vimos a detalle en la clase pasada. Una vez que ya tienes tu texto limpio, entra a la parte de feature engineering. Y aquí vimos algunas técnicas de vectorización que era de bolsa tipo bolsa de palabras, es decir que eh ponen todas las palabras componen un documento en un saco y según eso comparan un documento versus otro, ¿no? Sin importar el orden. Pero también habíamos mencionado los Word BS, que es otra técnica diferente e que es de vectores más densos, que es lo que vamos a ver hoy.
+
+
+00:06:20
+
+lse posgrados: Vamos a ver cómo se crean estos vectores de igual, en cualquier caso, una vez que uno tiene el vector, eh el vector como número es lo que recién ingresa al modelo, al a cualquier modelo que vayamos a usar. dentro de las técnicas que vimos la vez pasada, había algunas que eran sobre todo conteo de palabras, ¿no? Vimos la inicial era simplemente conteo y una más avanzada era el TF y DF, que es conteo más un factor de ajuste, ¿no? que le disminuye la importancia de las palabras que son comunes de todos los documentos y en cambio le da más importancia a aquellas palabras que sí permiten diferenciar entre un documento u otro, es decir, que no están presentes en todos los documentos. Entonces, esta era una forma de crear vectores esparzos, ya que vimos que e usaban muchas dimensionalidades y muchas muchas de estas dimensiones eran cero, ¿no? Porque cada columna, digamos, representaba una palabra. Entonces, eh esta era una primera técnica de vectorización. Por otro lado, eh los dos conceptos más importantes que que sí o sí tienen que recordar son lo que vimos en esta lámina, que era segmentar y toquenizar, ¿no?
+
+
+00:07:42
+
+lse posgrados: Que justo, bueno, mencioné hace un ratito que es algo que siempre se va a hacer, no importa qué modelo estés usando o qué o qué técnica. ¿En qué consiste? Pues la segmentación es básicamente los pasos que haces para dividir el texto en unidades, ¿no? Y puedes tomar diferentes eh diferentes reglas. Puedes primero dividir por espacios, pero por símbolos, de repente considerar algunos e palabras compuestas, dejarlas juntas. La idea es quedarnos en unidades al final y luego tokenizar significa reemplazarla por eh un identificado. Ahora, las técnicas que vimos la clase pasada eh tenían diferentes problemas. U uno de ellos, bueno, las técnicas de conteo, ¿no? La de conteo, la de OneH encoding y TFID DF, que son todas back of words, tenían diferentes problemas. Uno de ellos es que hay textos que pueden significar lo mismo, pero que son ortoganales, ¿no? Por ejemplo, es estos dos. Estoy viajando en colectivo y voy arriba del bus. Se podría decir que son parecidas, ¿no? Pero, ¿cuál va a ser la similitud coseno de estas dos eh oraciones?
+
+
+00:09:04
+
+lse posgrados: Si utilizamos estas técnicas de vectorización que vimos la vez pasada, ¿cuál sería el valor de la similitud coseno para estas dos eh oraciones?
+Gonzalo Rodriguez: cero
+lse posgrados: Cero. Sí, tal cual. ¿Por qué sería cero?
+Gonzalo Rodriguez: porque no coincide ninguna palabra de una con la otra. M.
+lse posgrados: Ajá. Sí, tal cual. Muchas gracias. Eh, la las técnicas que vimos básicamente ven si es que hay palabras en común entre una oración y otra, ¿no? En este caso, palabras en común así exactamente iguales no hay. A pesar de que hay sinónimos, ¿no? Por ejemplo, colectivo, bus son sinónimos o significan lo mismo. Sin embargo, eh para estas técnicas de conteo no toman en cuenta el significado. Por tanto, si una palabra se escribe diferente es diferente y no tiene nada en común. Entonces, utilizando estas técnicas eh oraciones así que son prácticamente iguales, serían ortogonales, significa que los tendría una similitud coseno de cero, es decir, sin ninguna relación. Y luego vimos un segundo punto en contra, ¿no?, que es la dimensión de estos vectores que se crean con estas técnicas depende del tamaño de vocabulario, es decir, va a haber una una columna por cada palabra de vocabulario.
+
+
+00:10:42
+
+lse posgrados: Y vimos que en idiomas como el inglés, por ejemplo, puede tener más de 180.000 eh palabras. Entonces son 180,000 columnas en las que la mayoría son C, no se aprovecha la dimensionalidad. Ese es el segundo punto de encontro de estas técnicas. Y bueno, básicamente vimos este gráfico, ¿no? Eh, todo esto sería vocabulario. Una columna es una palabra en particular y la mayoría de oraciones solamente usa unas cuantas palabras, ¿no? Por ejemplo, esto usa cuatro. Entonces habría cuatro columnas llenas y las demás cero. Sería un una matriz muy esparza. Entonces estas estos problemas en particular son los que vamos a ir eh solucionando con esta nueva técnica de Word and Ben nuevo tema o todo bien. Está bien. ¿Me pueden editar? Ya, perfecto. Entonces, habiendo hecho ese pequeño esa pequeña recapitulación, entramos al tema de los embils. Eh, un básicamente es una representación densa eh de palabras en un espacio vectorial. No es únicamente el término embeding, no se usa nada más para palabras.
+
+
+00:12:14
+
+lse posgrados: Acá lo estamos viendo Word Bedings, así que por tanto vamos a acotarlo al mundo de las palabras en esta clase, pero lo cierto es que los enos son representaciones densas de cualquier tema abstracto. Pueden representar palabras, se puede usar, pu representar imágenes o se puede representar incluso voz, ¿no? Por ejemplo, cuando haces transcripción de voces y quieres diferenciar un hablante de otro, puedes crear en que te ayuden a separar. como es la voz de una persona versus otra, ¿no? Entonces, el embeding es un vector que representa esas características medio abstractas de la voz, de la palabra, de las imágenes. Entonces, es eh una forma de capturando características distintivas de un concepto y bueno, es en un espacio vectorial eh continuo y es denso porque todas las dimension dimensiones se aprovechan. Entonces, básicamente estas son las propiedades. Representación compacta no es necesario tener tantas dimensiones para eh capturar el valor de de la palabra en este caso. Similaridad semántica, porque lo que buscamos es que acá sí se tome en cuenta el el significado de la palabra, no solamente si aparece o no una palabra en un documento.
+
+
+00:13:38
+
+lse posgrados: Y lo tercero, que depende de la técnica que se use, es la comprensión del contexto. En la clase de hoy vamos a ver medios a nivel de palabra, entonces no va a tomar tanto en cuenta lo que hay alrededor de la palabra, pero eh es decir, si el contexto cambia, el vector de la palabra no va a cambiar. Pero sí hay otras técnicas que son las que eh, por ejemplo, salen de las arquitecturas Transformers, que sí son embedings eh contextuales, ¿no? En este caso sí hace que los embedings cambien dependiendo del contexto que rodea la palabra. Pero bueno, digamos que es una propiedad que se busca. Algunas técnicas eh le ponen más énfasis a eso que otras. ¿Cómo podríamos ejemplificar este concepto de medis? Es decir, ¿cómo logras que un vector, que son números, lleguen a representar algo que es medio abstracto, que es el significado de una palabra? Acá le traído por para darnos una idea, un ejemplo de cómo podría ser con un ejemplo sobre simplificado de frutas, suponiendo que queremos distinguir una fruta de otra y recolectar características de la fruta y tenemos dos dimensiones.
+
+
+00:15:01
+
+lse posgrados: Para hacerlo, imaginemos que elegimos que una dimensión represente el dulzor y otra dimensión el tamaño. Entonces, lo que podrías hacer es ir arreglando o eh colocando la fruta en la parte de este espectro de dos dimensiones que más o menos representa la realidad, ¿no? Por ejemplo, una sandilla sabemos que su tamaño es grande y es dulce. Entonces, podemos ponerla en esta esquina superior. Un plátano no es tan grande, pero también es bastante dulce. Entonces está arriba y digamos que al medio. Y por otro lado hay frutas como el aranda, ¿no?, que son chiquitos y son más ácidos, entonces el dulce y el tamaño estarían más cercano al origen. Igual las demás se irían acomodando en relación a las a las otras frutas y en relación a las dos dimensiones. Entonces, si se dan cuenta, haciendo este ejercicio, ya más o menos estamos representando a las frutas con una dimensión de dos valores, ¿no? El tamaño y el dors y están en un espacio eh continuo. Ahora, obviamente, dos dimensiones no representa todo lo que una fruta significa.
+
+
+00:16:20
+
+lse posgrados: se necesita muchas más características para poder ir describiendo la fruta de forma más completa. Es por eso que un nunca es de dos dimensiones. Entonces, uno le podría ir agregando eh, por ejemplo, el color puede ser una dimensión el color rojo, otra dimensión si es tropical o no, otra que tan circular es la fruta, ¿no? Y según esto, comparando las frutas, más o menos les vasando sus valores, ¿no? Dijimos que, por ejemplo, la escendí o la piña es grande, es dulce, es más o menos circular, pero no tiene nada de rojo. Cero. En cambio, una manzana es es roja casi toda, suor y su tamaño medio no es tan tropical, pero sí es más o menos circular. Entonces, si se dan cuenta, así como jugando y y asignándoles valores, comparando una y otra, se están creando vectores, ¿no? Digamos que el vector de la manzana sería esta fila, el vector de la piña sería esta de acá, el de la arana, el de acá, ¿no? Y en este caso tenemos vectores de cinco dimensiones. Y se podría hacer decir que así ya hemos creado de forma mecánica, poco artificial.
+
+
+00:17:40
+
+lse posgrados: un embeding de cinco dimensiones para estos conceptos de luego si le aplicas minitud coseno pues te va a dar, ¿no?, que eh por ejemplo estas que son rojas y y medianas van a ser más cercanas, que es si por ejemplo comparas eh la fresa con el plata, ¿no? Entonces, aplicándole los mismos técnicas matemáticas, vas a poder encontrar frutas que son parecidas unas a otras. E ahora, ¿cómo llevas esto a a los emails que se usan en la práctica? Pues obviamente uno no se va a poner a definir estas dimensiones a mano y tampoco van a ser solo cinco para definir todo el espectro de de vocabulario que hay, ¿no? Que que cualquier idioma tiene. Entonces se tiene que encontrar la forma de poder ir reduciendo las dimensiones necesarias y los valores dentro de estas dimensiones de forma automática. Y eso es lo que se hace con eh las los métodos de creación de de los Word and B. Entonces, e hasta aquí se entiende el ejemplo antes de de entrar a lo demás de Gener. Eh, Maneta dice, "¿Cuántas dimensiones es lo recomendable?" va a variar dependiendo
+
+
+00:19:05
+
+lse posgrados: uno de tu capacidad de cómpo, ¿no? de tu capacidad de cómputo, ¿no? Porque entre más dimensiones necesitas más memoria y procesamiento también de tu corpus, porque si tienes un corpus muy chiquito y le das un un una dimensión muy elevada, pues tampoco te va a ayudar en mucho porque no tienes tanta información para llenar tantas tantas dimensiones, ¿no? Entonces va a depender entre más corpus puedes aprovechar una dimensión más grande de medios. Si tu corpus es chiquito, pues no va a importar que le aumentes el tamaño a los email porque igual no vas no vas a poder capturar tanta información de tan poco texto. Entonces va a depender de esos factores. En lo que vamos a usar en la clase, pues de ejemplos vamos a usar eh entre 100, 300 por ahí. Ahora la las los las losings actuales, de hecho no me puesto a ver en qué en qué en qué tamaño ya se usa en GPT. Lo voy a tomar como nota para buscar, pero son un poco son más grandes, ¿no? Y usan eh GPUs también más grandes para si con eso te respondí, María Teresa.
+
+
+00:20:21
+
+lse posgrados: Genial. Bueno, pero en conclusión cinco no va a ser nunca. Eh, van a ser más de 100 eh casi seguro la la dimensionalidad que vamos a usar. Entonces, al tener tantas dimensiones, obviamente uno no lo puede hacer manualmente. Tenemos que encontrar alguna forma de crear estas dimensiones y estos valores de forma automática. E es por eso que han surgido varios métodos para poder crear estos edings. Vamos a ver estos tres en esta clase que son unos métodos clásicos de fijos. Y luego cuando entran al tema de Transformers y mecanismos de atención ya con Fernando, van a ver estos métodos que crean en más eh dinámicos. Pero esto es un poquito la línea de tiempo de cómo fueron evolucionando. Entonces, eh primero surgió el digamos el método estrella que introdujo este este concepto de de los que es un word to back. Fue creado en 2013 por Google. Ah, mira, por ahí Carlos nos nos averiguó los textes. Esos son de Open AI 1500 36 y el otro 3000. Ya, genial.
+
+
+00:21:45
+
+lse posgrados: Muchas gracias. Muchas gracias por el dato. Bien, entonces volviendo al tema, el primer método que surgió fue en 2013 de Google. Eh, esto fue un por ser el primero. Entonces, por eso son también bastante famosos. Introdujo dos de las arquitecturas que son bastante usadas, que es Sibo y Steelw. son arquitecturas de redes neuronales que logran capturar eh el significado de las palabras y y crean estos envins. Ahora, en la segunda parte de la clase vamos a entrar más a detalle de cómo funcionan estas dos de acá. Después, en 2014, eh se introdujo el método de Glob Stanford y la diferencia es que eh trataba de incorporar estadísticas globales de todo el texto. Esto lo hacía mediante matriz de concurrencias de todo el corpus. Entonces, básicamente hacía una matriz en donde veían eh qué palabras aparecen juntas y según eso iban creando los vectores. Después, en el 2016 eh entra Facebook y introduce Fastex. Acá elito o la diferencia de de este mecanismo es que e lograron resolver el crear envies de palabras desconocidas que no estaban en el corpus y esto lo hicieron utilizando enramas de caracteres que ahora en un ratito lo lo vamos a ver más a detalle.
+
+
+00:23:19
+
+lse posgrados: Y bueno, el estado del arte actual, el que se usa ya eh más frecuentemente ahora es eh apareció por el año 2018, que es el uso de los Transformers, ¿no? Que se introdujo con Elmo y Bert. ver del lado de de Google y el de Allen Institute. Y la diferencia elito de estos formas de ser en es que son dynamics, que es lo que les decía, que una palabra puede cambiar su vector dependiendo del contexto. Ya no son, en este caso ya no son, sino son contextualis. Y bueno, hoy estamos viendo W, por eso nos centramos en estas tres y ya cuando entremos al tema de Transformers, pues ya verán los contextos albe. Entonces, para entrar un poco al detalle de cada uno, ya hablamos de Word to B, es de Google, eh, lo que ellos trataron de hacer o su gran eh descubrimiento fue enseñarle a las máquinas el significado de las palabras, simplemente haciéndoles procesar bastante texto, sin usar diccionarios, porque eh como recordamos en los eh en todos los métodos pasados a este Más que todo se usaban eh diccionarios o conteos de palabras, pero aquí la idea es que el modelo vaya aprendiendo conforme iban leyendo el corpus.
+
+
+00:24:50
+
+lse posgrados: ¿Y cuál era la hipótesis que usaban? Eh, básicamente es esto, que conocerás una palabra por las compañías que tiene. Es decir, eh, dime con quién andas y te diré quién eres. Algo, algo así es lo que aplicaron, pero el mundo de las palabras. Y ellas fueron las que introdujeron el término de eh de los enveis en sí como vectores que son eh un espacio denso de muchas dimensiones que apuntan según el significado de de la palabra en sí. para ver un poco cómo funciona esto de de los embils en un espacio denso. Justo hay un proyector bastante interesante. Acá lo pueden entrar al enlace o si quieren se los pongo también en el chat. Ya. Eh, este es el proyector. Acá pueden ver un ejemplo de eh de Word to que son 10,000 palabras en una dimensión de 200. Y acá se cada punto es e una palabra, pero está reducida. se ha aplicado un método de reducción de dimensionalidad para poder graficarlo en 3D, ¿no? Entonces, por ejemplo, podemos hacerle clic a versus y acá a la derecha pueden ver las palabras que están más cercanas, ¿no?
+
+
+00:26:21
+
+lse posgrados: Eh, acá están aplicando distancia coseno, es decir, a menor distancia más parecida la palabra. En este caso, la de menor distancia de versus es versus justamente, pero abreviado B, que tiene mucho sentido, ¿no? Entonces vemos que en este caso ya desaparece el problema que habíamos visto con los las técnicas de back of worlds, ¿no? En back of words estas dos palabras no tendrían ninguna relación, serían ortogales, es decir, cero cero de de similitud coseno. Pero en este caso las las sinónimos si están muy cerca en distancia. Eh, bueno, de ahí un poco que que parece palabras más variadas, pero a ver, veamos esta otra inco ya. Inclusela comedia, capital, revenues, household, tax, taxes, revenue, vemos que ya está podiendo agrupar palabras. en categorías parecidas o al menos significados relacionados entre sí, ¿no? Poverty, earnings. A ver, vemos otra printer. Printer, la relación con printer en plural, printing, controller, ge, graphics. Entonces vemos eh la diferencia, ¿no? Ahora sí podemos comparar palabras que son sinónimas o de una categoría parecida o incluso conjugaciones entre palabras.
+
+
+00:27:54
+
+lse posgrados: Em, ¿qué más? Bueno, en este caso se se hace una reducción de dimensionalidad con PCA y bueno, también eh pueden utilizar otro tipo de reducción. Entonces así se así funcionan estos embates que sí toman en cuenta el significado de de las palabras. Ahora entremos un poco al detalle de las técnicas que fueron apareciendo, las que ido a mencionar. Si tienen alguna duda, igual me interrumpen o lo ponen en el chat. Eh, bien. Entonces,
+Elian Pinzas: Una consulta en relación al gráfico este que vos mostrabas.
+lse posgrados: sí.
+Elian Pinzas: En este caso están todas las palabras en inglés. Imagino que si le empezas a agregar palabras en español también, o sea, no las va a clasificar igual, ¿no? Vamos a las
+lse posgrados: Depende mucho del corpus que se haya usado, ¿no? En este caso, no estoy muy segura. A ver, creo que todas son en inglés, me parece. Sí, si no sería más. Si hubiesen usado un corpus de diferentes idiomas y que hacen relación entre idiomas, por ejemplo, algunas eh traducciones, ahí sí podría ser la la eh la comparación, ¿no?
+
+
+00:29:15
+
+lse posgrados: Pero en este caso, si no me equivoco, es un corpus en inglés. Entonces una palabra en español no va a tener vector y no la va a poder relacionar,
+Elian Pinzas: Claro.
+lse posgrados: pero depende mucho de de con qué lo hayan entrenado. Sí.
+Elian Pinzas: Gracias.
+lse posgrados: pongas a buscar, pues creo que no hay en España igual, o sea, si en algún punto quieren utilizarlo para hacer un trabajo, sí, sí van a encontrar eh estas versiones con cuerpos ya eh multilingü, ¿no? Es cuestión de buscar la descripción y fijarse que sean eh multilingües tal cual. Ya, genial. Entonces, continuamos eh un poco entrando a las características de estos métodos que les había comentado. Ya vimos que WardB usa este tema de eh ver los vecinos, que luego vamos a entrar un poco más al detalle de cómo lo hace. Lu por otro lado, eh usa más una matriz de ocurrencia, que es una hipótesis parecida, porque la conocurrencia también es verbecinos de tres signos, pero lo utiliza formando una matriz de palabras que es básicamente así. Esta es la técnica que usa Glob simplificada eh con un ejemplo básico de de letras de canciones.
+
+
+00:30:38
+
+lse posgrados: Entonces, este ejemplito se hizo con un corpus de estas dos páginas web, letras top y buenamica.com. Se sacaron las letras de las canciones y se dice preprocesamiento, ¿no? De convertir toda minúscula, quitar puntos, divide texto a nivel de palabra, es decir, tocanización por palabra. y quitar los stops. Se hizo eso primero. Luego, para este ejemplo en particular se tienen solamente eh 10 palabras más comunes para poder visualizarlo fácilmente. en en la técnica general, en verdad serían todas las palabras estarían en esta matriz, pero en este caso contamos la frecuencia de palabras, seleccionamos las 10 más comunes y eh contamos cuántas veces estas palabras aparecen juntas tomando en cuenta una ventana, ¿no? Por ejemplo, definimos una ventana de contexto de cinco palabras alrededor de cada término, es decir, cinco antes, cinco después de cada término. Y si una palabra aparece junto a esta otra palabra en esa ventana, pues se cuenta como uno, ¿no? Entonces, por ejemplo, amor y vida dentro de una ventana de contexto eh de cinco aparecieron 15 veces juntos. Luz 12, 10, pielo, así para cada uno.
+
+
+00:32:03
+
+lse posgrados: Entonces, si se dan cuenta, haciendo estos conteos ya se tiene un vector, ¿no? Y por qué esto ayuda a capturar relaciones entre palabras. Pues lo más común es que las palabras aparezcan junto a aquellas que tienen un significado parecido a ellas o que están relacionadas, ¿no? Por ejemplo, eh amor con corazón, eh amor con vida, alma, por ejemplo, tienen relación y por eso se se usan en el vocabulario común juntas de forma más seguida, ¿no? No sé, por ejemplo, luz con sol. Bueno, no aparece tanto, pero si aparece con luz, luz con amor, perdón. Entonces, la premisa es parecida a la de Word to de que vas a conocer una palabra por sus vecinos, no por aquellas que lo acompañan. En este caso se utiliza con una matriz de concurrencia, simplemente se hace una especie de conteo por una ventana y con eso se crea el vector. En el caso de Word to como vamos a ver después, eh es un poco eh más complejo porque son una red neuronal para el entrenamiento. ¿Qué otras características tiene el Glob?
+
+
+00:33:22
+
+lse posgrados: Pues aparte del uso de la matriz de concurrencias, eh la tocenización es en base a palabras. Es decir, la unidad mínima es una palabra y se entrenó con textos de Wikipedia como Groll y Gigaw, que si la mayoría son en inglés, ¿no? Inicialmente fueron entrenadas en sí, pero también existen otras versiones entrenadas en otros idiomas. Luego está Fastex. Eh, acá la diferencia importante de Fastex que tienen que recordar es sobre todo la tokenización. A diferencia de Glock y de Word to back, que eran tokenización a nivel de palabras, Fastx usa tokenización a nivel de enegrama de caracteres, es decir, ya no toma en cuenta una palabra completa, sino que la divide a nivel de caracteres. Y aquí puede variar, no pueden ser, puedes coger de tres en tres, de cuatro en cuatro, cinco, seis caracteres. Y esto ayuda porque puedes interpretar el significado a nivel de sufijos, prefijos y raíces. Y como les había dicho, FastEx lo creó eh Facebook. Eh, y algo interesante de la forma o el método que usaron es que esto les ayudó a poder eh tener de palabras que no se habían o que no estaban en la base de entrenamiento, palabras nuevas.
+
+
+00:34:51
+
+lse posgrados: Entonces, acá les pregunto a ver si eh si lo deducen, ¿por qué creen que justamente Facebook le interesaba tanto e poder conocer palabras nuevas que no estaban en en el en el datasedo original? porque justo a Facebook les interesaba, ¿no?, es este tipo de de técnicas que les ayudaría a poder crear embes de palabras que palabras nuevas diferentes que nunca se vio en el entrenamiento. ¿Alguien se le ocurre?
+Gonzalo Rodriguez: para predecir mejor la escritura.
+lse posgrados: Sí, sí, sí, sí. Pero eh particularmente Facebook, por ejemplo, es una red social, ¿no? Entonces, ¿qué diferencias tienen los textos en las redes sociales?
+Vicky: por el algoritmo,
+lse posgrados: Ver,
+Vicky: los hashtags y demás.
+lse posgrados: eh,
+Gonzalo Rodriguez: que se escribe por ahí con alguna terminología que no es la que en el diccionario. Ver.
+CARLOS AGUSTIN BERDAGUER: Claro, más informalidad en el texto.
+lse posgrados: Sí, tal cual. Sí, más más lo último que han dicho,
+CARLOS AGUSTIN BERDAGUER: Oh.
+lse posgrados: ¿no? Porque los hashtags se pueden eh limpiar con preprocesamiento y eso, pero lo que no se puede hacer de forma simple es eh estas variaciones de del lenguaje que hay en las redes sociales, ¿no?
+
+
+00:36:18
+
+lse posgrados: Que es más informal, como dicen, que lo escribes mal a propósito, le agregas caracteres adicionales inventados, ¿no? Por ejemplo, cuando tú te expresas en una red social y quieres, no sé, por ejemplo, decir eh saludar eh con más emoción, podrías poner hola con varias, ¿no? Y un un método normal que te usa la palabra como token, un hola con muchas no lo va a reconocer, que no lo ha visto en su en su fase de entrenamiento. En cambio, fastex, como lo ve a nivel de caracteres, si va a poder identificar entre toda esa combinación de caracteres nueva una parte que es hola en sí y va a poder determinar su significado, ¿no? Entonces, justo por eso eh F tenía esta reto y a la vez ventaja de tener este corpus diferente, informal de de la forma de escribir en las redes sociales. Entonces, eso es algo eh bastante interesante. Y bueno, en su base de entrenamiento usaron obviamente sus redes, pero también portales de noticias, reviews de Wikipedia también. Y en las técnicas usaban las mismas de Word to Bec, es decir, Sibo y Skip Bram.
+
+
+00:37:36
+
+lse posgrados: Skip lo usaban también. Lo que cambiaba es la forma de tokenizar, como les comenté. Y la ventaja es que pueden ver palabras eh pueden deducir el significado de las palabras que no han visto antes. Entonces, ¿cómo funciona esta parte de la tokenización por enegramas? Pues enramas en verdad es una subsecuencia de de elementos, una sí, una subsecuencia. Puede ser una subsecuencia a nivel de palabra o a nivel de carácter. Si hablásemos deas a nivel de caracteres, pues simplemente serían conjuntos de palabras, ¿no? Por ejemplo, un eama de N1 sería palabra por palabra, en el grama de de de N2 sería bigramas, es decir, dos palabras juntas. Entonces, lo separarías de dos en dos, ¿no? Primero disis, luego Isa y luego acentis. y tres lo mismo, pero yendo agarrando de tres en tres y bueno, recorriendo así eh una ventana de tres. Sí, se dividiría eh una oración a nivel de palabra eh con estos niveles de n. Ahora, llevado esto al nivel de carácter de frente a la parte de caracteres, sería lo mismo, pero eh nada más que vas agarrando por caracteres y agrupando según eso, ¿no?
+
+
+00:39:03
+
+lse posgrados: Por ejemplo, unigrama sería eh literalmente dividir toda la oración por cada uno de los caracteres que hay. Por ejemplo, todas las hojas son del viento, se dividiría por t o de A. En bigramas irías agarrando de dos en dos. Entonces, primero estas dos dos eh te corres una y vas a o D, ¿no? Corres una más y de A. Entonces, eh así se va agarrando eh deslizando la ventana a lo largo de de la oración y trigrama la misma idea. Entonces esta es eh la forma como Fastex hace la división de eh de las de las oraciones, ¿no? Obviamente uno puede variar entre si decide usar un solo carácter o tres, ¿no? O más incluso. Pero la idea detrás es eso, ¿no? avarnos únicamente a nivel palabras, sino poder ir dividiendo las palabras por sus caracteres. Eh, ¿alguna pregunta sobre esta parte de los enegramas? Se entendía un poco como cómo se divide, no es una simple división entre tres, sino que se va corriendo, ¿no? La ventana. Ya.
+
+
+00:40:20
+
+lse posgrados: Genial. Entonces, eh dicho esto, ahorita en un ratito vamos a ver el notebook para que puedan eh podamos explorar algunos embellings ya entrenados. Y en esta exploración sí es importante poder tener alguna forma de comparar unos embedings versus otros. Eh, entonces una forma de poder comparar en Bis son es haciendo test de analogías. Lo interesante de los embedings es que eh como son ya numéricos, se puede incluso hacer eh operaciones aritméticas con ellos, como si fuesen números eh normales. Y algo interesante es que como ya estamos convirtiendo una palabra a un número, podemos hacer sumas, divisiones, bueno, sumas y restas, sobre todo de palabra. Y al hacer estas sumas y restas y comparaciones, puedes hacer analogías. Entonces, una un ejemplo es eh por ejemplo, dos palabras que tienen la misma relación entre ellas se pueden comparar y te pueden dar eh vectores similares. Por ejemplo, París es a Francia, lo que Madrid es a España. ¿Qué pasa si a París le restas Francia? ¿Qué te quedaría como concepto? No, imagínense que a todo el concepto de París le quitas todo lo que significa Francia.
+
+
+00:41:53
+
+lse posgrados: ¿Qué concepto te quedaría al final? Carlos dice capital. Sí, tal cual. Sería algo similar a capital. Yeah. Entonces, eso pasa si a París le quitas Francia. Entonces, si a Madrid le quitas España, sería similar, ¿no? Porque a Madrid le está quitando todo lo español, te quedaría solamente el concepto de capital. Entonces, haces la misma la misma operación a palabras con la misma relación y ambas operaciones deberían darte algo similar, ¿no? París menos Francia debería darte un vector parecido a Madrid menos España, ya que los dos te darían algo parecido a capital. Y la similitud coseno de esta eh esta operación de vectores también debería ser cercana a uno o lo ideal, lo esperable sería que esté cerca a uno. Entonces esta es la forma como se utilizan los test de analogías haciendo operaciones aritméticas simples y comparando el vector resultante de estas operaciones. Y según qué tan cerca te salga o qué tan qué tanto sentido tenga el resultado, por ejemplo, de esta similitud, eh vamos a poder determinar si es que los que se crearon pudieron capturar las relaciones entre las palabras o no.
+
+
+00:43:18
+
+lse posgrados: No, si es que te cercano a uno significa que estos embedins sí pudieron capturar la relación entre estos estas palabras de capitales y países. Si estuviese muy alejada significa que es capturaron otro otro tipo de de significados y no los que deberían. Entonces, estas cosas vamos a utilizar ahora dentro de el color que vamos a ver. ¿Alguna pregunta de esta parte de las analogías? ¿Todo bien? Ya, bien. El colap ya lo colgué. Déjenme ver si esto corrió bien. Ah, acá se me acuerdo carácter que no ve bien. Ya el col lo ya lo colgué en Ghub. Entonces pueden descargarlo si quieren corriendo estas. Ya vamos, vamos viendo de qué trato un poco más de Z. A ver, ahí se ve bien o más. Ya, Gen. Ya. Entonces, como les decía, eh la idea de este de este notbook más que el código es poder explorar los ya preentrenados de eh Glob y Fastex. Entonces, acá tienen el código para poder bajarse los edins y e bueno, originalmente está en este drive disponible, pero si en algún un punto está esta ubicación no está disponible, pueden bajárselo directamente de los enlaces oficiales, ¿no?
+
+
+00:45:09
+
+lse posgrados: Eh, por ejemplo, FastEx está dentro de los enlaces de de Google y bueno, Fastex acá también pueden encontrar su eh perdón, acá está su sus enlaces oficiales, ¿no? Lo de Stanford y de Facebook también acá. Bueno, ya están en un en un drive, así que un poco más fácil lo descargamos y acá van a encontrar algunas clases para poder operar más fácil con estos de base, ¿no? Eh, una clase general de Word and Base y luego eh unas clases específicas para Glob y para Fasts. Son más que todo para ayudarnos a a explorar un poco mejor eh eh en este notebook, ¿no? por ejemplo, e poder ir de una palabra al índice, del índice palabra, eh, poder traernos las y otros métodos útiles. hay una función para poder eh graficar una matriz eh de similaridad coseno que lo vamos a estar usando y e que sería básicamente estas dos funciones que vamos a utilizar para los gráficos, ¿no? Entonces hacemos un ejemplo con la de Fastex. cargamos en en la eh en la clase los edings y vemos que eh la cantidad de palabras es de 2 millones de palabras.
+
+
+00:46:49
+
+lse posgrados: De hecho, esta, si no me equivoco, sí eh sí tiene varios idiomas en sí. Me parece que una vez comparé con ahorita si no hacemos un ponemos acá una palabra en español a ver si si funciona, ¿eh? Pero bueno, tiene 2 millones de palabras. Acá podemos poner las palabras que queramos analizar y acá abajo lo graficamos con las funciones que ya les comenté. Entonces, empezamos haciendo una pequeña comparación con estas palabras que son más de saludos y otras relacionadas a computadoras, dispositivos. Si nos damos cuenta en este gráfico de similitud coseno, eh las las palabras más cercanas sí se han logrado diferenciar o en subgrupos, ¿no? El subgrupo de de los aludos está cerca, tienes eh se diferencia por este color azul y el otro subgrupo de los dispositivos pues está separado acá con eh también con similitudes cercanas entre ellas. Y en cambio la combinación de de unas y otras como son categorías diferentes, pues tienen una similitud más cercana a C. Entonces, lo que podemos ver acá, por ejemplo, es que eh por ejemplo hello y Hi, estas dos sí están bastante cercanas.
+
+
+00:48:13
+
+lse posgrados: Voy a checarlo un ratito porque no se ve todo el gráfico. Hello y High están cercanos, de hecho tienen la similitud más grande y tiene sentido porque son casas sinónimas, ¿no? Una es más informal que otra, pero significan lo mismo, salud. Y en cambio eh por por otro lado, igualmente laptop y computer que también son sinónimos, tienen una similitud coseno bastante alta. Entonces si estamos logrando capturar el significado de estas palabras que son eh parecidas. Ahora, ¿qué otra cosa podemos comparar? Por ejemplo, esta palabra morning, que normalmente va con good morning. En este caso, a pesar de ser salud, no está tomando tan parecido a e a H es un saludo de por sí. Podemos deducir que de repente el significado que está tomando un tema en relación a momentos del día más que saludos, ¿no? Eh, está un poquito más cerca goodby, pero no tanto a los otros saludos. ¿Y qué otras cosas podemos deducir? Por ejemplo, eh computer printer si están eh cercanas, eh device y laptop también, pero no es tan la similitud no es tan parecida como cuando comparas sinónimos como laptop y computer.
+
+
+00:49:38
+
+lse posgrados: E se les ocurre alguna palabra que les gustaría comparar acá para poder ver qué está, qué concepto se está tomando en cuenta alguna sugerencia. Si no voy con los ejemplos que ya tengo preparados. Mouse. Mouse. ¿Con qué lo compararías? ¿Con laptop o con alguna otra? Con computer. Ya. Entonces ponemos mouse y de hecho la tengo acá porque es una que siempre me comentan. Vamos a comparar mouse con CAD y con computer también. No me este teclado está en inglés y no me acuerdo los veamos. Le agregamos. Ajá. Sí, tal cual. Apple marca, pero también es una fruta, ¿no? Entonces, veamos qué sale. A ver, estamos agregando eh Apple. Y también agregué banana al propósito para ver si Apple era fruta o Apple era marca. Entonces, en este caso hemos agregado Apple. Si su relación Apple con computer o Apple con machine es baja. No, no es cero, pero no es lo que uno esperaría si estás considerando Apple como mar.
+
+
+00:51:12
+
+lse posgrados: En cambio, Apple con banana es muy alto y por tanto podemos deducir que Apple tiene más el significado de fruta. Ahora, ¿qué va qué va a definir si es que Apple lo considera más marca o o más fruta? pues es en base al corpus de de entrenamiento, ¿no? Si es que tú estás entrenando tus embedits e con, por ejemplo, revistas de tecnología, pues te vas a salir pues cercano computer porque en ese contexto los van a usar juntos las dos palabras, pero si estás usando por ejemplo un corpus de recetas de cocina pues te va a salir Apple cercano a banana, ¿no? Entonces, este es un primer contra que tiene este tipo de de vectores que si bien hemos dicho que recogen el significado de las palabras, el contra es que son vectores fijos, ¿no? Entonces, una palabra que tiene dos significados diferentes en contextos distintos, van a tener el mismo vector y por tanto en ese vector se van a mezclar los dos significados de la palabra. Por ejemplo, también comentaron mouse. En este caso, mouse y cat están super cerca y mouse y laptop no son ceros, pero no están tan cerca como con cat, ¿no?
+
+
+00:52:36
+
+lse posgrados: Entonces vemos otro ejemplo de eh una palabra que tiene significados diferentes por el contexto. Y en este caso pues por el entrenamiento que se le ha dado a estos a estos está tomando mouse más como como un animal que como un dispositivo. Ahora voy a agregar estas otras de acá e para hacer una comparación rápida. Quito esto. Ya agregamos esas de acá que son power, money, mano. Por ejemplo, vemos los valores de power y money relacionados a man y woman. ¿Qué creen que que pasa en estos casos con estas palabras de acá? la relación de hombre con poder hombre con dinero y mujer. ¿Por qué creen que hombre sale más relacionado a dinero que que mujer?
+Martin V: por el corpus con el que se entrenó.
+lse posgrados: Ajá, claro. Y normalmente, ¿qué qué se evidencia en los corpus o en los textos cuando hablas de dinero de poder?
+Martin V: Y quizás si está, por ejemplo, hablando de política,
+Nicolás Moguilner Reh: salarios.
+Martin V: habla de presidentes y no sé, por ejemplo, imagino en Estados Unidos todos los presidentes han sido hombres, entonces si habla de poder quizás lo relaciona con presidente y y en ese caso han sido, o sea, habla más de hombre, supongo.
+
+
+00:54:35
+
+Martin V: Ah.
+lse posgrados: Ajá. Sí, tal cual. Por ahí dije también. Sí, más que todo es digamos que estamos capturando sesgos propios de la sociedad, ¿no? Porque lo que nosotros escribimos refleja también lo que pensamos como sociedad o también realidades que que ocurren, ¿no? O sea, existe una brecha salaria entre entre hombres y mujeres, hay estudios que que hacen este tipo de de métricas. Eh, y en el día a día eh existen también diferencias, por ejemplo, si si pusiéramos ingeniero, probablemente la relaciones más con hombre, que son temas que uno ve en las en la sociedad, que son sesjos o o realidades que ocurren, ¿no? y se ven reflejados en el corpus de texto, porque es texto que crean humanos y los humanos tienen eh estas estas características o la sociedad está hecha al menos de esa manera por por el momento. Ahora, ¿qué problema habría si es que usamos esos vectores en eh por ejemplo para predecir o para definir a quién le damos un crédito? ¿Qué problema en ese caso?
+Martin V: Tendría un sesgo machista quizás.
+
+
+00:55:58
+
+Martin V: M.
+lse posgrados: Claro, probablemente como estamos dándole un peso mayor a hombre con dinero o si con dinero sí, el modelo nos va a terminar diciendo que el hombre es capaz de pagar más y por tanto le puedes dar más crédito, ¿no? Por así decirlo. Entonces, el problema de esto de capturar estos sesgos es e justamente cómo lo vas a usar, ¿no? Si usas los vectores tal cual y no tomas en cuenta los que puede haber capturado, pues puede llevarte a crear eh modelos que amplifiquen estos sesgos o estas diferencias, ¿no? Entonces si es importante tomar en cuenta el análisis de los ejos al momento de o antes de utilizar estos estos enve cuando se quiere, por ejemplo, crear este tipo de de modelos de de crédito, ¿qué otro tipo de casos creen que se podría haber afectado? Yeah. Si es que usas los vectores así tal cual, ¿en qué tipo de de casos de uso uno debería tener consideraciones especiales para no tomar estos sesgos? ¿Algún otro ejemplo? Ah,
+Gonzalo Rodriguez: Habría que ver el tema de las razas por ahí, de de la gente.
+
+
+00:57:29
+
+lse posgrados: claro. El tema de de prejuicios de repente con minorías, ¿no?
+Gonzalo Rodriguez: Claro.
+lse posgrados: Eh,
+Gonzalo Rodriguez: Con los colores de piel.
+lse posgrados: también se podría ver y por ejemplo, yo mencioné el ejemplo de los créditos, ¿qué otro ejemplo no debería usarse así tal cual? ¿Alguien se le ocurre algún otro caso en el que hay que tener cuidado de cómo utiliza los envenedings? Uno, por ejemplo, que siempre me mencionan es el eh cuando haces escaneo de CBS, ¿no? Muchas muchas empresas usan los modelos de lenguaje para determinar si un CB calza o no con eh una vacante o o para ver a quiénes pasan a la siguiente etapa de entrevistas, ¿no? Y como ya tanto sabes, pues uno lo trata de automatizar procesamiento de lenguaje. Hay que tener bastante cuidado de cómo se está haciendo los filtros, ¿no? Eh, tal vez no introduzcas de nacionalidad. Sí. Eh, siguiendo este ejemplo de los CBS, pues habría que ver que tu modelo no esté eh priorizando por nacionalidad o por género o por algún grupo minoritario versus otro, ¿no?
+
+
+00:58:58
+
+lse posgrados: Entonces, ese tipo de de casos en los que es por necesidad ética tienes que ser equitativo. Es importante darle una inspección a los vectores y ver si es que está trayendo algún ser. Ahora, ¿qué se podría hacer? pues podrías de repente, no sé, promediar los valores para a propósito, ¿no?, de de este tipo de de vectores o específicamente las dimensiones en las que no quieres que se que se que se diferencien. Eh, o podrías de repente ver que se pueden utilizar eh corpus curados para poder eliminar este tipo de C. Podrían ser algunas alternativas. Entonces sí es importante que lo tomen en cuenta porque es es algo que que puede variar bastante el resultado de de los modelos que pueden ir creando y no depende solo de los email, sino va más allá, ¿no? comienza desde el cor. que uno utiliza también. ¿Alguna pregunta de esta parte? Ah, ¿cómo corregir? Dice Martín. Pues una forma es esto que les comento, ¿no? Eh, limpieza de corpus o de repente hacer ajustes como estos promedios, ¿no?
+
+
+01:00:16
+
+lse posgrados: De repente quieres promediar el vector de hombre y mujer dejas eh sin distinción para poder evitar estos sesgos. Puede ser por ahí que también tengo el contenido de un taller de equidad que les puedo ir pasando si es que quieren ampliar un poco en estos temas. Ahí se los se los comparto después por por correo, pero son son algunas cosas que uno podría hacer y para poder darse cuenta de los egos, este tipo de análisis eh graficando las relaciones ayuda ayuda bastante también. Genial. Entonces, vamos con otros ejemplos. Habíamos hablado también de los test de analogías. Uno bastante común es eh utilizar analogías de estas palabras. ¿Qué pasaría si a rey le quitas el concepto de hombre y le sumas mujer? ¿Qué te daría? ¿Qué qué palabra debería dar? Rey menos hombre más mujer.
+Hernando Scheidl: Reina.
+lse posgrados: Reina. Sí. Tal cual. Entonces es lo que vamos a hacer, ¿no? Traemos los edad edins de estas palabras. Eh, restamos rey menos hombre más mujer y te debería dar queen.
+
+
+01:01:37
+
+lse posgrados: Le estamos renombrando como new queen, que sería una una queen creada por nosotros. Lo agregamos al a nuestra base de palabras completas, es decir, a nuestra matriz original de palabras. Lo agregamos ahí. y hacemos la similitud coseno de e de de estos vectores. Entonces, lo graficamos y vemos qué tal nos ha salido esta new. Vemos que está bastante cerca a King, eh, que tiene sentido porque hemos usado King como base de este vector. Entonces, sigue manteniendo bastantes características de King, pero sí se parece también a a Queen, se parece bastante. Entonces, en este caso, pues ha salido exitoso el experimento y vemos que eh ha salido similar a lo que queríamos, ¿no? Tal vez que está un poco lejos de de Woman, de repente debería estar más cercana, eh, pero bueno, no está tan mal. Es decir, los conceptos, las relaciones entre palabras de de estos vectores que estamos usando eh tienen sentido. Otra cosa que se puede hacer es, por ejemplo, esta este nuevo vector que hemos sacado se puede comparar versus el resto de de palabras de la base y podemos sacar Yeah.
+
+
+01:03:01
+
+lse posgrados: los 10 más cercanos, los 10 más cercanos a la New Queen. Entonces vemos que sale King, Queen, Kings, Queen Mother y bueno, algunas variantes de del vocabulario que está un poco sucio, pero todas tienen relación y muchas ha salido muchas variantes de queen. Entonces vemos que estas palabras las está relacionando bien como casi sinónimos o bastante bastante cercanas en en significado. Ahora, ¿qué pasa si es que a rey le restamos hombre? ¿Qué concepto quedaría ahí?
+Elian Pinzas: Pleo.
+lse posgrados: Rey menos hombre. Le bello al revés sería
+Hernando Scheidl: Realeza,
+lse posgrados: no estás digamos que rey es un hombre con realeza y le estás quitando solo hombre quea realeza. Entonces aristocracia dicen por ahí. Vamos a compararlo con estas anarquía, monarquía, reino, bueno, corona y realeza, que es lo que habían dicho. Lo comparamos y vemos que sale este nuevo vector que le hemos denominado Noki. En este caso, pues se parece a realeza. Sí, salió más como realeza. eh no es tan cercana a realeza porque obviamente eh Kim seguramente contiene otros significados, no solo es realeza, de repente contiene poder, riqueza otras otras cosas, ¿no?
+
+
+01:04:42
+
+lse posgrados: Entonces eh pero sí tiene sentido que esté cercano a esta palabra e de cierta manera. Yarquía vemos que más bien es lo opuesto, ¿no? Es eso es interesante porque un rey eh gobierna y es lo contrario a un estado de anarquia. Eh bien, vemos otros ejemplos. ¿Qué pasa si a rey le quitas realeza? Que lo contrario, ¿no? Ya no le quitamos hombre, si no le quitamos realeza. Esperaremos que salga eh solamente hombre, no man. A rey le estamos quitando todo lo reals, todo lo monárquico y se supone que quedaría un simpleón. Entonces comparamos esta nueva palabra New World con las demás eh newman, perdón. Y eh vemos que todavía sigue sigue pareciéndose a a Rey. no se parece tanto mal, sino que mantiene bastantes cosas de reí. Y acá podemos concluir que pues rey, lo mismo de arriba, ¿no? Rey contiene otro tipo de significados que no solamente son realeza, entonces probablemente le tengas que restar más conceptos para llevarlo algo más similar a un. Entonces, haciendo este tipo de juegos, pues uno puede ver las relaciones, ver qué cosas se están capturando.
+
+
+01:06:23
+
+lse posgrados: Podemos ver, por ejemplo, una palabra que tiene dos significados. Este tipo de de a cuál se está pareciendo más. Y podemos ver se eso es lo que lo que hemos visto en este tal cual. Le tenías que quitar más cosas para que sea plebello. Bien, acá hay algunas otras que más más de su lado. Si es que quieren profundizar y hacer lo mismo con Glow, pueden eh descargarse acá Globo y pueden comparar. Eso ya queda como opcional si es que quieren hacer esa comparación. ¿Alguna duda antes de irnos al primer receso? Claro. Ya. Genial. Entonces hacemos un receso y volvemos. Eh, 15 minutos sería las 8:23 para ser exactos. 8:23. Volvemos. Ahí nos vemos. Hola, ¿qué tal? Me dicen si ya están por acá compartiendo todos. Ya. Eh, bien. Entonces, ya hemos visto conceptualmente que son los envedis y hemos explorado un poco que hay dentro de algunos en medios preentrenados, pero ahora la idea es poder entender cómo se cómo se entrena.
+
+
+01:24:20
+
+lse posgrados: Vamos a ir un poco más al detalle del entrenamiento y habíamos dicho que Word to back introdujo dos técnicas, una es continuous back of worlds y la otra es skip. Y esas técnicas eh también las usa fast. Entonces, eh ahora les vamos a aprender. Si aprenden, van a poder o conceptualmente van a entender tanto word como fasttex, porque la diferencia entre los dos es básicamente la forma de tokenizar. Entonces, vamos a ver ambas técnicas un poco más a detalle y al final vamos a introducir una librería que ya la ya tiene la lógica por detrás construida, pero igual es importante que entiendan conceptualmente la lógica para que luego sepan cómo eh eh cómo interpretar los resultados. Entonces, comencemos por el primero que es eh si. Eh, básicamente lo que se trata de hacer es adivinar qué significa una palabra por su contexto, que es lo que decíamos, ¿no? Por eh, dime con quién andas y te diré quién es. Entonces, el modelo recibe pistas de qué significa esta palabra en base a lo que hay alrededor.
+
+
+01:25:38
+
+lse posgrados: Básicamente lo que se hace es le das eh unas palabras al modelo y tiene que adivinar cuál es la palabra que falta al centro. En este caso, si les doy este ejemplo, el mañado, ¿qué iría acá? ¿Qué palabra va ahí?
+Hernando Scheidl: Gato.
+Gonzalo Rodriguez: No.
+lse posgrados: Sí. Y bueno, es bastante fácil para nosotros deducirlo, ¿no? Porque sabemos que los gatos maullan, a los gatos les gusta estar en el tejado. Entonces, si se dan cuenta, el contexto sí da información suficiente sobre la palabra en sí. Si uno analiza la palabra gato y ve un una cantidad grande de ejemplos de oraciones con esta palabra, pues va a ir viendo que gato se relaciona con maullar, gato se relaciona con tejado, con bigotes, con patas, cola, eh no sé, todos los conceptos relacionados a gatos poco a poco te lo van describiendo, ¿no? Entonces, ya sabes que los gatos no huyen, ya sabes que los gatos tienen cola, tienen orejas, tienen bigotes y eso es porque has podido ir viendo esa palabra en relación a otros. Y con más ejemplos, pues vas aprendiendo mucho más sobre el significado de esa palabra.
+
+
+01:27:02
+
+lse posgrados: Entonces, esa es eh la hipótesis en la intuición detrás de esta técnica de SIM. ¿Cuáles son las características? Eh, pues básicamente uno tiene una ventana de contexto que puede ser variable. Por ejemplo, esta ventana es de uno, uno antes y uno después y tiene una palabra target al medio. Y lo que tratas de hacer es que el modelo adivina esta palabra target en base a estas palabras del contexto, ¿no? Entonces, tú le das al modelo I natural y el modelo te tiene que devolver like. Eso es lo que como función. Entonces, eh, ¿cuáles son las características? es de muchos a uno porque le das varias palabras de input y solamente te debe devolver una única palabra. Eh, su velocidad es rápida en comparación a skip porque por cada palabra solamente hace una corrida, ¿no? Por cada palabra target hace un proceso de diferencia y es más ideal cuando se tienen e se tiene un corpus grande y lo que te interesa es capturar el significado generar de las palabras. las palabras comunes, sobre todo.
+
+
+01:28:24
+
+lse posgrados: Entonces, esto es rápido, bueno para palabras generales, no tan bueno para palabras muy específicas. Eso es un vistazo raro. Entonces, e cómo funciona. Ya entrando al al detalle de la lógica, pues básicamente el modelo recibe eh los vectores de de las palabras del contexto. En este caso, una ventana de contexto de dos, serían dos después y dos palabras antes. recibe sus vectores y hace eh normalmente es un promedio, podría ser otro tipo de de operación, pero normalmente se promeden los vectores y luego eh con una capa de la raicional se compara este vector con con las demás palabras del vocabulario y se define cuál es eh la palabra que debería ir como target, ¿no? Como la palabra central en relación a las palabras del contexto que se recibió. Entonces, más o menos así funciona y por eso es de muchos a unos no usas muchas palabras para determinar una única eh palabra. Entonces, básicamente tratas de eh predecir o sacas las probabilidades de que dado este contexto, esta ventaja de contexto, una palabra eh sea eh la palabra central, ¿no?
+
+
+01:29:57
+
+lse posgrados: la que se tiene que adivinar. Y por otro lado está la segunda técnica que es skip ram, que también usa ventana de contexto y usa eh usa una ventana y una palabra target, pero la diferencia es que trata de partir de la palabra target original para luego predecir las palabras que eh podrían estar en su contexto. Entonces, acá está un poquito al revés, ¿no? Tienes el vector de la palabra central, lo pasas a través de de la red neurunal y tratas de predecir eh cuáles de las palabras de vocabulario son parte del contexto de esta palabra o no. Entonces, básicamente es eh la probabilidad de que una palabra esté en el contexto dada eh la palabra tag al revés. Ahora, en todos los casos, para obtener estos vectores, pues se inicia con one encoding, ¿no? Se inicia con one encoding para poder determinar qué palabras están ingresando y luego eso se transforma en el vector e buscando en la matriz que se está construyendo conforme vas entrenando la red neuronal. Ahora vamos a ver más detalladamente para que para que se entienda cómo cómo funciona esto.
+
+
+01:31:20
+
+lse posgrados: Eh, acá está. Bueno, el ejemplo específico adhesivo que ya habíamos visto, ¿no? Recibe eh los inputs, los vectores de las palabras de contexto se pueden sumar o se pueden promediar. más comúnmente se promedio para tener eh proyectarla en un solo vector y luego ese eh te ayuda a definir el output, ¿no? ¿Cuál va a ser la palabra que eh vas a inferir que está eh en el medio, la tarde? Y cómo se construyen estos ejemplos de contexto y target a partir del corpus, pues se define una ventana de contexto, como les había comentado, en este caso, pues de uno, y se va recorriendo esa ventana de uno en uno para sacar los ejemplos, ¿no? Primero pues tratarás de predecir like con I y natural. Luego tratarás de predecir natural con like y lengue. Y igual no le das natural processing y el modelo debería predecir lengue. Entonces así se va corriendo la la ventana a lo largo de todo el texto que usas de Corpus y se van sacando los ejemplos para entrenar la red neurona.
+
+
+01:32:31
+
+lse posgrados: Acá, bueno, le damos un doble check. Y eh vemos un poco los el detalle de las dimensiones, ¿no? Suponiendo que eh tienes una una un vector de dimensión m, es decir, tienes su vector es es de m, pues eh tienes una matriz con eh todos los vectores de vocabulario, ¿no? Poniendo que tienes n palabras. vocabulario con un one encoding va sacando el vector de cada una de las palabras del contexto, se promeden o se suman y se obtienen un solo vector para representar el concepto que se quiere adivinar. Luego con este con este vector se saca eh se se pasa por otra capa de r neuronal y se saca una probabilidad por cada una de las palabras del vocabulario, es decir, por n palabras, ¿no? Y con esto que se define cuál es la palabra de del medio. Acá vamos a ver un ejemplo más detallado, un otro zoom adicional a lo que hemos visto. Empiezas con el one coding que les decía, digamos que estos estos estos cuadraditos serían el one encoding para cada uno de las palabras.
+
+
+01:33:55
+
+lse posgrados: Esto de C se multiplica por la matriz, eling layer. Esta matriz es el tamaño del vocabulario por la dimensión del embeding, ¿no? Entonces, digamos que eh cada fila es un embeding de una palabra en particular. Entonces, el one encoding te ayuda a detectar cuál de estas filas tienes que extraer representar esa palabra. se multiplica de encoding por esta matriz y obtienes eling específico de la palabra del contexto y eso para todas las palabras que vayas a traer según la ventana de contexto que tengas. Después pasa por una capa lambda que en este caso es un average. Haces un promedio de los vectores y obtienes esta capa consolidada con toda la información del contexto. Después esta este vector que tiene la misma dimensión que acá que la misma dimensión que el embeding, e lo pasas por una capa adicional densa, una softmax que te va a dar las probabilidades de de que cada palabra sea la la la target. Y con eso vas a seleccionar una palabra en particular y esa la vas a comparar con la palabra eh la palabra que era, ¿no?
+
+
+01:35:13
+
+lse posgrados: Según tu tu dat de entrenamiento y según qué tan cerca esté eh o si acertado o no se hace el back propagation y se va ajustando en los pesos hacia atrás. Entonces, e qué ocurre acá? Acá estás entrenando sobre todo esta matriz y aparte acá también hay otros pesos que que vas entrenando, ¿no? Pero lo interesante es que cuando hagas este recorrido por cada uno de los ejemplos de todo el corpus, se va a ir ajustando los pesos de esta matriz de acá y al final esta matriz de acá va a ser la que te va a guardar el significado de las palabras. que es la la matriz más importante que va a determinar si se eh puede adivinar o no la palabra final. Entonces, eh una vez termina todo el entrenamiento, lo que vas a extraer es únicamente esta matriz y esa matriz luego lo vas a utilizar para hacer la vectorización de tus textos, ¿no? Simplemente buscando la palabra en en el espacio o el índice que corresponda y extrayendo esa partecita de la matriz como vector de la palabra.
+
+
+01:36:27
+
+lse posgrados: Entonces, así es como funciona y así es como se puede entrenar o ir capturando el significado de las palabras de forma automática utilizando esta técnica adhesivo. ¿Alguna duda sobre estos pasos que que les he explicado? ¿Quedó más o menos claro? Es one de coding, extra vector de cada uno, promedias, sacas un vector único y luego ves con eso de la probabilidad y y eliges una palabra, comparas el resultado y luego ajustes. Sí, Nicolás,
+Nicolás Moguilner Reh: Si hay una palabra nueva que no estaba en el diccionario original, hay que hacer un reentrenamiento.
+lse posgrados: sí, en este caso no vas a tener el vector de la palabra nueva, ¿no?
+Nicolás Moguilner Reh: Claro,
+lse posgrados: tienes de vocabulario. Entonces,
+Nicolás Moguilner Reh: claro,
+lse posgrados: justamente tiene ese problema que solucionó Fastex, ¿no? Que palabras nuevas no las vas a poder representar, te va a salir error si lo usas.
+Nicolás Moguilner Reh: gracias. Ah.
+lse posgrados: A el géner una pregunta. Eh, bueno, acá tienen un ejemplo en queras de cómo se haría. Eh, que es bastante simple porque si usas esta clase de secuencia simplemente le vas a agregar capa por capa y ya tiene, digamos, la lógica de las capas eh ya hechas, tú solamente la la vas a armar.
+
+
+01:37:52
+
+lse posgrados: Entonces, si quisieran eh hacerlo en que ahí termino y voy contigo. Si quisieran hacerlo en queras, pues simplemente agregarían una capa de medi que tienen como input el tamaño del vocabulario y eh el tamaño de del embedic que ustedes determinan. Ustedes se parametrizan y recibe como input la cantidad de palabras que ustedes definan de la ventana de contexto por dos porque es antes y después de la palabra.
+Hernando Scheidl: H
+lse posgrados: lado se agrega una capa lambda que en este caso es average eh que también eh promed y y da como resultado un vector del mismo tamaño del embedil. Luego la capa densa que eh va a terminar dando eh una probabilidad por todo el tamaño de vocabulario. Y bueno, la los que es eh categórica central. Sí, Hernando. comentando.
+Hernando Scheidl: Sí, mi duda es cómo se hace, o sea, el back propagation. Normalmente en una red se van ajustando los pesos, bueno, con el gradiente, pero acá lo que se va ajustando son los embedings, ¿no?
+lse posgrados: Sí, en verdad hay pesos acá. Esas son la mayor cantidad de parámetros están acá, pero también hay pesos aquí.
+
+
+01:39:11
+
+lse posgrados: Sí, se van a ajustar los pesos de la capa densa también, pero al final no te van a interesar mucho estos de acá, ¿no? Los que te van a interesar son estos porque Sí,
+Hernando Scheidl: Pero digamos, perdón, cuando se comienza la embeding layer es algo aleatorio,
+lse posgrados: sí,
+Hernando Scheidl: pesos aleatorios y se van se van entrenando.
+lse posgrados: ajá. Sí, tal cual.
+Hernando Scheidl: Okay,
+lse posgrados: Ah,
+Hernando Scheidl: gracias.
+lse posgrados: lo lo puedes inicializar de forma aleatoria y se va ajustand. De hecho, creo que acá tengo un ejemplo de los parámetros. Sí. Eh, más o menos acá está la cantidad para que puedan ver la la cantidad de parámetros e en cada parte. Los que más te van a servir o los que vas a terminar usando son los de la capada de B. Y si se dan cuenta, acá hay e estamos en en este ejemplo había 12,000 palabras, un poco más de 12,000 palabras, eh meding de 100 dimensiones y en total para poder hacer este entrenamiento se usaron casi 2.5 millones de parámetros.
+
+
+01:40:20
+
+lse posgrados: Entonces, para que sepan más o menos cuántos parámetros se necesitaría, eh, más o menos que se divide mitad mitad entre la densa y la de empeding, pero al final esta de acá es la que nos va a terminar eh siendo más útil. Y si se dan cuenta, simplemente la cantidad de palabras por 100, ¿no? Esa es la matriz que se tiene acá como como en un poco para que vean las magnitudes de los parámetros. ¿Alguna otra pregunta que tengan? Ya. Entonces, si todo está bien, vamos al ejemplo de skip. Eh, como habíamos visto, ya habíamos adelantado, Skib se parece un poco asío porque también usa un target y un contexto. Entonces, también trata de predecir eh relacionando target y contexto, ¿no? Solamente que lo hace al revés. Target ahora la palabra del medio ahora es el input y lo que quieres adivinar ahora son las palabras de contexto. Entonces, ¿cómo se hace? lo que se hace se divide en pares, ¿no? Tú eh tomas una ventana de contexto, por ejemplo, eh esta, por ejemplo, y vas haciendo los pares de el target y su contexto.
+
+
+01:41:47
+
+lse posgrados: Entonces, hype con, hype con wheel, hype con orange, hype con use. Tienes cuatro pares y cada uno de estos va a ser un paso de entrenamiento. Entonces, si se dan cuenta con con SO solamente entrenabas una vez, ¿no? Eh, los cuatro adivinaban una palabra, pero acá estás adivinando una por una cada una del contexto. Entonces, vas a entrenar con cuatro ejemplos. Es por eso que una de las ventajas de Skibrom es que le saca un poco más de provecho al al corpus porque están sacando muchos más ejemplos de entrenamiento, ¿no? Estás viéndolo a nivel de pares. Entonces, ¿cuáles son las diferencias? Pues es de uno a muchos. Usas una palabra para adivinar varias palabras. Eh, la precisión, bueno, la la velocidad es un poco más lento que Sibo porque como verán hace más pasos de entrenamiento, pero es más preciso porque eh es capaz de capturar más relaciones entre palabras y por tanto las palabras raras eh va a aprender un poco más de las palabras raras. ¿Cuándo es recomendable?
+
+
+01:43:02
+
+lse posgrados: Pues cuando tu corpus es pequeño o cuando tienes vocabulario complejo bastante específico y variado, en ese caso es recomendable usar skip, ¿no? Porque como les dije saca más provecho de de del corpus y saca más ejemplos de entrenamiento. Obviamente el contr que es más lento, un poquito más costoso. Entonces, viendo los mismos gráficos que vimos antes, cómo cambian con con Skim versus CO, es que tiene de input la palabra original, se pasa por una capa de red neuronal y eh se define en verdad es un uno por un primero define si es que esto está en el contexto, una decisión binaria, ¿sí o no? Está en el contexto o no. Luego defines la otra y así para cada una de las palabras. Eh, acá tenemos ya más el detalle. Entonces, lo que ocurre es eh inicias igual con one encoding, pero eh inicias con la palabra target y la palabra de contexto, es decir, el par que estás analizando. Eh, sacas el embeding de cada una y lo eh lo fusionas en con un eh producto punto, ¿no?
+
+
+01:44:25
+
+lse posgrados: Entonces es el producto punto de eh ambos envenis para relacionarlas en luego ese producto punto lo pasas por una capa densa y eh es una con sigmoide porque lo que vas a decidir si es si este par está dentro del mismo contexto o no. Entonces haces esa decisión binaria, lo comparas con con tu de entrenamiento y luego haces el back propagation hacia atrás, ¿no? Entonces es un poco diferente en el sentido de que lo haces por pares y estás comparando pares para ver si están eh si pertenecen al contexto, al mismo contexto o no. Ahora, del lado de que eras, ¿cómo se vería? Pues igual usa sequential, solamente que eh partes primero de eh obtener el embeding de de la target, luego obtener el embeding del contexto y luego eh se unen ambos ambos resultados de de embeding con el improducto. y se eh pasa por la capencia que hace la decisión final que creo que está recortado, pero bueno, básicamente esta es la que la que te decide si es que es o no parte del contexto. Entonces esa es un poco la diferencia.
+
+
+01:45:48
+
+lse posgrados: Eh, ¿alguna pregunta acá? Sé que es un poquito pesadito, pero me avisan si tienen dudas o si está todo bien.
+Hernando Scheidl: y los los embeding de las palabras finalmente, entonces, ¿dónde quedan? En el otro quedaban en cada línea de la de la matriz,
+lse posgrados: Pero, no, no te escucha bien repit.
+Hernando Scheidl: ¿no? Digo, en el en el caso anterior, en el continuous eh bag of words, en en la matriz de embeding, cada línea de esa matriz era un era un el embeding que nosotros de cada palabra en el resultado. Acá dónde quedarían los eding de cada palabra.
+lse posgrados: Eh, igual en esta en estas cajitas de acá, o sea, estas partes de acá es la que nos nos quedaríamos. Es decir, eh los pesos que con los que te quedas al final son eh estos de acá. Son dos matrices. En en este caso son dos matrices, pero al final normalmente te quedas con con la de acá,
+Hernando Scheidl: Ok.
+lse posgrados: la de T. Sí, incluso hay otras opciones, ¿no? O sea, podrías hacer la el promedio, la suma de las dos matrices.
+
+
+01:47:14
+
+lse posgrados: Eh, por convención normalmente te quedas con con con la la delta, pero hay diferentes variances. ¿Alguna otra duda?
+Gonzalo Rodriguez: Porque básicamente esas dos matrices serían iguales o
+lse posgrados: Eh,
+Gonzalo Rodriguez: similares.
+lse posgrados: podrían dar variaciones porque si te das cuenta son pesos diferentes, ¿no?
+Gonzalo Rodriguez: Eh,
+lse posgrados: O sea,
+Gonzalo Rodriguez: sí,
+lse posgrados: al final
+Gonzalo Rodriguez: yo me me refiero a iguales de los parámetros que entré Digo,
+lse posgrados: eh o sea, son no son los mismos pesos, sí se pueden ajustar diferente, pero no deberían variar tanto. Sí podrían haber cierta variación, no es que sea la misma matriz. Exactamente.
+Gonzalo Rodriguez: Está bien.
+lse posgrados: otra pregunta nuestra pregunta no ya. Entonces, bueno, eh conclusión, la que más se usa es esta. Hay otras variantes en las que puedes combinarlas, pero eh normalmente por convención es esta. igual está eh va a ir capturando el significado de las palabras conforme se vaya entrenando, ¿no? Porque la idea es que conforme lo vas comparando con el contexto, lo que tratas de hacer es eh ver eh las características de la target, ¿no?
+
+
+01:48:44
+
+lse posgrados: O sea, como habíamos dicho, el ejemplo del gato, ¿no? Tienes gato acá, lo vas comparando con con bigotes, con cola, con las palabras que aparecerían y según eso vas ajustando su significado. ¿Listo? Entonces, eh algo interesante eh o algo importante que hay que tener en cuenta es que no solamente se toman el par de las palabras de contexto, porque ahí no tendría sentido porque siempre te saldría uno, o sea, siempre te tendría que decir son del contexto. Esos son los ejemplos positivos, ¿no? los ejemplos que te deberían salir si son si son eh si están relacionadas, pero también se tiene que comparar con las palabras que no estén del contexto para que el modelo pueda aprender lo opuesto, ¿no? O sea, el modelo tiene que aprender cuáles están relacionadas y cuáles no están relacionadas para poder eh diferenciar. Entonces, ¿cómo se hace esto? Si uno quisiese hacer entrenamiento completo, pues tendría que traer todas las palabras de vocabulario y los pares con todas las palabras. Ese sería, digamos, un entrenamiento completo, eh, pero que sería muy pesado de hacer y aparte que podría causar un overfeiting porque eh estás ajustando demasiado al corpus, ¿no?
+
+
+01:50:08
+
+lse posgrados: Estás comparando con todas las palabras el vocabular. Entonces, eh para simplificar o para evitar también overfeitting, se usa una técnica que se llama negative sample. Significa que en vez de comparar contra todas las palabras de algo vocabulario, ya no eh eliges todas, sino solamente una muestra de de vocabulario. Entonces, cuando tú entrenas y tienes una palabra target y quieres compararla con eh su contexto, pero también con palabras fuera del contexto, tienes el el contexto en sí, pero también algunas palabras fuera de contexto que se se eligen de forma aleatoria, por eso es un sampling, ¿no? Entonces, originalmente hubieras tenido que comparar la palabra con todas y hubieras tenido que calcular eh hacer hacer el cálculo para todas y y y a nivel computacional era muy pesado y poco eficiente, ¿no? Entonces, lo que haces es no haces el cómputo para todas las palabras, sino que seleccionas algunas algunas palabras de ejemplo negativo. Obviamente s incluyes las del contexto, todas las del contexto que tenías, pero eh las palabras fuera de contexto seleccionas algunas eh eh por muestro evaliatorio. Entonces, acá el objetivo es optimizar el có y igual vas a ir aprendiendo tanto de los ejemplos positivos, de los que existen en el contexto como de los ejemplos negativos, solamente que estás eh usando un muestro más pequeño.
+
+
+01:51:54
+
+lse posgrados: Eh, obviamente es eh cuántos cuántos agarros de negative sampling es un parámetro y uno lo va decidiendo, ¿no? De hecho, ahora que vamos a ver el ejemplo, la cantidad de palabras de negative sampling es un parámetro que uno va ajustando y va a depender también del corpus, ¿no? Si tu corpus es chiquito y de repente tu vocabulario no es tan grande, bueno, sobre todo si tu corpus es chiquito, no tienes tantos ejemplos, no te puedes dar el lujo de filtrar tanto, te puedes poner una cantidad de muestreo más grande. En cambio, si tu cuerpo es grande y tienes de sobra texto para entrenar, pues puedes hacerlo más chiquito eh la cantidad de muestras. Entonces, este es eh concepto que se usa eh tanto para para el skip como también para hacer eh el CBO, ¿no? Es decir, no es necesario calcular probabilidad de todo. H hay formas de de poder reestructurar para no tener que calcular todas las probabilidades de vocabulario, sino simplemente ir aprendiendo con una muestra más pequeña. ¿Se entiende? Aquí me ponen delito arriba y si tienen preguntas me me avisan.
+
+
+01:53:14
+
+Hernando Scheidl: Perdón, yo cuando me imaginaba que para entrenar se iba recorriendo el texto y se iba cambiando el target con el contexto. Eh, pero en el caso esto de los negativas eh, empieza a elegir una palabra aleatoria del del vocabulario que no esté en el contexto en particular en ese momento, porque capaz que está en el contexto,
+lse posgrados: Ajá. Sí.
+Hernando Scheidl: pero más adelante en el texto.
+lse posgrados: Ajá. Sí. Tal cual. Eh,
+Hernando Scheidl: Ok.
+lse posgrados: por ejemplo, eh, no sé, digamos, en este ejemplo de de Will, no tienes estos tres pares que vas a comparar, pero también sacas Will con Breakfast, Will con cat, Will con que no están acá ni siquiera, están en otra parte del de vocabulario. il que esos esos ejemplos book cut, por ejemplo, van a entrar acá como como pares y la idea es que acá te dé cero, ¿no? En vez de darte uno de que sí está en el contexto, te va a dar cero, te debería dar cero. Y si se equivoca es porque eh bueno, si se equivoca va a ser back propagation y va a tener que ajustar los pesos para poder diferenciar de que esas palabras no van juntas.
+
+
+01:54:25
+
+Hernando Scheidl: Claro, pero digo, capaz que en este en ese lugar del texto no están juntas y dos párrafos más adelante sí están juntas. Eso no hay problema.
+lse posgrados: Ah, sí, podría ocurrir. Claro, es más un ajuste, o sea, conforme vas conforme vas recorriendo todo el corpus, vas viendo cuál es más probable que estén juntas, ¿no? Al final termina siendo una probabilidad y las que estén más juntas más frecuentemente van a van a tener un unos emboses que otros, ¿no?
+Hernando Scheidl: Okay,
+lse posgrados: es un poco mm sí,
+Hernando Scheidl: gracias. Ah.
+lse posgrados: ¿alguna otra duda? Ya. Bueno, entonces si está todo bien, me ponen dedito arriba. Si quieren que repita algo, me avisan también. Tienen que tener una pregunta específica. Ya. Genial. Entonces ahora eh vamos a a poder entrenar nuestros nuestros de cero con estas técnicas y un poco algo que tienen que tomar en cuenta es cómo lo podemos visualizar, ¿no? en el ejercicio que vamos a hacer y también para el desafío dos va a ser importante poder concluir que también están saliendo nuestros edins y un poco para poder analizarlos, aparte de las técnicas que hemos visto de eh de las analogías, de graficar los las similitudes, también se pueden hacer gráficos en dos dimensiones y en tres dimensiones como el proyector que vimos al inicio.
+
+
+01:56:03
+
+lse posgrados: Para poder hacerlo se tiene que reducir la dimensionalidad de los envecees. Y para eso una técnica que les va a ayudar a graficar sobre todo es esta de Disney de Tistributed Stocastic Neighbor. Y bueno, ¿por qué es útil esta técnica? Porque no es lineal. PCA, como sabrán, es eh una reducción eh lineal, pero normalmente estos conceptos de de vocabulario no son lineales, ¿no? Las relaciones entre probablemas no son lineales. Entonces, por eso es preferible hacer esta otra técnica que es no lineal. Entonces, sirve para reducir la dimensionalidad y es estocástico. Entonces, no se usa mucho para eh para entrenar o crear modelos en sí, pero sí para visualización, ¿no? porque por su carácter estocástico puede cambiar. Eh, si lo eh puede cambiar conforme lo corres una y otra vez, no es reproducible, digamos. Exactamente. Entonces, como herramienta de visualización y exploratoria nos va bien y lo vamos a usar de esa manera. Entonces, e con un intervalo, pero si quieren, no sé si quieren hacer una pausa acá y volvemos o continuamos y terminamos antes.
+
+
+01:57:27
+
+lse posgrados: ¿Cómo prefieren? Pausa. Me ponen delito arriba. Continuamos deito. Una pausa. Dos. Tres versus dos. Continuamos. Creo están iguales. Ya continuamos un poco más y de ahí de ahí les doy una pausa más chica. Si no, e ya. Eh, vamos a ver un ejemplo. Ah, me olvidé de introducir esto. Vamos a dar un ejemplo con esta librería que es eh la librería Gensim. Esta ya tiene por detrás eh toda la lógica de Skip y se Entonces e es una libr en Python desde 2009. eh es bastante fácil de usar, así que nos va a ahorrar un poco el tener que hacer la red neuronal en cero. E ya les he colgado, de hecho, en el en el GitHub, si lo abren, van a ver la carpeta desafíos, el desafío dos que lo voy a abrir, si quieren lo van bajando, pero este e este desafío tiene una parte que es el ejemplo, que es lo que vamos a ver ahora, y eh al final tiene la consig.
+
+
+01:58:56
+
+lse posgrados: Entonces, veamos parte de del ejemplo así y de ahí eh vemos qué lo que se llevan ustedes eh como parte del desafío. Ya. Entonces, como les había comentado, vamos a usar GSIM. Voy a ejecutar todo de una vez. Acá pues simplemente le importan. E para el tema de del ejemplo de la clase hay e un dataset que es el sound dataset que es de ejemplo, pero la idea es que luego cuando ustedes hagan sus desafíos se puedan conseguir un un dataset diferente. De hecho, acá les he puesto algunos eh recomendaciones en en la lámina. pueden usar el Project Gutenberg, que es una página que tiene libros que es abierto. Voy a mostrar. Eh, acá pueden ver diferentes libros conocidos eh que se pueden usar libremente. Entonces, de acá si quieren pueden elegir eh un libro o también acá en Tex Infos, igual creo que también son libros, ¿sí? Si no me equivoco, también pueden bajar eh libros en formato texto. Entonces, la idea es, si bien en la plantilla van a ver un ejemplo de son dataset, la idea es que lo reemplacen por un corpus que ustedes elijan.
+
+
+02:00:30
+
+lse posgrados: Estas fuentes de acá son sugerencias, pueden usar libros. Si tienen un dataset propio de ustedes que quisiesen usar, no sé, por ejemplo, papers de alguna temática que les interese o o su campo de de trabajo, pueden también tomar eso. Eso es está abierto. La idea es que eh ustedes seleccionen un corpus diferente al que al que vayan vayan a ver acá en la plantilla. Es es eh lo primero. Entonces acá, bueno, vamos a hacer un ejemplo chiquito con estos canciones y vamos a seleccionar específicamente los beatops para eh tener un ejemplo de un artista en particular. Esta data entonces pues ya eh viene a nivel separado a nivel de línea de de la letra de la canción. Entonces, digamos que el documento sería eh una frase de la canción. Ese sería un documento. Si vemos la cantidad de documentos que hay para estos artistas, para los Beatles, eh, tenemos 1846. Entonces, si se dan cuenta, es un corpus chiquito, eh, no no es no es tan grande, por tanto, para la clase está bien porque va, de hecho, creo que ya termina de entrenar, entrena bastante rápido.
+
+
+02:01:51
+
+lse posgrados: Eh, una vez uno ya tiene su su corpus, ya le importaron. Si quieren, cuando ustedes importan los libros le hacen una limpieza, ¿no? Si si ven que hay caracteres extraños o a veces hay, no sé, cabeceras de los libros que se repiten, pies de página, lo pueden limpiar y la idea es que hagan eh la segmentación de los documentos eh adecuado al corpus que tengan. Por ejemplo, algo importante que a veces muchos se equivocan es acá en este ejemplo está separado por línea, ¿no? Si se dan cuenta, porque este cuerpo son canciones y cada oración es una línea, pero si aplicasen esta técnica para la los libros, va a cortar oraciones a la mitad porque los libros no tienen una línea por por oración, ¿no? Las oraciones tienen saltos de línea y continúan. Entonces, algo importante es, fíjense bien cuando hagan la división, que quede una oración en su sentido completo en un solo documento, ¿no? No corten las oraciones, eh, ni las dejen eh, incompletas. Entonces adecúen este este armado, esta segmentación dependiendo del dataset y cómo les venga la información.
+
+
+02:03:08
+
+lse posgrados: Una vez ya tienen su cuerpo separado por por documentos, eh frases, oraciones, se comienza eh preprocesamiento. enqueras, igual que en LTK que vimos la clase pasada, eh igual que que en NLTK eh tiene su su sus funciones para poder procesar texto y hay una en particular que eh te va de texto a palabra, ¿no? Tex to word sequence. Entonces, eh podemos usar esa para hacer las separaciones eh de las palabras de de documentos a nivel de palabra, sería la segmentación. Entonces, aplicamos eso a todas las líneas de del dataset que tenemos y con eso ya obtenemos los eh los arreys de cada documento, pero ya eh a nivel de palabra separado. Entonces, esta es la primera etapa de preprocesamiento, sería primero limpieza, división a nivel documento y luego división a nivel eh palabra. En este caso, ¿alguna pregunta hasta acá de preprocesamiento de los corpus? G. Eh, bien. Después viene la parte ya de crear los vectores. Entonces, bueno, acá eh tenemos una función colbava que nos va a ayudar a imprimir la los simplemente la reutiliza, no es necesario que que vean el detalle tanto.
+
+
+02:04:49
+
+lse posgrados: Eh, lo importante es es esta de acá. Acá es donde ustedes definen el modelo. Entonces, GSIN, como les dije, la librería GSIN ya trae la lógica de WordB ya construida. Eh, simplemente hay que eh elegir los parámetros de cómo queremos que se construyan nuestros. Entonces, entre estos parámetros pues está el inco es la frecuencia mínima para que una palabra sea incluida. Una palabra que aparece solo una vez en todo el corpus no va a tener suficiente información para que ustedes determinen cuál es su vector o su significado, ¿no? Entonces, las palabras que tienen muy pocas apariciones normalmente se pintan. Y entonces acá con este parámetro ustedes deciden cuántas veces tienen que aparecer la palabra como mínimo para que lo puedan considerar. Esto también depende del corpus. Si tienen un corpus grande, pueden darse el lujo de subir esto. El corpus es muy pequeño y le pones un min capaz que te vuelas la mitad de las palabras. Entonces, hay que tener cuidado y ajustarlo al cuerpo que elija. Luego en la parte de Windows, esta es la parte de la ventana de contexto.
+
+
+02:06:04
+
+lse posgrados: Entonces acá ustedes van a definir qué tan grande quieren que sea la ventana. Por ejemplo, en este caso de las canciones, las oraciones son cortitas. En una ventana chiquita de dos, está bien. Dos palabras antes, dos palabras después. De repente si es que tienen eh textos con frases más largas, oraciones grandes, a ver si le pueden incrementar y pueden ir probando con ventanas de contexto más altas. Eh, después está el tamaño del vector, ¿no? Como habían comentado o por ahí me habían hecho la pregunta de qué tamaño elegido. Eh, depende de del corpus. En este caso va a depender del corpus, ¿no? Si si tienen un corpus chiquito como este de canciones, no importa que le pongas 1000, probablemente igual no no vaya a performar tan bien porque no tienes tanta información para capturar, ¿no? Entonces a más grande el corpus puedes darte de incrementar la dimensionalidad. Es cuestión de ir probando e ir viendo cuáles da mejores resultados. Después está la parte del negative sampling, que es lo que vimos, ¿no?
+
+
+02:07:13
+
+lse posgrados: ¿Qué cantidad de palabras de ejemplos se pueden eh ejemplos negativos se va a a elegir de forma aleatoria cuando eh igualmente cuando el corpus es eh es grande, puedes eh tomar menos muestra porque igual vas a tener bastantes ejemplos para entrenar. Cuando el cuerpo se chiquito, puedes aumentarle el negative sample, eh, y si es que ves mucho fitting también, si hay overfitting puede servir un poco disminuirle la cantidad de de ejemplos. Eh, bueno, workers esta casi no la van a usar, es el que tiene más de un core y quieren agregarle. Y este último es para decir es que van a usar Zoow y Skim. Si es que quieren, es opcional, pueden comparar los dos y ver qué tal. En general, importante eh en cualquiera de estos parámetros es que elijan un número, vayan comparando y expliquen por qué decidieron ese número y también qué es lo que van observando, conforme van eh experimentando con con los los hiperparámetros. Pues una vez elegido estos eh eh ya con esto construyen el modelo, eh le inyectan acá el dataset y se va a construir automáticamente el vocabulario de dependiendo del corpus.
+
+
+02:08:42
+
+lse posgrados: Acá, por ejemplo, para el corpus que estamos eligiendo de Beatles tenemos 1846 palabras. Entonces, no, perdón, la cantidad de comentos y las palabras son incluso menos 445. Entonces se nota que es un cuerpo bastante chiquito. Eh, ¿alguna pregunta de los hiperparámetros de acá que son super importantes? ¿Todo bien? Genial. Ya veo, veo dos manitas. Genial. Entonces, e vamos a hacer un pequeño break para que se despejen un ratito, pero más chiquito para para no alargar mucho la clase. ¿Les parece? Hasta las 9:20 tomamos el genial. Entonces ahí nos vemos en en 9 minutos. si ya están de regreso. Ya fui corriendo todo. Sí, ya nos habíamos quedado en esta parte. Entonces, habamos dicho primero preprocesamiento del corpus, eh haces limpieza, segmentación, luego defines los hiperparámetros de el modelo que vas a usar. Ya describimos cada uno y eh simplemente le haces eh aplicas ese ese modelo primero sobre tu dataset para obtener el vocabulario y luego viene la parte del entrenamiento. Simplemente utilizas este método train, le das eh eh tú debes hacer, defines la cantidad de de epox y bueno, acá está el callback que les había dicho arriba, ¿no?
+
+
+02:21:29
+
+lse posgrados: es lo que nos ayuda a que a que se se impriman estos loss por cada una de las Entonces, entrenamos el modelo y en este caso vemos que se está disminuyendo la los eh continuamente, así que se está prendiendo. Vemos un poco. Una vez ya está entrenado, de hecho acá demoró super rápido, 3 segundos. Es un corpus chiquito igual. ¿Cómo cómo analizamos que también le ha ido al entrenamiento? Pues básicamente podemos ir comparando como habíamos hecho en la versión pasada, ¿no? Sacando palabras similares a algunas que que sean de nuestro interés y viendo cuáles son las que tienen más similitud. Entonces, este el modelo que tenemos eh ya tiene algunos métodos que nos van a ayudar a poder extraer rápidamente las palabras similares eh según la la similitud coseno. Simplemente utilizamos esta este parámetro de positive para traer palabras similares y negative para traer palabras que tengan similitud negativa, que no tengan relación. Y acá podemos seleccionar cuántas palabras traer. En este caso estamos trayendo 10. Entonces, en el caso de darling tenemos pretty, sleep, help, cry.
+
+
+02:23:00
+
+lse posgrados: Podemos ver qué tienen sentido en relación a las canciones, ¿no? Eh, parece que darle igual si están las canciones. Eh, entonces lo que van a ver va a estar muy relacionado y probablemente en este caso, como tenemos un cor chiquito, incluso sobrejustado eh al al corpus en sí. Darling, bueno, a veces van a encontrar cosas relacionadas más que todo a cómo está utilizando el artista en este caso las palabras en en su verse y darling también, ¿no? Cosas más relacionadas a cómo lo usan sus canetes. En este caso con love hemos usado negative, significa que son palabras que no tienen nada que ver, por eso es que está saliendo ya en sé números y otras palabras que no están relacionadas. Entonces, también pueden utilizar esta esta otra alternativa para ver las palabras eh no relacionadas en eso. Luego, si vemos, por ejemplo, for, vemos que en este caso sí no se ha relacionado bien y hay un clúster bastante e notorio de números y que han quedado todos cercanos en en similitud. Si ponemos for, de repente nos arroja eh una gran cantidad de números y a partir ya de la palabra siete ya se va desviando otros temas, pero al menos acá hemos identificado que las palabras si están bien eh los números, perdón, si están bien relacionadas en tres.
+
+
+02:24:33
+
+lse posgrados: Eso es algo positivo de estos que hemos entrenado. Después, bueno, en relación a Money, eh, que habla más de comprar, de can't, no poder, max, cantidad, no just, digamos que hay algunas que tienen sentido, eh, otras que no están tan relacionadas en sí. Acá lo importante es eh tratar de saber por qué, ¿no? Porque eh en algunas casos eh tiene sentido, en otras no. ¿Qué cosas nos dice sobre el dataset? Como hemos dicho desde desde el notebook pasado, el corpus e influye bastante en las relaciones que se van a encontrar. Entonces, no sé, de repente los Beatles no usan tanto la palabra money. De repente eh sirve ver cuántas veces aparece money y en qué casos ellos eh lo eh lo utilizan o a qué lo relacionan. que un cantante de repente ve la palabra mani como algo positivo, de repente otro lo va a ver más como algo negativo, uno de repente lo ve como algo que sí tiene porque habla más de temas, no sé, por ejemplo, raperos de repente usan la palabra armónica como como eh algo más positivo y y algo que que tienen y que ganan y de repente otro cantante tienen un punto de vista diferente sobre el dinero y por tanto lo refleja en sus en sus letras o en esos textos, ¿no?
+
+
+02:26:03
+
+lse posgrados: Entonces, acá lo interesante es ver esas diferencias y qué está recogiendo, qué te dice del corpus que que estás utilizando. Y acá hay otro ejemplo que es justo lo que preguntaba, ¿no? ¿Qué pasa si pones una palabra que no existe en tu corpus? Pues eso es lo que ocurre, eh, arroja rol porque no va a encontrar en la matriz ninguna palabra similar. eh va a estar fuera del índice, lo va a buscar y no no va a encontrar en el índice, en el diccionario esta palabra y por tanto no va a poder sacar, ¿ves? Si vean acá es un error de de llave, no lo encontro. Entonces el word to eh a nivel de palabra, tocen palabra no no funciona cuando hay una palabra nueva. Eh, otra cosa interesante es pueden sacar el vector completo de la palabra. Eh, acá en estas en estos métodos no era necesario usar vector porque ya lo hacían por detrás, pero pueden extraer el vector con esta función getor y con el vector pueden hacer las mismos eh analogías y aritméticas que vimos, ¿no?
+
+
+02:27:12
+
+lse posgrados: Si quieren pueden hacer divisiones, sumas y comparar analogías de palabras. pueden hacer eso o también pueden usarlo directamente para calcular eh para calcular los eh las similitudes, que al final te va a salir lo mismo. Si usas este método muy similar con la palabra, te va a salir lo mismo que si lo usas con el vector. Son dos formas de hacer lo mismo. La única diferencia es que acá también te está trayendo la palabra misma como parte de la comparación. Y bueno, en este caso cuando comparamos lo pues en este caso vemos que para los Beatles está más relacionado a P, que podría ser como intercambiable la palabra, ¿no? Alguien que amas lo llamas como los como son palabras intercambiables o sinónimas desde el punto de vista de la necesidad. Y bueno, acá ya se desvía un poco y y da otros conceptos. Entonces, la idea es que cuando ustedes hagan sus corpus también eh comparen qué palabras salen, cuáles no tienen mucho sentido, eh y vean si los resultados que están obteniendo eh les causa algo de sentido y qué críticas le podrían hacer al al modelo.
+
+
+02:28:38
+
+lse posgrados: Esta es la parte de la en los gráficos, como les había dicho, pues estamos usando Disney para reducir la la dimensionalidad. Acá eh tienen la función ya creada y abajo pueden utilizar ploty para poder eh graficar en este caso en dos dimensiones. Pueden elegir aquí cuántas palabras de eh utilizar a la vez para e para poder visualizar mejor y no llenarse de de todo el vocabulario completo. En este caso, pues el vocabulario era de 400 instantas, entonces estamos graficando la mitad de las palabras. Y la idea es que en esta parte encontremos algunos clusters interesantes y podamos concluir porque están cerca. Por ejemplo, acá un cluster que sí nos había hecho sentido antes, lo vimos arriba también era esto de los números, ¿no? Acá se viene eh one, two, three, f están juntos. Entonces, eh vemos acá también se han graficado juntos y nos hace sentido que que estén así. Por otro lado, también van a haber algunos casos bien particulares de del dataset. Por ejemplo, este, si se dan cuenta, que dice yellow yellow submarine, una canción específica.
+
+
+02:29:57
+
+lse posgrados: De repente en otros contextos no saldrían juntas las palabras, pero en En este caso, submariz probablemente la única vez que aparezca en todo este cuerpo sea junto a hielo por la canción en sí, porque no es una palabra común en canciones. Entonces, aquí aparecen casi que en la misma posición, justo por eso vemos un caso de de overfitting de de datas. Después si vemos por acá, creo que hay otro interesante, los saludos, ¿no? Hello, goodbye. Say, digamos, hay un grupito de saludos juntos. Eh, acá otra estrafa de canción, si no me equivoco, con ch the world también. Entonces, si se dan cuenta, si bien los e esta técnica de Word to te ayuda a más o menos eh sí, sí te ayuda a a caracterizar palabras que tienen sentido, por ejemplo, estas de acá o las de saludos. eh tiene sus limitantes, ¿no? Sobre todo si si el corpus es chiquito se va e va a haber un especial de overfitting a frases que se repitan mucho. Entonces, sobre todo en canciones, van a ver bastante que frases que se que se estribillos que se repitan en las canciones bastante eh van a van a aparecer juntas.
+
+
+02:31:19
+
+lse posgrados: Por ejemplo, one to hold your hand también parte de de la canción. Y en cambio, a medida que se tenga un dat más grande, es mucho más probable que ya no esté tan eh sobreajustado a a a unas canciones en particular. Eh, ¿alguna duda de acá? ¿Alguna alguno de estas le ha llamado la atención? Get get back home también otra frase. Todo bien, genial. Bien, entonces ese es un primer gráfico y luego tienen otro ejemplo eh, que es más eh 3D. También pueden usarlo si quieren. Le dan zoom y van viendo si es que encuentran algún algún cluster interesante. Eh, probablemente vean algunos repetidos de arriba. Eh, no sé si alguno que les llame la atención me avisan. Acá dice Good Jud. Acá dice he, por ejemplo, de la canción e darling, que también lo vimos arriba. Y submarin también otra vez aparece también. Sí, sí. Gracias. similares que ya hemos visto normalmente como son canciones y se repiten juntas varias veces los va a agrupar.
+
+
+02:33:10
+
+lse posgrados: Por ejemplo, acá dice carry weight tiene sentido, están relacionadas peso y y y sostener peso en sí. Eh, y bueno, entonces en este caso pues vemos hay que tiene sentido, está bastante sobreajustado, que tiene sentido que esté sobreajustado por el dat chiquito de solo 18 documentos. Entonces, la idea es que ustedes cuando lo hagan traten de probablemente con libros tengan un mejor resultado porque van a tener más ejemplos, un texto más grande. Vean si les sale mejor los resultados, vean qué relaciones encuentran y qué les dice los empeños que que obtienen del autor que están analizando. Por último, acá eh también tienen esto que es opcional. Si quieren pueden eh exportar sus embedings en dos archivos que son los vectores y los labels y pueden utilizar el mismo proyector que vimos al inicio, ¿no? Este proyector que tenía Word to que ya estaba con reducción PCA. Acá también pueden cambiarle por Disney si quieren. Estos vectores que ya vienen acá ya son precargados, pero también pueden cargar ustedes sus propios vectores. Entonces, por ejemplo, eh, que terminen.
+
+
+02:34:41
+
+lse posgrados: Pueden cambiar la forma de reducción de bidimensionalidad acá y acá pueden cambiar y cargar sus propios vectores. Entonces, cuando entren esos vectores, simplemente los dos archivos los colocan acá, los vectores y y los labeles, y van a poder visualizar. Sí, porque como es este como Disney era una variable, pues se no se visualiza también. Acá pueden jugar con esto, cargan acá y también lo pueden ayudar para analizar, lo pueden usar para analizar sus resultados. Bien, ¿alguna duda de la visualización? Todo check. Sí. Ya. Entonces, vamos a darle una leyita a la consigna. Ya he les ido adelantando varias cosas, pero básicamente eh lo que tienen que hacer es crear sus propios vectores o gens. Igual como hemos visto la plantilla de arriba. Sí, elijan su propio corpus. Eh, elijan su propio corpus para tener el puntaje completo y hagan la limpieza correspondiente al corpus que hayan elegido. pueden ver los enlaces. que ya les mostré de eh Project Gutenberg y este textas.info, o info, pueden sacar de ahí o de otros lugares.
+
+
+02:36:10
+
+lse posgrados: La idea es que no no utilicen el mismo songs dataset que está acá, sino que lo ac eh tienen que elegir términos de interés y buscar eh términos más o menos similares. Ideal unos cinco términos al menos y los buscan y los comparan igual como hemos hecho acá con love, con darling y con las otras palabras. saca tus conclusiones a ver si tiene sentido lo que sale, qué palabras no tienen tanto sentido o que cuáles de repente son más overfitting del text. Eh, de ahí tienen que hacer la reducción de dimensionalidad con el la función que ya está arriba. Pueden llevarlo a dos dimensiones o a tres dimensiones y lo graficando también los maxws para ver cuántas palabras a la vez quieren visualizar. probablemente su vocabular sea más grande si es que van a usar los libros completos. Entonces, hacen esa visualización y luego tienen que inspeccionar el gráfico y buscar pequeños grupos. Lo ideal es que encuentren algunos clusters interesantes, ¿no? Al menos tres clusters que puedan interpretar por qué los ha agrupado juntos, eh si les hace sentido o si es una limitación de del modal en sí que están que están utilizando.
+
+
+02:37:33
+
+lse posgrados: Y algo importante es que no no siempre a veces no se renderiza bien o eh como estamos usando Disney, no siempre me van a salir los mismos grupos que ustedes. Entonces, cuando vean un grupo, traten de sacarle captura de pantalla para que yo pueda visualizarlo. Le sacan el print de pantalla y lo agregan eh como acá en una cela de comentarios que lo pegan y ponen sus comentarios. Entonces, ese es el desafío dos. Eh, vuelvan a ejecutarlo con su corpus. Eh, hagan todas estas consignas y en cada una un comentario y explicación. No se olviden de comentar los hiperparámetros, eso también lo considero bastante y sus conclusiones. Sobre este este desafío todavía hay varios deditos arriba. Ya. Genial. Bien. Entonces este es el desafío dos que se presenta hoy y si no me equivoco, está el dos. uno y dos hasta el 12 para poder entregar con la nota máxima y bueno, de ahí se va descontando eh algunos puntos si se si se retrasan un poco. Ya está colgado igual la primera hasta la próxima.
+
+
+02:38:55
+
+lse posgrados: Sí, la primera es hasta el final del día del cinco, es decir, A ver, hasta que termine el día. Después de la clase pueden entregarlo si quieren de la próxima. Ah, eh, se entrega por correo, no se entrega por el sacar abrir otra vez la presentación de la vez pasada. Acá en las diapositivas que hecho ya colgué, si no me equivoco, ya las colgué. Sí. Eh, les he puesto el enlace. Recuerda que se entrega por formulario. Eso es para que los correos no se nos pierdan, porque a veces cuando cuando hay correo se se traslapan y y a veces se nos pasa algo. Entonces, más ordenado, llegan el formulario, puede ser en pareja o individual. Y acá en qué desafío es, en este caso el uno, bueno, el uno o el dos y pegan su enlace por acá, lo entregan y lo envían. en está en la presentación de la diapositiva de la primera clase también. Luego los voy a lo voy a volver a enviar por correo para que no sean de cronograma.
+
+
+02:40:15
+
+lse posgrados: ¿Alguna otra pregunta de del desafío? Ya todén me pueden editar ya. Ya. Genial. Entonces para cerrar la clase, ¿no? Bueno, temas de interés que no vamos a profundizar ahora, pero seguro les les interesa cómo entran loss, o sea, estos que estamos viendo que son clásicos versus lo que ustedes seguramente están familiarizados, que son los más actuales. Entonces, de hecho, acá van entrar más a detalle al final del curso, pero estos envenes que hemos visto hasta ahora, los de Word to back, FastX y Glow, como dijimos, si superan bastantes debilidades de las técnicas que eran más de conteo de palabras previas, ¿no? La que vimos en la clase. ¿Por qué? Porque toman en cuenta eh el los conceptos de las palabras, la semántica de la palabra. Importante relacionar mejor palabras que son sinónimas y palabras que tienen relación entre sí a nivel conceptual. Aparte el vector es denso, entonces usa mejor la dimensionalidad, ¿no? No es esparzo, es lleno de ceros. Esas dos cosas se han superado con estas técnicas que hayamos visto.
+
+
+02:41:44
+
+lse posgrados: Eh, pero lo que no se ha superado o el defecto que todavía tienen es que una palabra que tiene varios significados dependiendo del contexto va a tener solo un vector. Entonces, con las técnicas que acabamos de ver, ese vector va a mezclar conceptos probablemente no sean muy buenos para representar una palabra en diferentes contextos, como por ejemplo vimos banco, vimos el caso de Apple, de Mouse. Entonces, el estado del arte actual ya no usa eh estáticos como los que hemos visto, sino son dinámicos. ¿Y qué cambia? El modelo ya no ve palabra por palabra, ¿no? Cuando uno usa un vector estático, lo que tiene que hacer es palabra y reemplazarla por su vector. Palabra reemplazo por vector. Acá ya no es así, sino que ves la frase entera y en relación a las frases, las palabras completas, eh hay un mecanismo de atención por detrás que te seleccionan cómo se va afectando otras cómo afectan otras palabras al al significado global del texto. Entonces, e ya no hay una tabla fija de por palabras o por todo vocabulario, sino que estos enve se calculan en el momento y en relación al contexto, dependiendo de las palabras vecinas.
+
+
+02:43:13
+
+lse posgrados: Esos sons dinámicos o contexto de la enveneros, sobre todo el más conocido es ver. Si buscan de repente internet les va a salir muchos muchas variantes de ver, porque de hecho Ver es open source, eh, y muchos lo han reentrenado para casos de específicos, incluso hay hay arquitecturas basadas en ver más eh modernas y pero todas usan por detrás los Transformers, ¿no?, que usa este mecanismo de atención que define qué palabras son más importantes para definir el significado global. Entonces, esto es, digamos, la evolución de los y el siguiente paso eh que que se dio. Y algo eh interesante es que los como les había dicho, no solamente es para representar palabras, se pueden representar diferentes conceptos abstractos con los embings. Entonces, muchas veces se se usan embedings a nivel de oración, no solamente a nivel de de palabra. Entonces, en vez de eh tener un vector por cada palabra y luego de repente promediar los vectores, las palabras, puedes hacer de frente un vector de toda la oración completa. Entonces, ese vector al final lo que va a hacer es resumir el contenido de la oración o lo que la oración completa trata de eh comunicar.
+
+
+02:44:37
+
+lse posgrados: Estos se llaman sentence bence. Eh, entonces son representan el significado global de una palabra y perdón de un texto. ¿Alguien no ha escuchado por ejemplo el término R? Doc toc. Sí, algo algo como doct. Claro, partes de un de un documento y vas lo conviertes en un solo vector. A Martín, eh, sí escuchaste R o has escuchado R. Es tu editora por eso.
+Martin V: Sí, he escuchado, pero no puedo dar la definición.
+lse posgrados: Ay, González Nicolás también. Alguno que se anime, que sepa de qué trata.
+Nicolás Moguilner Reh: Es como un LM que no está entrenado por ahí con documentos propios, poder extenderlo y agregar documentación propia para poder hacer consultas como
+lse posgrados: Sí, es es darle una ayuda adicional al de información eh propia, ¿no?, de documentos. es eh básicamente no es que estés reentrenando el modelo,
+Hernando Scheidl: Hm.
+lse posgrados: sino que dentro de su ventana de contexto, o sea, insertado dentro del prom junto con el prom que le envías, le pones partes de texto de información que tú quieres que sepa el modelo para poder responder.
+
+
+02:46:06
+
+lse posgrados: Y cómo seleccionas qué párrafos y o qué partes de de información le vas a dar como input es justamente usas en base para eso, ¿no? Entonces, normalmente, por ejemplo, tú quieres un chatbot que te responda preguntas sobre eh, no sé, el la declaración de de derechos humanos y y entonces tú le das ese documento de derechos humanos como fuente de información, como base de conocimiento y esa ese texto que probablemente sea granden junto con otros de interés, lo divides en párrafos o en unidades de información y eso lo vectorizas. Entonces ahí lo que estás vectorizando no es la la palabra, sino el párrafo en sí, ¿no? Eh, entonces vectorizas el párrafo y luego comparas el vector de ese párrafo con la pregunta que te está haciendo tu usuario. Lo comparas y y traes los párrafos más cercanos a la pregunta y esos son los que le pones al al modelo, al LLM dentro de su de su prom, ¿no?, de la ventana de contexto. y por tanto le das un poco más de información para que pueda responder correctamente un tema particular.
+
+
+02:47:25
+
+lse posgrados: Entonces es un tipo de uso que se le da a los envenis, pero ya a nivel de oración. Ahí por ahí Martín me pregunta si hacemos, ¿no? En esta materia vemos nada más a nivel modelo, o sea, van a entender eh cómo se crean las LLMs a nivel conceptual eh y hasta Transformers. Sí. van a llegar Transformers, mecanismos de tensión y el LMS. No, no, no llegamos acá a ver lo que hay alrededor, pero sí en la materia dos. De hecho, si llevan la especialización, lo pueden llevar como como como opcional, ¿no? Procesamiento de lenguaje dos, me parece que sí lo lo introduce. Bueno, entonces esa es una forma de usarlo y es también en mediance, pero a nivel operación. Otro tema interesante de Bedis en sí es los multimodales. De hecho, eh como les dije en no solo para palabras, también se puede usar para para imágenes. ¿Y qué creen que pasa cuando tú llevas una palabra y una imagen al mismo espacio vectorial? O sea, un mismo espacio de latent.
+
+
+02:48:45
+
+lse posgrados: ¿Para qué crees que se pueda usar? es que tienes un mismo un espacio latente en común para imágenes y texto.
+Hernando Scheidl: y para las dos cosas, generar imágenes con o buscar imágenes contexto y explicar qué es lo que hay, describir qué es lo que hay una imagen al revés.
+lse posgrados: Claro. Sí, genial. Puedes ir de si lo llevas un espacio común, puedes ir de texto a imagen de imagen a texto, ¿no? Puedes comparar las dos y ir de un tipo de de documento a otro, ¿no? Porque ya tienes como un puente entre ambos tipos de de input. Eh, de hecho, esto este puente, digamos, este mapa para ambos tipos lo construyó Peni con su modelo CL y lo que hizo fue eh tenía un dataset grande de imágenes con sus descripciones. Entonces, por ejemplo, tenías imágenes de perritos y en las descripciones decían perrito de color marrón, de tal raza y eso hicieron para entrenar un un modelo eh un modelo con con Transformers que que aprenda a poder vectorizar tanto las palabras como las imágenes en un mismo espacio, ¿no?
+
+
+02:50:03
+
+lse posgrados: Se entrenaron en conjunto para que las dimensiones que se aprendan de los dos estén relacionadas. Entonces, ¿esto qué hace? que esto ayuda a que puedan surgir estos modelos también de generación de imágenes porque les das texto como input y te arroja eh imagen, ¿no? o también los LMS, los modelos multimodales que puedes darle tanto imágenes como tu pregunta que es texto, puedes darle los dos de input para que te devuelva una respuesta en base a Entonces también existen estos envies eh multimodales que llegan diferentes inputs a un mismo espacio vectorial y aplicaciones interesantes. Las medos, ¿no? Ya vimos el tema de los RACs, que es para buscar información. Los buscadores también aplican un mismo algo similar, ¿no? La búsqueda lo que le pongas en la cajita de texto que quieres buscar, eh se vectoriza y busca en las páginas eh contenido similar también en base a similitud de vectores. Luego para recomendaciones, ¿no? Si tú tienes un embeding de, por ejemplo, libros que le gusta a una persona, puedes hacer comparación versus otros libros que no ha leído y traerle los libros que se podría asemejar a sus gustos en base a a similitud de vectores. Y por otro lado es la, ¿no? Los los LLMs usan edings eh e para poder procesar el texto eh para responder las preguntas que que les damos a través de sus interfaces de chat. Entonces tien muchas muchas aplicaciones diferentes. ¿Alguna duda más? Esta es la última. Sí. ¿Alguna pregunta antes de acabar? Todo bien. Ya. Genial. Entonces, eso sería de la clase de hoy. Si tienen alguna duda de los desafíos del contenido, igual me escriben. Y ya nos vemos la próxima semana. Gracias, chicos.
+Nicolás Moguilner Reh: Muchas gracias. Buenas noches. Yeah.
+lse posgrados: Nos vemos.
+Hernando Scheidl: Ciao.
+Jeraldinne Molleda: Gracias.
+Hernando Scheidl: No.
+Martin V: Adiós. No.
+Jeraldinne Molleda: M.
+lse posgrados: That's
+Rodolfo Di Chiazza: Gracias. M.
+
+
+La transcripción finalizó después de 04:00:35
+
+Esta transcripción editable se generó por computadora y puede contener errores. Los usuarios también pueden cambiar el texto después de que se cree.
