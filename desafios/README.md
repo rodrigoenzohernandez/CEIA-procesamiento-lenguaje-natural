@@ -5,24 +5,28 @@ Cuatro desafíos de código, individuales o en pareja. La nota de la materia es 
 | # | Tema | Se presenta | Nota 10 hasta | Consigna | Estado |
 |---|------|-------------|---------------|----------|--------|
 | 1 | Vectorización de texto | Clase 1 (22/10) | Jueves 05/11 (clase 3) | [01-vectorizacion](01-vectorizacion/README.md) | Resuelto, falta entregar |
-| 2 | Word embeddings | Clase 2 (29/10) | Jueves 12/11 (clase 4) | [02-word-embeddings](02-word-embeddings/README.md) | Pendiente |
-| 3 | Generación de secuencias | Clase 4 (12/11) | Jueves 26/11 (clase 6) | | |
+| 2 | Word embeddings | Clase 2 (29/10) | Jueves 12/11 (clase 4) | [02-word-embeddings](02-word-embeddings/README.md) | Resuelto, falta entregar |
+| 3 | Generación de secuencias (modelo por caracteres) | Clase 4 (12/11) | Jueves 26/11 (clase 6) | [03-modelo-lenguaje-caracteres](03-modelo-lenguaje-caracteres/README.md) | Resuelto, falta entregar |
 | 4 | Modelos seq2seq | Clase 6 (26/11) | Jueves 10/12 (clase 8) | | |
 
 ## Nota máxima según la fecha de entrega
 
-![Tabla de notas máximas por clase de entrega](../clases/01-introduccion-vectorizacion/img/slide-06-evaluacion-desafios.jpg)
+![Nota máxima de cada desafío según la semana de entrega](img/notas-maximas-por-semana.png)
 
-*Slide 6 de la clase 1.* Cuenta hasta la última hora (hora argentina) del jueves de cada clase:
+*Tabla de la docente con las fechas de cada semana. Tiene los mismos valores que la [slide 6 de la clase 1](../clases/01-introduccion-vectorizacion/img/slide-06-evaluacion-desafios.jpg).* Cada semana va de lunes a jueves y cuenta hasta la última hora (hora argentina) del jueves, que es el día de clase:
 
-| Entregado hasta la clase… | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
-|---|---|---|---|---|---|---|---|---|
-| Desafío 1 | 10 | 10 | 10 | 9 | 9 | 8 | 7 | 6 |
-| Desafío 2 | | 10 | 10 | 10 | 9 | 9 | 8 | 7 |
-| Desafío 3 | | | | 10 | 10 | 10 | 9 | 8 |
-| Desafío 4 | | | | | | 10 | 10 | 10 |
+| Semana | De lunes a jueves | Desafío 1 | Desafío 2 | Desafío 3 | Desafío 4 |
+|---|---|---|---|---|---|
+| 1 | 19/10 al 22/10 | 10 | | | |
+| 2 | 26/10 al 29/10 | 10 | 10 | | |
+| 3 | 02/11 al 05/11 | 10 | 10 | | |
+| 4 | 09/11 al 12/11 | 9 | 10 | 10 | |
+| 5 | 16/11 al 19/11 | 9 | 9 | 10 | |
+| 6 | 23/11 al 26/11 | 8 | 9 | 10 | 10 |
+| 7 | 30/11 al 03/12 | 7 | 8 | 9 | 10 |
+| 8 | 07/12 al 10/12 | 6 | 7 | 8 | 10 |
 
-En clase se dijo "un punto menos por semana de atraso"; la tabla es más generosa en algunas semanas. La última fecha para entregar todo es el jueves de la clase 8.
+En clase se dijo "un punto menos por semana de atraso"; la tabla es más generosa en algunas semanas. La última fecha para entregar todo es el jueves 10/12 (clase 8).
 
 ## Cómo se entregan
 

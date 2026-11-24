@@ -1,0 +1,707 @@
+nov 12, 2026
+Procesamiento del Lenguaje Natural I (4/8) - a264b26 - Transcripción
+00:00:05
+
+lse posgrados: Hola, ¿qué tal? Buenas tardes. ¿Se me escucha bien?
+Vicky: Hola, profe.
+lse posgrados: Ya,
+Vicky: Sí.
+lse posgrados: Genial,
+Nicolas Lastra: Sí.
+lse posgrados: genial. Perdón la demora que tenía un problema para entrar. No sé por qué no cargaba de mi trabajo se cayó Microsoft Outlock y otros, así que demme un segundo y empezamos en en unos 2 minutos. Ya listo. Estoy compartiendo un segundo. Ya, genial. Entonces, comenzamos la clase de hoy. Eh, como les había adelantado la vez pasada, eh, vamos a utilizar un poco lo que hemos visto en las últimas tres clases, más la última, la tercera. Eh, y vamos a usar esas arquitecturas que hemos aprendido, las arquitecturas recurrentes, tanto la RN simple, la LCTM y, bueno, también la RU para poder hacer un modelo de lenguaje. Y ahora vamos a a revisar en qué consiste un modelo de lenguaje en sí. E, pero antes hagamos un pequeño repaso de lo que vimos la clase pasada. Segundo, voy a voy a poner el otro lado.
+
+
+00:04:01
+
+lse posgrados: Ya, listo. Habíamos visto primero las redes neuronales recurrentes. ¿Se acuerdan para qué tipo de problema sirven estas redes? ¿En qué caso se utilizan? Es decir,
+Gonzalo Rodriguez: para serie de tiempo,
+lse posgrados: ¿qué qué característica tienen los datos?
+Gonzalo Rodriguez: o sea, el tiempo importa,
+lse posgrados: Sí,
+Gonzalo Rodriguez: diramos, o sea, la secuencia de cómo van entrando los datos.
+lse posgrados: sí, tal cual. Ahí Gonzalo respondió también en el chat. Emiliano dice secuenciales. Tal cual. Estas redes se utilizan para eh tomar en cuenta el orden de los inputs, de los elementos de una secuencia y analizarlo según ese orden y poder e ya sea predecir el siguiente elemento de la secuencia o de repente clasificar la secuencia completa, pero siempre tomando en cuenta el orden. Entonces, por eso son tan interesantes y diferentes a otras arquitecturas de redes neuronales, ¿no? que está así eh toman en cuenta el orden y según eso van construyendo una memoria. Y lo interesante es que como tiene una matriz fija eh que se va utilizando se en cada elemento, en verdad podrías procesar una serie de secuencias de tamaños diferentes, ¿no?
+
+
+00:05:31
+
+lse posgrados: No no es necesario una una secuencia fija eh para este tipo de de arquitecturas. eh algunos problemas de secuencia que mencionamos, pues eh fue el tema de los bots, que es lo que está de moda ahora, es tener un chat con el que puedas conversar y simula te responde preguntas, incluso esto ha evolucionado agentes que son chats que aparte pueden razonar y ejecutar acciones. Eh, está temas de name entity recognition, que es básicamente asignarle una etiqueta o una palabra en específico dentro de un texto. Puede ser para eh detectar tipos eh a qué clases pertenece una palabra, ya sea por ejemplo personas, lugares, fechas, montos, entre otras cosas. O también se puede paguear las palabras según su e al grupo gramatical al que pertenece. Luego vimos también que se puede usar para traducir idiomas, que también está dentro de del tema del lenguaje, speech to text, que es partir de eh una secuencia de frecuencias que sería el audio y según eso eh convertirlo a texto digital. Luego vimos series temporales, o sea, no sé, temperatura a lo largo del tiempo o ventas.
+
+
+00:07:08
+
+lse posgrados: o cualquier otra métrica a lo largo del tiempo. Y por último, también hay secuencias en dos dimensiones como las imágenes que también pueden ser abordadas con con RNS. Entonces, todas estas tienes tienen esta característica de que se debe mantener el orden, porque el orden importa para resolver estas tareas. y que vimos sobre eh cómo se hace el cálculo e o cómo funciona por dentro estas estas redes. Eh, básicamente tienen una celda llamada la celda del hacen la combinación de la información que viene de del elemento de la secuencia en ese momento, en el momento T y reciben también como input eh la memoria, ¿no? memoria interna, que es este H, que se va actualizando con cada uno de los de los X de los elementos. Entonces, en cada uno de los puntos en el tiempo se se obtiene el elemento de de ese de ese momento o ese orden y se trae la memoria del momento anterior y con esos dos inputs se combina, ¿no? Se tienen dos matrices de pesos, que son los parámetros entrenables de nuestra red que van a e van a procesar la información tanto de la memoria interna como del del e del elemento en este momento del X. Se van a combinar como en una combinación lineal con un bias y luego se le se le aplica una función de activación.
+
+
+00:08:42
+
+lse posgrados: Con eso se obtiene una nueva memoria y esa nueva memoria a la vez es el es el output de de esta celda y esto se repite por cada elemento de la secuencia. Yeah. Eh, por eso esta representación compacta. Ahora, eh habíamos visto un problema de este tipo de redes que eh como tienen una dimensión extra, es decir, la una red neuronal que usa este tipo de de celdas, no solamente tiene profundidad a nivel de capa, sino también tiene profundidad a nivel de del tiempo, es decir, de qué tan larga sea la secuencia. por cada X que se procesa, pues toda esa dimensión eh de cantidad de elementos de la serie es un nivel de profundidad extra por el cual se tiene que pasar de back propagation. Entonces, eso puede generar eh explosión de gradientes o también van gradients, sobre todo el tema de vanishing gradient es el el más eh difícil de manejar porque para el otro puedes ponerle simplemente un tope, ¿no? Y van por otro lado no se puede manejar de esa manera. Entonces, una forma de poder eh evitar que eh la gradiente se se desvanezca y a la vez también evitar que se olvide la información de los primeros elementos de la serie era crear una nueva arquitectura que tenga una memoria a largo plazo.
+
+
+00:10:23
+
+lse posgrados: Digamos, la arquitectura anterior tenía este problema de olvido porque usaba una sola memoria que se iba afectando por el eh por la multiplicación de gradientes y la multiplicación también en en el paso forward de de los pesos. Entonces, lo que se decidió hacer fue eh crear una memoria a largo plazo que sí eh mantenga información del inicio que sea relevante para el atario. Entonces, por eso se creó la LCTM, que es la Long Shorterm memories. Como habíamos visto, esta LCTM existía desde 1997, pero se hizo más popular recién en 2014, cuando era en el estado del arte para problemas de de texto antes de que lleguen los Transformers, que las destronaron por completo. Pero en su momento estas restoronaron las RNN por este beneficio de eh de poder mantener información del inicio y poder eh evitar el vanishing greatness. Entonces, eh, ¿cómo funciona el LCTM? Pues vimos que tiene un nuevo componente que era la memoria largo plazo y esta se va actualizando segúnas compuertas. se tiene una compuerta que decide eh cuánto de la información nueva del input se va eh perdón, cuánto de la información de la memoria interna se va a mantener.
+
+
+00:11:52
+
+lse posgrados: de luego otra e cuánto de la de la información de la memoria anterior se va a olvidar de la memoria a largo plazo. Y también eh existe una comport al input nuevo. Y por último, la de output, que eh decide qué parte de la memoria nueva que se vaya a calcular la CT se va a tomar como output de esta celda. Entonces, eh se calculan, sobre todo estas tres compuertas tienen pesos que te deciden qué información se mantiene, qué información se resetea. Y eh gracias a estos pesos, pues se se combina la memoria antigua, la del t -1, con la memoria del t actual y se genera la eh la memoria final de largo plazo, que es la que se va a pasar al siguiente al siguiente punto, ¿no? Y por último, estos pasos de acá del output es el que te genera la nueva memoria de corto plazo. Entonces, al final terminas con dos memorias, de corto y de largo plazo. Ahora, lo interesante que habíamos dicho es que esta memoria de larga plaza tiene este camino que simplemente es una combinación aritmética y no pasa por ninguna función de activación directamente y no es no es e no está afectada por el preparation ni por eh, sí, sobre todo de preparation que puede causar el desvanecimiento de gradientes.
+
+
+00:13:30
+
+lse posgrados: Entonces, este paso, este camino que tiene el C para poder ir de una celda a otra de forma más limpia es la que deja que esta información viaje como un skip de un de un de una capa de de la red a otra. Salta de de una capa a otra de forma más limpia y por tanto esta información que viene desde antes, desde el inicio, se puede mantener hasta el final de del análisis de la secuencia. Entonces, eh digamos que esto fue la mejora que se introdujo y es la que vimos también en los ejemplos que hace que este tipo de redes eh performen mejor en series más largas, ¿no? Vimos un ejemplo de suma de una serie de 50 elementos, ¿se acuerdan? Que estaba llena de ruido de elementos que no servían. Solamente se tenía que sumar dos. En ese ejemplo que vimos, la RN eh a medida que le aumentaba los elementos del de la secuencia eh performaba eh mal y esta eh sí le ganaba en en el valor final de la suma de los dos números, ¿no?
+
+
+00:14:45
+
+lse posgrados: Entonces esta es la mejora. Y la última, eh, bueno, acá está la comparación, ¿no?, de las cuatro celdas, vernos. eh de la RNM. Y por último, vimos una última red que de hecho en el ejemplo que vimos la clase pasada incluso le ganó la LSM que es el GRU, que eh es un poco más eficiente en el sentido de que no no usa una nueva memoria, sino que reutiliza el mismo H, solamente que e le da este camino directo eh utilizando compuertas igual que la LSTM, ¿no? Entonces, el mismo H e se se multiplica con la información o se combina con la información nueva y se mantiene parte de la información previa utilizando estas compuertas, ¿no? Se hace una combinación eh también de eh suma producto prácticamente entre la información nueva y la información anterior y con esto se crea la H. Entonces, en cierta forma es parecido a la LCSTM, solamente que eh se reutiliza, por ejemplo, esta comporta de update. E los mismos pesos de acá se utilizan para definir eh cuánto va a quedar de la memoria anterior y cuánto se va a agregar de la memoria nueva, ¿no?
+
+
+00:16:07
+
+lse posgrados: La H sombrerito. Entonces se reutiliza esta comporta y bueno, también se tiene e eh la compu reseteo que determina cuánto de la información nueva del input se va a utilizar para el cálculo de del H sombro. Entonces es parecido a la LST en el sentido de que usa comportas, solamente que acá nada más usa tres y eh no ya no uso dos memorias, sino que se queda nada más con una memoria, pero tiene el mismo camino el eh de paso de información libre con solo multiplicación y suma que hace que eh esta información de la memoria se pase de un eh de una capa a otra de forma más libre, ¿no? Y no se pierda la información. Entonces, ese es un resumen de lo que vimos. Eh, no sé si tienen dudas o algo no quedó claro de la clase pasada, igual aprovechen antes de comenzar el nuevo tema. Ahí dejo espacio a a preguntas o si está todo bien, pues me pone un dedito arriba. Genial Carlos, ya veo varios deditos, así que eh continuamos. Entonces, en resumen, pues vamos a utilizar estos tres tipos de arquitecturas, ¿no?
+
+
+00:17:44
+
+lse posgrados: La RN simple, que es una una sola celda de combinación lineal. Eh, luego la LCTM que tiene estas eh cuatro subsceldas, por así decirlo, y la Jer tiene estas tres de acá y las vamos a comparar y aplicar específicamente para este problema de predicción de texto. Es un modelo de lenguaje eh inicial, uno chiquito. Entonces, ya habíamos visto esta lámina, de hecho, la clase pasada y la idea acá es e entender o lo que el modelo tiene que hacer es llegar a entender la estructura de lenguaje. Entonces tiene que comprender de forma estadística qué palabras van juntas, que qué es lo normal que eh cómo normalmente se combinan las palabras para generar eh secuencias con sentido y cómo se ve esto e bueno, ¿qué es lo que tiene que modelar en sí en nivel eh matemático? pues básicamente es la probabilidad del siguiente elemento dados todos los elementos anteriores, ¿no? Eh, se ve estas probabilidades y según según esa probabilidad se elige la palabra eh que va a continuar. Ya habíamos hablado que esta tarea es la que hacen los large language models, ¿no?
+
+
+00:19:05
+
+lse posgrados: Los que utilizamos ahora. Ahorita no vamos a crear un modelo grande, o sea, no un large, vamos a crear uno chiquito, que obviamente no va a ser tan bueno porque tampoco tenemos GPUs tan grandes y estamos haciendo una arquitectura anterior a los Transformers, pero el objetivo es el mismo. Este esta idea de de tratar de de modelar de lenguaje de forma estadística es el mismo que usan los LLMs. Y la tarea que hacen loss también es la misma, ¿no? Tratan de aprender a predecir la siguiente palabra. Entonces, si bien la arquitectura por detrás es diferente, la tarea, el objetivo, todo incluso el preprocesamiento de información es bastante parecido a lo que hace un Ll actualmente. Entonces, le va a servir bastante para entender por qué a veces los elementos se comportan de una forma u otra. Eh, y algo que habíamos hablado, por ejemplo, es esto que lo que en verdad hace modelo de lenguaje es ir generando token por token, ¿no? un L no razona al final, sino que simplemente está generando token por token que simula una oración de razonamiento, pero no es que su proceso por detrás sea razonable, sino que simplemente generar lenguaje y e imitar de alguna manera el oraciones que son razonamientos eh como si fuera un humano que a la larga al final sirve O hay muchas técnicas que sirven porque el texto que el mismo Len va generando le sirve como input para los siguientes
+
+
+00:20:49
+
+lse posgrados: pasos, ¿no? Entonces, cuando un elm va generando palabra por palabra condición las siguientes palabras que va a ir eh dando y por tanto si hace un razonamiento, si hay razonamiento condición a la a la respuesta final del modelo. Entonces es por eso que a pesar de que generamos palabra por palabra al final termina eh siendo más o menos un símil de razonamiento cuando lo vemos en la práctica. Eh, ¿alguna duda o curiosidad que tengan sobre este concepto de de generar palabra por palabra y bueno, la probabilidad eh de las secuencias? No sé si han notado la pregunta de la clase pasada, pero fácil ahora que que ya pasó una semana, se han puesto a notar como los celulares van generando token por token y eso condiciona un poco lo respuesta que dan. Igual si Carlos.
+CARLOS AGUSTIN BERDAGUER: Incluso, incluso es lo que o a mi parecer es lo que va haciendo que vaya haciendo esas respuestas que después te termina pidiendo disculpas porque te siguió el hilo a vos dándote la razón con algo. Le dijiste, "No, esto está mal." Dice,
+
+
+00:22:07
+
+CARLOS AGUSTIN BERDAGUER: "No, tenes razón." Disculpá.
+lse posgrados: Sí, sí, sí. Y de hecho, eso sí pasa bastante. No sé si les ha pasado que le corriges, también me ha pasado que le corriges y al inicio te comienza a decir, "No, no es así porque tal, tal, tal." Y al final va cambiando su su respuesta y se termina disculpando,
+CARLOS AGUSTIN BERDAGUER: Ahora,
+lse posgrados: ¿no?
+Matias Leonardo Coulougian: Yeah.
+CARLOS AGUSTIN BERDAGUER: esos sonos que también suceden con modelos más complejos como Transformers o más avanzados. M.
+lse posgrados: Sí. O sea, de hecho, mi experiencia es que sí he pasado con los GPTs desde antes. Ahora que ya salió Pus Fable, Sol y todos estos gigantes modelos, pasa menos, pero no diría que se ha eliminado por completo. De hecho, algo que he notado último en los GPT, no sé si les ha pasado, pero cada vez que comienzan a hablar dicen sí, como que le pregunto cualquier cosa, no sé, eh, ¿en qué acción puedo invertir? Y me dice, sí, punto. Las acciones que las que puedes invertir son tal.
+
+
+00:23:07
+
+lse posgrados: Es como que su
+CARLOS AGUSTIN BERDAGUER: Yo a lo que me refería, el principio de los modelos más avanzados es el mismo que estos que estos secuenciales
+lse posgrados: Ah,
+CARLOS AGUSTIN BERDAGUER: y por eso es que tien los mismos.
+lse posgrados: ah, okay,
+CARLOS AGUSTIN BERDAGUER: M.
+lse posgrados: okay. Sí, sí, sí, sí. O sea, los modelos han sido preentrenados para generar el siguiente toque. Entonces, la tarea es la misma y lo que hacen es generar probabilidades de palabras, ¿no? Entonces, eso es igual. Lo único que ha cambiado en los modelos más recientes es que luego de entrenarlos para generar la siguiente palabra, les hacen otro un segundo paso de entrenamiento que es con reinformant learning, ¿no? aprendizaje por reforzamiento y ahí les hacen como un una segunda iteración de entrenamiento en las que les dan tareas y según si hacen bien tarea o no se van calibrando. Eso ya es como un paso adicional que han tenido los modelos que usamos ahora y sobre todo por eso ha mejorado mucho en matemáticas y en programación porque con reforming learning con con el reforzamiento en esos campos en específico es mucho más fácil medir si hacen bien la tarea.
+
+
+00:24:21
+
+lse posgrados: O sea, una fórmula de matemática se puede comprobar rápidamente y un un un código mal hecho, bien hecho, se puede comprobar fácilmente compilando, ¿no? Entonces, y haciendo tests. Entonces, por eso que se han vuelto tan buenos en esas tareas, pero no ha sido por esta etapa de de preentrenamiento de del lenguaje, sino ha sido por una etapa posterior. Así que es es la diferencia. Pero por detrás sigue siendo un modelo de lenguaje que que va generando token por toquen. La única diferencia es que sus pesos los han ido ajustando para que puedan hacer mejor las otras tareas. Sí, ¿alguna otra duda? Creo que por ahí alguien quería comentar. Matías, creo. No, no vi bien.
+Matias Leonardo Coulougian: No, no iba a comentar de eso que estaban hablando, que que se autocorrige en la misma el mismo misma respuesta. Empieza a decir algo y después se corrige al final del la respuesta. Me pasó con modelos nuevos actuales con Cloud Opus,
+lse posgrados: Sí, tal cual.
+Matias Leonardo Coulougian: por ejemplo, pero sí no es tan común ya.
+
+
+00:25:30
+
+Matias Leonardo Coulougian: Yeah.
+lse posgrados: Sí, sí, tal cual. Y y eso es lo que les decía la clase pasada, ¿no? O sea, si le haces una pregunta de sí o no, te va a responder la que le dé más probabilidad. Probablemente sea sí, porque sí tiene más probabilidad que el no. y te va a comenzar diciendo que sí luego va a comenzar a dar su justificación y si esa justificación resulta que era lo contrario, se era no, probablemente se termine disculpando. Entonces eso ocurre bastante con los módules, pero lo importante es entender por qué, ¿no? eligen palabra por palabra y a medida que van generando más texto, pues tienen más información o más de estos elementos previos de la secuencia para poder decidir mejor. Entonces, por eso al final terminan eh corrigiéndose y probablemente la corrección sea lo correcto. Sí. Entonces, eh esta es la tarea que vamos a intentar hacer con estos arquitecturas antiguas y ya luego cuando vean la parte de Transformers pueden si quieren probar reemplazando las arquitecturas y viendo qué tal es. Pero al menos para esta clase vamos a comenzar viéndolas con las eh RNES.
+
+
+00:26:46
+
+lse posgrados: Entonces, eh dado que este es el problema que queremos solucionar eh antes incluso de del modelo lo que tenemos que hacer es dejar la la data lista, el corpus de información. Entonces, e lo primero que se tiene que hacer es nosotros tenemos un corpus grande de texto, ¿no? Tenemos puede ser libros, artículos y una combinación de de cosas. Lo primero que se tiene que hacer es segmentar el corpus y dividirlo en eh documentos específicos, ¿no? Lo más probable eh sería, no sé, frases o o partes más chiquitas eh del corpus. Esa sería la segmentación del texto en sí. Después se tiene que tocenizar qué es lo que habíamos hablado, ¿no? La los documentos o las palabras o oraciones se dividen en en las unidades mínimas que vamos a usar en nuestro modelo. Y acá habíamos hablado también que hay eh diferentes formas, ¿no? Hay desde a nivel palabra hasta llevarlo a nivel carácter incluso puntos intermedios, ¿no? las que son enegramas de caracteres, ni palabras completas ni caracteres únicos, sino combinaciones de caracteres.
+
+
+00:28:06
+
+lse posgrados: Entonces, esa parte, esta sería, digamos, las decisiones de tocenización serían en esta en esta parte y una vez que se tienen las divisiones, ya se reemplazan los caracteres o palabras por identificadores noos. Después, eh una vez que ya se tienen todas las separaciones, se eh tiene que definir una ventana de contexto y según esa ventana se va modificando la la longitud de la secuencia, ya sea truncando porque son secuencias muy largas o agregando padding porque son secuencias más chiquitas. Y el entre estos pasos se pueden también hacer aumentado de datos. Así que este detalle lo vamos a ver ahora en las siguientes láminas. Entonces, entramos a cada uno. Eh, la primera parte, bueno, entre la segmentación y la tokenización, pues en segmentación va desde dividir el cuerpo gigante a documentos y también eh dividirlo en los elementos específicos de eh los elementos unitarios de que vamos a utilizar, ¿no?, ya sea a nivel palabra, a nivel carácter o nigrama, es lo que se decide. Y finalmente, eh una vez ya tenemos las unidades, como les comentaba, se reemplaza por un identificador en específico.
+
+
+00:29:24
+
+lse posgrados: Acá eh ya está toquenizado, digamos, nuestro nuestro documento. Y estos identificadores son eh iguales para eh elementos iguales, ¿no? Por ejemplo, esta palabra va a tener este carácter siempre, no importa en qué secuencia o documento aparezca, tiene que tener el mismo identificado. ¿Alguna duda de tokenización? Ya lo habíamos visto. antes, pero si tienen dudas me avisan. Ya, si no hay dudas continúo. Eh, después está la ventana de contexto. Hay alguno ha escuchado este concepto o lo ha usado o ha visto su efecto o ha tenido alguna mala experiencia con esto usando los modelos. Matías dice que sí.
+Matias Leonardo Coulougian: que crece más más caro cada cada iteración, cada turn de la conversación y también se puede perder más si tiene un contexto cada vez más grande. Yeah.
+lse posgrados: Ajá. Sí. Es decir, el contexto, digamos, son la cantidad de tokens que recibe eh que recibe el modelo, ¿no? Pero, o sea, una cosa es el contexto que recibe en cada paso de diferencia que hacen y otra cosa es la ventana, que es un es una característica del modelo en sí, o sea, la ventana máxima de contexto.
+
+
+00:31:03
+
+lse posgrados: Entonces, no sé si se han fijado que cuando uno elige un modelo de lenguaje está entre sus características la ventana y puede comparar según eso el modelo que que quiere elegir. No sé si lo han visto cuando cuando han averiguado sobre GPT, sobre Gemini y los otros.
+CARLOS AGUSTIN BERDAGUER: Perdón, eh cuando iba a preguntar en aprendizaje profundo habían diseñando redes recurrentes, teníamos el parámetro en la librería de P torch en RN, había un parámetro que era el tamaño de la ventana.
+lse posgrados: Ajá.
+CARLOS AGUSTIN BERDAGUER: ¿Es eso lo que está hablando?
+lse posgrados: Sí, sí, sí. Tal cual.
+CARLOS AGUSTIN BERDAGUER: M.
+lse posgrados: Eh, es eso y también les voy a mostrar en los LLMs es algo importante que uno tiene que que fijarse. A ver, denme un segundo, les voy a mostrar cómo cómo sale. Eh, conta, no. Estoy buscando en internet en un segundo la tablita de comparación de los modelos. E a creo que salía rápido en la en la ventana Gooding. Pero ya no la veo. Ah, ahí está.
+
+
+00:32:55
+
+lse posgrados: Ahí creo que es este. Eh, eh, les comparto ahora sí. Ya se ve mi pantalla. Sí, no, ya. Eh, si ven o no sé si se han percatado, pero cuando uno elige con qué modelo de lenguaje trabaja, normalmente es una serie de características. Acá estoy entrando a a Open AI. Entonces, los que ya están un poco al tanto sabrán que los últimos modelos de PNI tienen como esta clasificación basada en astros, ¿no? El modelo más chiquito se llama Luna y el más capaz, el más grande es Astro. Pero aparte el tamaño del modelo y el costo que también varía mucho en input de tokens, eh uno normalmente cuando elige un modelo, pues eh tiene un costo por los tokens de entrada, es decir, lo que lo que uno le da en el prom, tanto en el system prom, todo se suma y te da la cantidad de tokens y por millón te cobran por millón de tokens, ¿no? de input y también te cobran por millón de tokens de output, es decir, cuánto texto va a generar el modelo, pero existen otros otras consideraciones.
+
+
+00:34:19
+
+lse posgrados: Y acá está el que les decía, ¿no? El de contextwin, este de acá. Ahí como dijo, no me acuerdo quién, creo que Carlos lo mencionó, es un parámetro cuando uno está entrenando el modelo. Entonces, cuando uno entrena el modelo, eh cuando uno entrena el modelo e es algo que decide, ¿no? Uno decide eh la ventana de contexto que que va a usar, pero cuando uno está seleccionando el modelo es una característica ya dada, ¿no? Porque acá la Open AI decidió qué ventana darle y según eso lo entrenó. Entonces, para uno que ya quiere usar un modelo entrenado, es una característica dada del modelo que va a usar. Y en este caso ya tenemos un millón, un poco más de un millón de de tokens de de ventana de contexto. ¿Qué significa? ¿Alguno sabe qué significa esto? el millón o qué limitación da alguno que yo haya usado por ahí los LLMs antes, de hecho, los modelos, por ejemplo, GPT3, si no me equivoco, su ventana era chiquita, era 125000, algo así y había bastantes problemas con la ventana de contexto.
+
+
+00:35:37
+
+lse posgrados: No sé si alguno lo ha sufrido por ahí, ¿saben?
+CARLOS AGUSTIN BERDAGUER: Eso es cuenta Đ
+Nicolás Moguilner Reh: lo que puede ir recordando de la conversación,
+lse posgrados: Yo creo
+Nicolás Moguilner Reh: eh, o o por ejemplo en cloud,
+lse posgrados: sí.
+Nicolás Moguilner Reh: si querés cargar skills o en CP, todo eso te va ocupando ventana de contexto. también hasta un punto que creo que te lo te lo achica y hace como un rag de eso para para evitar que se colapse.
+lse posgrados: Sí, sí, tal cual. Es decir, la ventana de contexto es, digamos, como la el espacio que tiene el modelo para procesar texto, el espacio máximo que tiene. Piénsalo como una cajita donde vas metiendo todo el texto que quieres procesar y si se llena ya no va a procesar más, ¿no? O sea, va a tomar nada más lo que entra. Entonces, cuando esto era bien chiquito, h los modelos GPT, incluso los otros solo llegaban a 125,000 tokens. E si le dabas, por ejemplo, un PDF grande, no sé, 50 páginas, no entraba todo el PDF.
+
+
+00:36:38
+
+lse posgrados: Entonces, o te daba un error o peor, no te decía nada y procesaba lo que le entraba, es decir, las primeras hojas nada más. Y cuando te respondía, te respondía mal si es que la información estaba al final del PDF, ¿no? Porque no lo había leído en verdad. Y eso ocurría porque la ventana de contexto no alcanzaba para meter el PDF completo. Entonces, el modelo no podía procesar toda la información. Ahora las ventanas son supergres y de hecho ya la mayoría de cosas se pueden procesar. Sí, hay cosas que no entran en un millón. Entonces, por ejemplo, una vez trata de meter un vídeo de 3 horas, no entra en un millón de tokens. En ese caso, uno tiene que tratar de dividir la información, o resumirla pasos previos para poder meterla ahí y que el modelo lo procese. Y como ahí mencionó Nicolás, ahora uno lo siente menos porque en conversaciones largas ya por detrás hay un eh estos servicios que te dan de chats de de cloud, de open a ya tienen por detrás procesos que resumen la conversación o traen solamente la información relevante de la de las interacciones pasadas.
+
+
+00:37:50
+
+lse posgrados: Entonces, a medida que va avanzando la conversación, va resumiendo y achicando. Entonces, ya lo han automatizado, digamos, el manejo de la ventana, cosa que el usuario no lo siente, ¿no? Capaz muchos de ustedes no se han dado cuenta, pero es algo que sí ocurre por detrás y si uno quisiese usar el modelo tal cual sin esos mecanismos, tendría que eh hacer eh tomar en cuenta esas esas cosas, ¿no?, para que su modelo eh funcione bien. Entonces, esa es la ventana. Como digo, muchos ya de repente ya ni han sufrido eso porque ahora es gigante la ventana y entra muchas cosas, pero sí es un límite que se tiene, ¿no? No se puede procesar todo el texto de de una sola vez. Ya. Y cuando uno entrena modelos, por otro lado, es una decisión que uno debe tomar, ¿no? De qué tamaño va a ser su ventana. Obviamente si uno quiere hacer un modelo que pueda procesar mucha información tiene que ser un modelo también de un tamaño mucho más grande, ¿no? un modelo chiquito, no podría procesar tante tantos los tokens a la vez.
+
+
+00:38:55
+
+lse posgrados: Entonces, eh regresando, voy a regresar a compartir la ventana de la presentación. Eh,
+Matias Leonardo Coulougian: Yo tengo una pregunta, eh,
+lse posgrados: sí,
+Matias Leonardo Coulougian: a medida que que se va ocupando cada vez más esta ventana de contexto, va como usando más tokens, o sea, va arrastrando más más texto en cada
+lse posgrados: sí.
+Matias Leonardo Coulougian: Okay.
+lse posgrados: Sí, sí. O sea,
+Matias Leonardo Coulougian: Y por eso por eso está las features de compactación que están en la mayoría de los hards hoy en día.
+lse posgrados: ajá, sí, tal cual. Existe la ventana como tal, que es un límite, digamos, físico, que no puedes procesar más de eso y también existe el costo, ¿no? O sea, tú podrías meter y usar toda la ventana completa de un millón de tokens, pero tu costo va a ser muy grande, ¿no? Porque te están cobrando por cantidad de tokens de input.
+Matias Leonardo Coulougian: H
+lse posgrados: Entonces, si bien podrías hacer la ventana al máximo, no sería muy eficiente, ¿no? Porque es es costoso. Y aparte entre más información le des al modelo para una tarea, más ruido probablemente esté recibiendo, ¿no?
+
+
+00:40:08
+
+lse posgrados: Y también entre más ruido tenga más más se va a equivocar. Entonces, por eso es que todos esos procesos de compactación y de manejo de memoria son temas bastante interesantes y necesarios. Eh, cuando uno trabaja con modelos de lenguaje, ¿alguna otra pregunta? Ya, genial. Entonces, ahorita no estamos usando modelos, los estamos creando. Así que la ventana de contexto no es un campo fijo como cuando ya tenemos el modelo hecho. Es un una parámetro que nosotros vamos a decidir. Entonces, e esta, bueno, viendo su concepto formal, básicamente es la cantidad máxima de tokens que el modelo puede considerar a la vez como entrada. Eh, y dependiendo de el tamaño que fijemos, vamos a tener que o rellenar secuencias para igualar el tamaño de la ventana, eso sería pading o eh truncar la secuencia, es decir, eh cortarla para que pueda entrar dentro de la ventana, ¿no? Una secuencia muy larga tendría que ser cortada en secuencias más cortas para poder procesarla. Y esta es parte de preprocesamiento. Recuerden que estamos haciendo el preprocesamiento antes de entrenar el model.
+
+
+00:41:32
+
+lse posgrados: Entonces, nosotros vamos a tener el cuerpo gigante. Ya dijimos que lo dividimos en oraciones o en documentos y luego definimos la ventana y según la ventana tenemos que eh o truncar o hacer parte. ¿Cómo se ve el truncado acá? Como estamos haciendo un monalo chiquito, no vamos a hacer una ventana gigante de un millón. Yeah. ventanas chiquitas. De hecho, el ejemplo que vamos a ver en el notebook es de una ventana de 10 nada más. Y bueno, acá para temas de diapositiva estamos con un ejemplo de una ventana de tres. Entonces, ¿qué pasa cuando tenemos una una oración más grande? Por ejemplo, esta. Todas las hojas son del viento. Tiene eh seis palabras. En este caso estamos tokenizando por palabra y nuestra ventana solamente de tres tokens. Entonces esta esta oración no va a ser no va a poder ser procesada por el modelo porque es más larga. Lo que se tiene que hacer es cortar. Eh, y acá eh para poder generar más ejemplos, porque estamos haciendo una base de entrenamiento, lo que hacemos es cortarla y hacer todas las combinaciones de tres posibles, ¿no?
+
+
+00:42:45
+
+lse posgrados: Ese sería el primer paso de truncado. Entonces, agarramos las tres primeras, luego de la la rotamos una palabra y agarramos las siguientes tres, las otras tres y las últimas tres. Entonces, con esto hemos logrado crear cuatro oraciones, es decir, tenemos cuatro cuatro oraciones para entrenar nuestro modelo a partir de una sola oración grande. Entonces, aquí ya de por sí estamos haciendo una especie de data aumentation, ¿no? Porque estamos generando varias oraciones a partir de una sola. Y estas oraciones ya están listas para meter a a nuestro entrenamiento porque ya tienen la ventana que hemos definido. ¿Alguna pregunta de acá del troncado? ¿Se entiende más o menos cómo se hace? pueden editar ya. Eh, bien. Y luego está el pading, que es cuando tenemos una oración más chiquita que la ventana del contexto. Acá no sé si han visto pading en visión por computadora, seguramente han visto. A ver si alguien si alguien conoce pading por visión, no sé si quiere comentar algo. ¿Cómo recuerda que es?
+CARLOS AGUSTIN BERDAGUER: para redes convolucionales.
+
+
+00:44:09
+
+CARLOS AGUSTIN BERDAGUER: lo veíamos
+lse posgrados: Sí. ¿Cómo cómo aplicaban paring ahí, por ejemplo, en la imagen?
+CARLOS AGUSTIN BERDAGUER: eh la ventana eh era si el centro de la ventana llegaba hasta el extremo de de todo el dato a procesar
+lse posgrados: Mhm.
+CARLOS AGUSTIN BERDAGUER: o se hacía que se cubriera con la Es difícil explicarlo en palabras, pero si se solapaban las ventanas una vez a medida que se analizando la entrada del modelo o si se rellenaba Con,
+Gonzalo Castro: Creo que era,
+CARLOS AGUSTIN BERDAGUER: por favor.
+Gonzalo Castro: creo que era para que el kernel llegue a procesar toda la imagen y no se coma los bordes.
+CARLOS AGUSTIN BERDAGUER: Exacto.
+Gonzalo Castro: Yes.
+lse posgrados: Ajá. Entonces, digamos que había un borde y el kernal para que pueda tomar como centro ese borde, le agregabas elementos a alrededor, ¿no? Como ceros, ¿no? Algo así, ¿eh? Eso, eso seguramente vieron en imágenes. Entonces acá parecido eh es lo mismo solamente que estamos en una dimensión, ¿no? En imágenes están en dos dimensiones y acá en una. y tu kernel o digamos lo que vas moviendo es la ventana de contexto.
+
+
+00:45:26
+
+lse posgrados: Entonces en este caso nuestra ventana es de tres y si tuviésemos una oración más chiquita, por ejemplo, de una palabra o de dos palabras, tenemos que rellenarla para completar la ventana. Y la rellenamos igual que en imágenes, lo rellenamos con ceros. Eh, ahora son ceros a la izquierda siempre para este tipo de problemas. ¿Por qué creen que se ponen a la izquierda los héos? ¿Alguien se le ocurre porque a la izquierda y no a la derecha los ceros del pad?
+Hernando Scheidl: Porque lo queecir es la siguiente palabra,
+CARLOS AGUSTIN BERDAGUER: para que nunca el relleno.
+lse posgrados: Ajá.
+CARLOS AGUSTIN BERDAGUER: No.
+lse posgrados: Sí, tal cual, porque lo que vas a ir completando va a estar acá a la derecha, ¿no? Entonces no no tendría sentido que los ceros estén acá porque los siguientes estaría la información y los siguientes elementos eh tendrían ceros al medio, digamos, no estarían en orden. Entonces, para que los ceros no se interpongan entre los siguientes elementos que vamos a ir creando, se ponen a la izquierda. Así, por ejemplo, acá comienza la oración en uno, luego a la izquierda le va generando dos, tres o lo que corresponde, ¿no?
+
+
+00:46:53
+
+lse posgrados: Sin y termina estas estas oraciones juntas, ¿no? Con ningún cero a la a la mitad. Gonzalo dice que estraparía la predicción también. Sí, porque sería como agregar elementos sin información al al final, que es justamente el momento que vimos que tiene eh las palabras del final en este tipo de redes recurrentes, pues son las que tienen más peso, ¿no? Entonces también por eso estarías digamos agregando ruido justamente en la parte más importante de la oración, pero sobre todo porque queremos que la oración termine junto, ¿no? las palabras de la de la oración estén juntas en el orden correcto. Entonces, eh eso es con referencia al padding y ahora, ya que ya sabemos que es truncado y que es padding, eh vamos a ver cómo se ese dat aumentation. Habíamos visto en en troncado que tenemos esta oración, ¿no? Todas las hojas son del viento que tiene seis elementos. M. AD y hicimos una especie de datención porque de esta sacamos cuatro secuencias, pero no solamente podemos sacar secuencias con las palabras completas para llenar la ventana de contexto completamente, sino que también podemos generar secuencias incompletas con menos palabras.
+
+
+00:48:13
+
+lse posgrados: Entonces, de esta oración, de todas las hojas, podemos hacer una oración con solamente todas, otra oración con solo todas las y la última oración sí completa, ¿no? Y estas de acá les agregaremos el pading para completarlas. Entonces, de una oración, primero de esta misma oración salieron cuatro y de cada una de estas cuatro salieron tres, ¿no? Entonces se multiplica la cantidad de oraciones que estamos creando. Estamos sacando más ejemplos de oraciones. Ahora, ¿por qué creen que es importante tener ejemplos variados de diferentes niveles de completitud? Por ejemplo, acá no es una oración más incompleta que la de acá. ¿Por qué creen que es importante tener eh oraciones con solo una palabra o con más palabras? Considerando la tarea que vamos a hacer, ¿no? Que le vamos a pedir al modelo que haga. ¿Por qué creen que es importante para la generación de texto? ¿Alguien se le ocurre? Capaz que alguien lo saca por ahí.
+Gonzalo Castro: para probar más combinaciones.
+lse posgrados: Sí, tal cual. Eh, todas las estas oraciones que estamos creando son ejemplos que el modelo va a ver, ¿no?
+
+
+00:49:37
+
+lse posgrados: Entonces, el modelo tiene que ver ejemplos diferentes y tiene que haber combinaciones variadas y el modelo va a tener que generar oraciones partiendo de de de oraciones inexistentes, probablemente, no solamente la el la pregunta y luego va a tener que seguir completando y a veces va a tener que partir de una sola palabra y va a tener que a partir de una sola palabra ir generando más palabras, ¿no? Entonces tiene que poder partir de diferentes cantidades de palabras ya de input. Entonces, eh porque el modelo va a estar haciendo eso, va a ir creando palabra por palabra. Entonces al inicio va a tener una oración chiquita con pocas palabras y luego va a tener oraciones más grandes que va a ir completando. Entonces por eso es importante que en su entrenamiento el modelo vea estas diferencias, diferentes eh oraciones con diferentes longitudes y niveles de completitud. Bien, ¿alguna pregunta sobre pading troncado y el aumentado que que hemos visto? Todavía me pone dedito arriba. G. Ya. Genial. Bien, entonces hasta acá conceptualmente ya tenemos el dataset listo, ¿no?
+
+
+00:50:59
+
+lse posgrados: Ya tenemos todas las oraciones. Ya tienen todas las oraciones eh la cantidad igual de palabra de perdón, de elementos porque ya está rellenado con el pading y troncado y ya están listos para ingresar al modelo. Ahora, ¿cómo hace el modelo para poder de estos ejemplos encontrar las oraciones? Eh, básicamente lo que lo que estamos tratando de hacer cuando decíamos que el modelo tiene que eh ver la estructura estadística del lenguaje es algo parecido a lo que se ve en la biblioteca de Babel, que este es un cuento de Borges. No sé si alguno lo ha escuchado, este cuento corto de la biblioteca de Babel. Ahí algunas sí, algunas no. ¿Alguien se anima como a a contar rápidamente nada más que era la biblioteca? ¿Alguien se anima a contar de qué trataba esta biblioteca?
+Vicky: Ay, profe, me mataste.
+lse posgrados: Bueno, sí se acorra, pero ellos les hago recordar si no. Eh, básicamente e era una biblioteca que tenía toda la posibilidad de combinaciones de caracteres que existían. Es decir, era una biblioteca infinita porque tenía la combinación infinita de caracteres que podrían haber.
+
+
+00:52:33
+
+lse posgrados: Entonces, cuando tú sacabas un libro X de la biblioteca, un libro aleatorio, podías o encontrar un texto sin ningún sentido porque eran caracteres combinados al azar. o podrías encontrar una obra maestra. O sea, había todo ese espectro de libros en la biblioteca. Entonces, la idea era que una biblioteca infinita porque las combinaciones son prácticamente infinitas que podrían haber para generar un libro. Pero lo interesante es que de todas esas comunicaciones aleatorias existían algunos libros que sí tenían sentido, existían otros que eran unos buenos y otros mejores. Entonces, básicamente hm eso es lo que trata de hacer el modelo de lenguaje, ¿no? Uno tiene podría combinar caracteres aleatoriamente, pero no se entendería lo que lo que lo que dicho o no estaría transmitiendo ningún significado. Entonces, lo que el modelo tiene que hacer es de esta biblioteca infinita de combinaciones de caracteres aleatorios tiene que definir cuáles de esas combinaciones tienen sentido para nivel a nivel lingüístico, ¿no? O sea, ¿qué combinación de caracteres es más probable que sea un buen libro o una obra maestra o una obra bien construida?
+
+
+00:53:52
+
+lse posgrados: Entonces, de toda esa probabilidad biblioteca como la biblioteca de Babel tiene que poder seleccionar aquellos libros o aquellas combinaciones de caracteres que hacen sentido. Entonces, básicamente eso es lo que el modelo trata de aprender, a seleccionar estas combinaciones y lo va haciendo palabra por palabra, ¿no? Va generando o va decidiendo palabra por palabra cuál sería la más probable para que la combinación tenga sentido. Entonces, básicamente lo que se tendría que ver es cuál es la probabilidad de que una secuencia tenga sentido. Podría ser una oración, podría ser un párrafo o incluso un libro como la biblioteca y es y el libro completo tiene una probabilidad, la probabilidad de un libro completo o una oración completa, ¿no? Entonces se tiene que ir desagregando, se puede ir desales de cada elemento, ¿no? No sé, por ejemplo, vas desagregando el primer elemento y lo vas multiplicando por la probabilidad, o sea, sacas la probabilidad condicionar del primer elemento y lo multiplicas por la probabilidad de los otros elementos, ¿no? Y así vas extrayendo elemento por el elemento y se va convirtiendo en una multiplicación de probabilidades, que es la que te define la probabilidad de la secuencia completa, ¿no?
+
+
+00:55:12
+
+lse posgrados: es un poco recordando cómo se esta composición en estadística, ¿no? Entonces, ¿cómo se lleva el lenguaje? Si es que queremos ver la probabilidad de que una combinación de tokens sea un lenguaje bien construido, tendríamos que ir viendo la probabilidad de cada uno de estos, ¿no? Entonces, eh, comienzas por la primera palabra, la probabilidad de la seleccionas la. Luego, cuando ya tienes decidida la tienes que eh definir la prioridad de la siguiente palabra, que en este caso sería hoja rasca, dado la. Luego defines la probabilidad de crepitar dado la hoja rasca, ¿no? Entonces ha el problema que era complejo era, digamos, teníamos la biblioteca de Babel Gigante y el problema complejo era definir qué libro seleccionar, ¿no? Pero este problema complejo de qué libro seleccionar lo hemos dividido en problemas más chiquitos. que sería palabra por Entonces hemos eh reducido la tarea a pasos más concretos y más fáciles, ¿no? Entonces, eh palabra por palabra y decidiendo en cada Entonces es esto es lo que eh tratamos de modelar cuando eh creamos estos lenguajes, estos modelos de lenguaje.
+
+
+00:56:43
+
+lse posgrados: ¿Se entiende esta parte? Me me ponen dedito arriba si se entiende más o menos la lógica. Ya, genial. Y otra cosa que es interesante o se tiene que saber es e cómo vamos a entrenar este modelo o cómo vamos a medir que este modelo esté aprendiendo o no. No, porque siempre que tenemos una red neuronal tenemos que tener una loss que vaya guiando el back propagation, ¿no? Para ver hacia hacia qué punto en en el en el espectro se tiene que mover los los peces, ¿no? Entonces, lo que se usa es este concepto de perplegidad, que es básicamente eh la cantidad media de palabras posibles eh en promedio. ¿Qué significa? que cuando un modelo decide la siguiente palabra, decide entre un una bolsa de palabras, es decir, de todo el vocabulario tiene que acortar a una cantidad de palabras menor entre las cuales elegir. Entre menos palabras tenga como candidata, significa que el modelo eh ha aprendido más. Si tiene si en verdad está decidiendo entre todas las palabras de vocabulario, significa prácticamente que el modelo no sabe nada, ¿no?
+
+
+00:58:05
+
+lse posgrados: Porque está haciendo un aleatorio. Entonces más o menos de eso trata la perplejidad. Si la perplejidad fuese igual al tamaño de vocabulario, significa que el modelo no sabe nada porque no sabe distinguir una palabra y otra y para él está siendo simplemente un aleatorio. En cambio, si la perplejidad va bajando, significa que el modelo está sabiendo discriminar entre palabras y está cortando su campo de decisión a menos palabras, ¿no? Entonces, básicamente es eso es lo que trata. Por eso eh a nivel matemático es eh la probabilidad inversa del corpus, ¿no? Tienes eh la probabilidad condicional de de la siguiente palabra de bueno, en verdad de eh de de toda la combinación de palabras posible inversa y normalizada por el tamaño de vocabulares, ¿no? Y esto te da un número. Entre mayor se la perplejidad, el modelo significa que no sabe mucho distinguir entre palabras posibles. Entre más chiquita sea, significa que el modelo sí puede distinguir más que entre qué palabras debería elegir. Entonces, lo que se trata siempre es de disminuir la perplejida.
+
+
+00:59:16
+
+lse posgrados: Entonces, acá hay un ejemplo chiquito, ¿no? La perplejida en cada punto. Por ejemplo, cuando eligió Fox, eligió entre 44 palabras. Cuando eligió D, eligió entre dos palabras. Es decir, su perplejidad en ese punto D era entre dos palabras. ¿Qué significa? Que el modelo estaba mucho más seguro de esta palabra al elegir esta palabra. En cambio, el modelo no estaba tan seguro cuando eligió Quick o Brown, ¿no? Porque tuvo que elegir entre 89 y 70 palabras. Y tiene sentido porque quick y brom son adjetivos de repente e y entre los adjetivos pues se puede intercambiar con otro muy fácilmente, ¿no? Y en cambio los artículos en en inglés, por ejemplo, solo hay prácticamente uno para singular. Eh, entonces en este caso era mucho más probable que sea D, es la palabra que continúa. Entonces, eh, básicamente así se mide la perplejidad y en cada punto, en cada eh inferencia que se hace, se se puede medir la perplejidad para para ese punto en específico.
+CARLOS AGUSTIN BERDAGUER: Perdón,
+lse posgrados: Eh,
+
+
+01:00:23
+
+CARLOS AGUSTIN BERDAGUER: es parecidos
+lse posgrados: el sampling de word to back. Eh,
+CARLOS AGUSTIN BERDAGUER: palabras
+lse posgrados: ah, no tanto porque el sampling te te no es entre qué palabras vas a decidir, sino entre cuántos ejemplos le vas a dar, ¿no? O sea, el negative sampling es más para entrenar el modelo, pero en la perplejidad es más resultado del modelo, ¿no? entre cuántas palabras posible, el modelo está decidiendo y es como resultado de las probabilidades que te ha generado. Esa es la diferencia. Entonces, esto va a depender de las probabilidades finales que el modelo está generando y con y en base a esas probabilidades se calcula esta esta métrica y se va haciendo una back preparation también hacia atrás, ¿no? ¿Alguna otra duda sobre esto? Ya. Entonces, solo como resumen, lo que te trata de decir esta métrica es qué tanto está adivinando el modelo o qué tan seguro está. Es decir, entre más bajito sea este número, significa que el modelo estado mucho más seguro de la palabra que elegía. Entre más alta sea este número, indica que el modelo está adivinando más entre muchas palabras y y no sabe con mucha seguridad cuál era la palabra que continuaba.
+
+
+01:01:55
+
+lse posgrados: básicamente diciendo de forma eh simplificada. Y algo interesante de esta métrica e es que eh si se dan cuenta se puede reescribir de esta otra manera. Eh, bueno, no es necesario hacer los cálculos, pero la perpigidad se puede reescribir de esta manera, ¿no? La exponencial de eh si le sacamos logaritmo, pues lo convertimos a una sumatoria y esta partecita de acá es la mismo que la croacéntropca, ¿no? Entonces, básicamente no puede calcular la perplejidad simplemente sacándole la exponencial a la crocéntrica. es una forma simplificada de calcularlo y es bastante conveniente porque muchas de las librerías que usamos ya calculan la crocéntropis. Entonces, simplemente sacamos esto, le sacamos el exponencial y ya sabemos cuál es la perplejidad de de otro modelo. Entonces, e esto lo vamos a ver también en el notebook, que va a ser una forma simplificada que lo vamos a a a tener implementado ahí en en el notebook. Bien, entonces hasta aquí ya hemos visto la mayoría de la parte teórica. Vamos a un descanso antes de verlo ya más a detalle en el notebook, ¿les parece?
+
+
+01:03:23
+
+lse posgrados: Entonces, vamos hasta unos 15 minutos, hasta las eh 8:25 sería las 8:25. vemos y ya lo vemos más en la en la plata. Holan si ya están arriba. Ya, entonces eh voy compartiendo Tom. Ya. Eh, bien. Se ve en pantalla, ¿verdad? Listo. E ya, Genial, gracias por los deditos arriba. Eh, ya habíamos visto un poco la introducción de lo que tenemos que hacer preprocesamiento, así que ahora vamos a verlo en en el notebook. Eh, vamos a estar usando igual que eres como como estuvimos viendo las eh las clases pasadas, que ya tiene de forma fácil implementadas las arquitecturas y vamos a estar usando un eh corpus ya que tiene bastantes varios autores. Eh, de hecho acá ya tiene como descargarse el dataset. Eh, viene de un repó de GitHub e y específicamente vamos a estar eh trayendo los cuentos de Borja. Si se dan cuenta, en este dataset eh Borja tiene 62 eh títulos diferentes. Entonces, vamos a usarlo de ejemplo para esta clase.
+
+
+01:22:03
+
+lse posgrados: Luego les voy a presentar el tercer desafío que va a ser algo parecido con una variación que luego les cuento, pero la idea es que utilicen su propio corpus para el desafío tres y y pueden si quieren reutilizar el corpus de la clase dos, perdón, el desafío dos, no hay problema, ¿no? La idea es que prueben con un corpus diferente al del ejemplo que que vamos a ver ahora en clase. Bien, entonces para esta clase tomamos este dataset el Borges y ahí podemos ver que tiene diferentes cuentos, ¿no? Abel Cainas, Droger, soñará por ahí. Si hay algún fanático de Borja seguro reconoce más estas estos cuentos. Y por ejemplo, si si tomamos uno uno de estos ehf, podemos traer uno de los eh de los documentos y vemos un poco cómo está el texto. En este caso, pues el texto ya está eh bastante limpio, eh digamos, ¿no? Eh ya ya viene en texto plano un poco más fácil de utilizar. Si ustedes eligiesen algún libro o algún otro corpus, a veces vienen con pies de página, eh, no sé, introducciones del editorial, cosas así, capaz que les conviene hacer una limpieza extra, ¿no?
+
+
+01:23:23
+
+lse posgrados: Dependiendo del dataset que estén usando. Entonces, en este caso vamos a a dividirlo a nivel de oración de de frases en verdad, porque acá tenemos unos delimitadores. Vamos a utilizar Rex para para separarlo y lo vamos a separar por punto. y signos de exclamación o o expresión o o de interrogación. E y como estamos agregando acá coma y otros símbolos, pues podría ser que en algunos casos terminemos con eh frases y no toda la oración, ¿no? Por ejemplo, eh en este caso que lo separa la coma hicieron un fuego y comien. En este caso nos sirve porque vamos a estar en una ventana de contexto chiquita para el ejemplo, entonces podemos separarlo un poco más o hacer más divisiones incluso a nivel de com eh luego, si quieren podrían probar eh considerando oraciones completas y ya no lo lo separan por la coma, sino que mantienen toda la oración, no son cosas que uno puede ir probando. Entonces, utilizando estos delimitadores, pues tenemos estas eh oraciones ya o frases ya separadas. Esa es la primera parte de la segmentación del corpus que habíamos hablado.
+
+
+01:25:02
+
+lse posgrados: Entonces, hasta acá ya ya tenemos las oraciones. Eh, lo expliqueamos acá era un ejemplo, ¿no? De de solamente el digamos el primer párrafo delf. Acá lo aplicamos a todo el corpus y con eso obtenemos casi 11,000 documentos o o frases, ¿no? Entonces, ya con esto tenemos al menos la primera parte de la segmentación, ¿no? Que es el corpus a documentos. Después eh lo que tenemos que hacer es dividirlo, tocanizarlo. Y en este caso, para este ejemplo de la clase lo vamos a hacer a nivel palabra. Entonces, nos vamos a sacar eh estos e ya funciones que vienen de que las de preprocessing text. Tiene bastantes e funciones que nos van a ayudar. Acá está elizer y el text to word sequ va a ayudar a hacer la la la división, ¿no? Entonces, le aplicamos primero el text to Word Sequence a las sentencias que habíamos eh creado en el corpus, ¿no? Este corpus de casi 11000 documentos. Vamos por cada uno de los documentos y le aplicamos el text to word sequence para poder separarlo a nivel de palabras.
+
+
+01:26:13
+
+lse posgrados: Entonces, de esta oración que teníamos así toda completa, lo dividimos a nivel de documento y cada uno de estos documentos se vuelve una lista de palabras. Entonces, acá tenemos una eh una lista de listas, por así decirlo, y cada lista, cada sublista es un un documento y cada elemento de la lista es un toque, ¿no? O bueno, todavía no están convertidos a identificador, pero ya están eh divididos a nivel de toque, que en este caso serán a nivel de palabras. Entonces, hasta acá eh tienen que lleva la segmentación de del corpus que elijas. Eh, después lo que tenemos que hacer es poder decidir qué ventana de contexto vamos a utilizar. Entonces, para este caso vamos a basarnos, vamos a hacerlo un poco al ojo y y vamos a tratar de contar eh de qué tamaño tenemos nuestras nuestras secuencias, ¿no? Entonces, sacamos el tamaño de las secuencias y calculamos en base a esas a esas longitudes un histograma. Y más o menos para tener eh ejemplos variados vamos a tomar eh la mitad de eh o la mediana, por así decirlo, de de estograma.
+
+
+01:27:53
+
+lse posgrados: Entonces, al ojo, pues para este ejemplo vamos a a decidir una ventana, ¿no? Que toman oraciones completas, tal vez este histograma se va a ir un poco más a la derecha, entonces van a tener que tomar una ventana más grande para poder eh abarcar más información de de sus ejemplos, ¿no? Entonces, eh pueden basarse en esto, en este gráfico, para poder decidir. Eh, entonces tomamos la ventana de 10 y con eso ya estamos listos para continuar eh el pading y el troncado. Antes antes de de eso, pues ya lo tenemos dividido, nada más le aplicamos el token de queas y acá ya lo tenemos con identificador, ¿no? Entonces, hasta acá ya está completo segmentación y toquenizado, que eran los dos pasos que habíamos dicho que eran los iniciales. Entonces, ya tenemos nuestras oraciones toquenizadas, ya tomamos la ventana de contexto decidida, que son eh va a ser de 10. Y eh ahora lo que tenemos que hacer es organizar un poco el dataset, ¿no? Eh, antes que nada, pues siempre es necesario tener un datos en entrenamiento y otro de validación, así que hacemos la división de siempre del training test y en esta parte aplicamos el troncado.
+
+
+01:29:35
+
+lse posgrados: Entonces, ¿cómo cómo se hace? Básicamente tenemos nuestro tamaño de la ventana de contexto que lo habíamos definido acá arriba, ¿no? Eh, acá, perdón, el max context size de 10 lo aplicamos acá y eh iteramos por cada una de de las oraciones para ver si son mayores, pues le aplicamos el el truncado y lo dividimos, ¿no? Acá estamos dividiéndolo, eh, recorriendo en uno en uno la ventana de contexto para poder generar la cantidad de oraciones que habíamos dicho. Ahora, en este caso, pues le estamos eh colocando un + un, o sea, estamos tomando la ventana de contexto más un ¿Por qué creen que es necesario agregarle un más un acá en esta partecita? ¿Para qué creen que es la ventana más más un elemento? ¿Qué qué sería ese elemento adicional?
+CARLOS AGUSTIN BERDAGUER: el que tiene
+lse posgrados: Sí, tal cual, ¿no? O sea, en nuestro modo va a recibir de input 10 elementos y el 11avo es el que va predeciim. Entonces, sería nuestro target, por eso son al final. Entonces, terminamos dividiendo nuestro nuestras oraciones que son más grandes en eh en conjunto de 11 palabras.
+
+
+01:31:02
+
+lse posgrados: Y bueno, lo vamos haciendo eh recorriendo como habíamos visto acá en eh acá, ¿no? Vamos recorriendo la ventana y vamos avanzando de uno en uno, ¿no? Para poder generar todas las combinaciones que que sean posibles. Entonces, eso es lo que hace esta parte de del del código y cada uno de estos elementos lo vamos agregando al a nuestro a nuestra lista de de oraciones. Entonces, haciendo eso, simplemente haciendo el truncado, tenemos al final 21700 y un poco más eh oraciones, ¿no? Entonces, habíamos partido de casi 11000. Eh, ¿dónde estaba? Acá arriba habíamos partido de de estas casi 11000 casi que hemos duplicado, ¿no? Hemos duplicado y ahora tenemos estas 20,700. solamente haciendo el truncado. Ahora todavía falta el dato aumentation que habíamos dicho, que es tomando eh oraciones incompletas, ¿no? Entonces hicimos troncado e y ahora lo que queremos hacer es eh hacer el padding, ¿no? Entonces acá lo que vamos a hacer es ir generando las subsecuencias. Es decir, si tenemos esta oración, vamos generando las subsecuencias con dos elementos, luego tres, luego cuatro, cinco, hasta lo que permita la ventana de contexto, ¿no?
+
+
+01:32:37
+
+lse posgrados: Entonces, por eso acá eh se va iterando y se va agregando eh los elementos hasta eh completar todas las subsecuencias posibles del de las oraciones que ya teníamos antes. Entonces, primero se generan estas subsecuencias. Yeah. onas y después todas estas subsecuencias le agregamos el el padding, ¿no? Y el padding es para completar la ventana de contexto más un como habíamos dicho, necesitamos el target adicional y el padding pre porque vimos que tenemos que agregarle los ceros al lado izquierdo, ¿no? Entonces, por eso se se le coloca eh este parámetro de PR. Entonces, con eso ya tenemos, digamos, las oraciones truncadas, ya le hicimos el aumentation, data aumentation y luego esas subsecuencias que salieron del data aumentation las completamos con el padding y también las otras oraciones originales que no hay sido completas o o que no hayan llegado a tener toda la ventana de contexto, también se les aplicó el pading en esta parte. Con esto, si se dan cuenta, hemos logrado generar muchas más secuencias. Ahora tenemos 178,000, son muchas más, eh, y todas tienen el mismo tamaño, que es 11. Entonces, hasta aquí ya hemos completado nuestro datos, ¿no?
+
+
+01:34:11
+
+lse posgrados: Ya está segmentado, tocenizado. Hemos decidido la ventana de contexto y con eso hemos troncado, hecho data aumentation y hemos agregado el padding y ya hemos completado todas las oraciones o las los ejemplos que vamos a utilizar en en nuestro entrenamiento y y valida. Bueno, en este caso incluso solamente de train, eh, solamente las secuencias de de train las tenemos acá que son bastantes. Entonces, eh a nada más lo que falta hacer es separar las los 10 elementos de de los inputs y eh dejar el target, que sería el 11avo elemento separado, ¿no? es así y obtenemos eh la secuencia de 10 que va a ser de input y el target que nos va a servir como eh bueno, para para ver si es que el modelo le acierta o no y para poder ir calibrando el modelo. Ahora, algunas cosas interesantes que nos da el el tokenizador de que de bueno, estamos usando, me acuerdo si era kit learn o de queras. De quereras, creo, sí, el tocenizador de queras. nos da algunos métodos e para poder ir eh jugando con los índices, ¿no?
+
+
+01:35:34
+
+lse posgrados: Entonces, le puedes puedes usar este método index Word, le das el índice del token y te lo convierte la palabra original, ¿no? Y también al revés le podemos e eh dar la palabra y te arroja el índice, ¿no? Entonces, esto va a ser útil solo te va a dar ese y luego lo tienes que convertir a la palabra para poder ver si es que lo que ha generado tiene sentido. Entonces, se va a tener que hacer la conversión, el encoder y decoder de las palabras enas. Entonces, por eso se usan estos dos. Y también podemos ver, por ejemplo, el tamaño del vocabulario. En este caso tenemos 15,000 palabras diferentes. En toda la en todo el corpus de Borges se ha utilizado un poco más de 15,000 palabras o símbolos también. Acá, bueno, podemos ver algunas de ellas. Eh, ¿qué más? Em, y bueno, hay otros métodos que te ayudan a ver, por ejemplo, en cuántos documentos apareci una palabra y con eso puedes ir sacando cuáles son las más comunes y las más eh las menos frecuentes también.
+
+
+01:36:46
+
+lse posgrados: Entonces, hasta aquí ya está todo el preprocesamiento. ¿Alguna duda de esto de cómo se implementó? Carlos dice que todo bien. Genial. Iralelin dice que todo bien. Ya. Genial. Entonces, ahora volviendo a a la lámina original, esto ya esto es lo que hemos hecho, ¿no? Segmentado, tocenizado, truncado, aumentado de datos y pad y justamente en este orden. Entonces, ya tenemos nuestro datas set listo eh para entrenar. Entonces, lo que sigue es definir el modelo. Ah, y antes de eso, pues si se dan cuenta, todo lo anterior es independientemente del modelo, ¿no? Entonces ahorita vamos a usar redes neuronales recurrentes, pero si en algún punto quieren usar Transformers, podrían usar. Vamos a usar la el mismo data, ¿no? Entonces, hasta acá los pasos son casi comunes a cualquier modelo, cualquier arquitectura. el truncado la segmentación, el pading, todo eso es común, incluso se usan en los modelos grandes de lenguaje. Nada más lo que va a cambiar pues va a ser básicamente esta parte de la definición del modelo y de repente la tokenización no va en un modelo ya estado del arte, no va a ser a nivel de palabra, no va a ser un poco va a utilizar otros métodos para poder eh hacerlo a nivel de caracteres y ver un poco qué combinación de caracteres son más frecuentes, ¿no?
+
+
+01:38:21
+
+lse posgrados: Y con eso eh hace la tokenización. Entonces, digamos que lo que hemos hecho hasta ahora de preprocesamiento es casi parecido a lo que se hace actualmente con excepción de la tokenización que lo estamos simplificando a nivel de palabra. Bien, entonces lo que sigue ahora es eh definir el modelo. Entonces acá, bueno, vamos a usar queas como ya habíamos visto en clases pasadas, un poco para simplificar y eh vamos a usar Porque básicamente vamos a eh poner una capa de embeding. Acá queras te permite poner una capa de embeding entrenable. Ya de por sí por default esta capa está eh tiene pesos entrenables. Entonces, ¿qué significa? que vamos a estar a la vez que estamos entrando en el modelo también estamos creando un un una matriz en basis, ¿no? Entonces estamos haciendo eh lo que hicimos en la clase en la clase dos, ¿no? lo que hicimos en la clase dos de word to back de de eh con civ estamos haciendo acá también, es decir, vamos a generar vectores de embeding de cero, solamente que lo vamos a hacer a través de de una red eh neuronal diferente, ¿no?
+
+
+01:39:45
+
+lse posgrados: Ahora estamos haciéndolo con las eh en este caso, bueno, con la LCTM y se va a ir creando esta matriz en base a los ejemplos de de oraciones que les vamos a a ir dando y en base a que le vamos a ir pidiendo completar oraciones, ¿no? Entonces, un poco que el mecanismo es diferente, pero vamos a llegar a un resultado también de una matriz de de vectores. Entonces, esta capa es la que la que va a guardar esa información de de los embedings y esos envedings luego van a ser input de e de la una capa del STM. Acá, bueno, le estamos poniendo una capa con 64 de de tamaño de de la memoria interna y como estamos apilando dos capas, le estamos poniendo return sequence. True. ¿Se acuerdan para qué servía este parámetro? ¿Alguien se acuerda de la clase pasada?
+Hernando Scheidl: Si era el many to era era por eso.
+lse posgrados: Sí.
+Hernando Scheidl: el recorri.
+lse posgrados: Si no si no lo activabas era un many to one, ¿no? Y si lo activabas era un many to many, ¿no?
+
+
+01:41:11
+
+lse posgrados: Y y en qué caso será necesario el men to men. Creo que acá tengo el gráfico. A ver. Acá eh digamos que estamos viendo esta capa de acá, ¿no? La primera y estamos poniéndole return sequence through ahí como como dijo Arnando para que sea un many to many, ¿no? ¿Por qué era necesario un many to many en esta capa? ¿Alguien se acuerda de de la clase pasada?
+Gonzalo Rodriguez: laidad tenga la misma dimensión que la entrada. M.
+lse posgrados: Sí. para que mantengan lo que lo que entre acá tiene que devolverse a la siguiente capa, Entonces, eh es importante que cada celda tenga su output porque si no eh la siguiente capa no recibiría nada si si es que no la activáramos, ¿no? Y es necesario que cada celda reciba su input correspondiente para que se pueda calcular la secuencia. Entonces es por eso las capas inferiores siempre son men y to men para poder darle un un elemento a la siguiente capa para que pueda procesar. Me pasé bien. Entonces eh por eso estamos poniéndole acá return sequence true.
+
+
+01:42:37
+
+lse posgrados: Luego le estamos agregando una una capa de dropout. Eh, ¿alguien se acuerda para qué sirve el dropout? Eso lo han visto en aprendizaje profundo.
+Hernando Scheidl: regularización
+lse posgrados: Ajá. Sí. ¿Y cómo ayuda a regularizar el droppo?
+Hernando Scheidl: va pagando neuronas aleatoriamente para que como que todas aporten algo.
+lse posgrados: Sí, tal cual. En el proceso de entrenamiento, pues va va pagando conexiones de forma aleatoria. En este caso, pues una conexión tendría 20% de probabilidad de ser apagada. Eh, ¿y eso eh, para qué sirve? Porque a medida que vas entrenando, pues vas apagando ciertas red y le obligas a encontrar otros caminos para hacer las eh las inferencias, ¿no? Entonces, no se acostumbra a ir siempre por un camino y por tanto solamente aprende una parte de eh lo estás obligando a encontrar y aprender también otras formas de de solucionar el el problema. Y eso hace que en eh justamente se regularicen y evitar fitting también, ¿no? Entonces ahí vuelvo a preguntar, ¿por qué en esta capa no hay un return sequen true?
+
+
+01:44:26
+
+lse posgrados: Porque en la capa final no no estamos colocando este parámetro. Ah, se entrecorta, me dice. A todos se les entrecorta o solamente ah,
+Gonzalo Rodriguez: Toda la explicación que dio ahí a lo último no se escuchó nada. Perfect.
+lse posgrados: debe ser porque está intermitente mi internet. Ahora sí se me escucha. Ya volvieron está bien. ¿O sigue mal? Ah, ya. Entonces, está bien. Ya. Entonces repito, igual si si vuelve a a a cortarse me avisas. Eh, ¿hasta dónde me escucharon? Para ver desde dónde repito. Dropout. ¿Ya? Okay. Lo que estaba diciendo de Dropout es que eh apaga ciertas conexiones de la red en la parte de entrenamiento, solamente en el entrenamiento y obliga al modelo a no acostumbrarse a ir siempre por un mismo camino, ¿no? Lo obliga a a evaluaros diferentes de la red. Entonces eso hace que estamos diciendo que las conexiones tienen
+Gonzalo Rodriguez: Se sigue cortando, profe.
+lse posgrados: un Se sigue cortando.
+
+
+01:46:00
+
+lse posgrados: A ver, agar un segundo.
+Gonzalo Rodriguez: Capaz que se acaba se apaga la cámara.
+lse posgrados: Voy a acercar si no al Ah,
+Gonzalo Rodriguez: Bak.
+lse posgrados: sí, sí, la tenía apagada por eso al inicio y también que ahora justo me he mudado y y mi wifi está un poco más lejos que antes. Eh, ¿se escucha mejor? Ahora se escucha. Me avisan.
+Gonzalo Rodriguez: Sí, sí, sí.
+lse posgrados: Ya,
+Gonzalo Rodriguez: Yeah.
+lse posgrados: ya. La tercera es la decía. No, ya me muevo más cerca al al modem y ya. Entonces, les decía, el drop te ayuda a que el modelo no solo aprenda un camino, sino que vaya aprendiendo varios caminos y no hago fitting al al dataset, ¿ya? Entonces, le estamos agregando por por eso esto. Y ahora en la última capa, bueno, la última capa recurrente, si se dan cuenta, no lleva un un return sequence. Entonces aquí les está preguntando por qué en este caso no se usa el retorn sequence strom.
+CARLOS AGUSTIN BERDAGUER: porque solo se quiere la palabra que tiene que preecir.
+
+
+01:47:17
+
+lse posgrados: Sí. Ajá. Eh, digamos que estamos haciendo un many to one, o sea, todo el problema es un many to one, ¿no? Al final estamos prediciendo solamente una palabra por vez. Entonces, nada más necesitamos el output final de la secuencia. Un solo output basta para poder predecir la palabra, ya que estamos predeciendo una sola palabra. Entonces, eh la última capa solamente te va es necesario que te arroje un solo elemento, algo así, ¿no? Acá las primeras capas, que podría ser más de una, en el ejemplo solo tenemos una capa inferior. Pero si hubiese más todas las capas inferiores, tendrían que tener un return sequence through para que revuelva cada celda un elemento, ¿no? Pero la última capa, como estamos prediciendo solamente una palabra, es decir, eh un elemento a la vez, entonces es un la última capa tiene que ser un many to one, ¿no? Y solamente nos quedamos con el elemento final de la secuencia. Entonces, eso es lo que lo que hace esta capa de acá y este elemento final que va a ser el estado interno de esta de esta última celda de de acá, que va a ser este vectorcito de 64. Ese vectorcito es el que va a entrar a la capa de densa final y esta capa es la que nos va e bueno, de hecho que le estamos colocando dos eh dos capas.
+
+
+01:48:51
+
+lse posgrados: Eh, estamos poniendo una densa primero de de 32 neuronas y luego eh adicional ya del tamaño de vocabulario para poder calcular las probabilidades de las palabras, ¿no? En base a la información que ha venido de acá. Entonces, acá tener una serie de probabilidades de todo el vocabulario y según eso se va a elegir cuál va a ser la palabra siguiente a general. Y acá le ponemos boca boca que es bueno también voario más un ¿Por qué creen que es un más un acá? ¿Qué será ese más un que le estamos agregando?
+Gonzalo Rodriguez: por la predicción, la palabra que va a predecir,
+lse posgrados: Ahí no te escuché, Gonzalo.
+Gonzalo Rodriguez: la palabra digo que va a predecir.
+lse posgrados: Eh, no, no. Eh, o sea, eh la la palabra predecir se va a elegir dentro todo este vocabulario. Entonces eh no no es por la palabra, sino es por un elemento adicional que estamos usando. No sé si alguien se le ocurre. Alguien dice fin, ¿no?
+CARLOS AGUSTIN BERDAGUER: el del padding.
+lse posgrados: Este es un token adicional al vocabulario que básicamente es el del padding.
+
+
+01:50:22
+
+lse posgrados: Por eso, Ajá. Sí, tal cual. Es el token del pading, que es un token extra, ¿no? Que es un token que no tiene significado, pero lo reservamos igual. eh reservamos un token para el padding porque lo vamos a estar usando en los Entonces, por eso tenemos este elemento extra aparte de de vocabulario, tal cual. Y bueno, acá al final eh bueno, compilamos con con la los En este caso la SP categórica de crossentropy. Bueno, le ponemos la ADAM, que es normalmente se usa y también podemos calcular el acurso. Con esto ya tenemos nuestro e nuestra arquitectura para este ejemplo, ¿ya? Y más o menos es algo como lo que está acá. En resumen, no con bidireccional, digamos que esto no es en vez de una bidireccional hemos usado dos capas de este tema. Pero básicamente lo que lo que lo que estamos haciendo al menos la parte inicial si es igual, ¿no? Tenemos el input, sería el texto, ya le hemos eh tokenizado y este estos elementos tokenizados luego se convierten en en embedir.
+
+
+01:51:46
+
+lse posgrados: En este caso, como hemos visto, le hemos puesto una capa de embedir centrenal, que significa que vamos a entrenarlos desde cero. Existe la posibilidad también de poder usar embedings preentrenados. Entonces, por ejemplo, si uno quisiese usar un edading de word to back ya entrenado, ya no ya no tendría que agregar esta capa, simplemente reemplazaría el el token por el embeding que le corresponde, ¿no? Y ese embeding ya reemplazado sería el input del modelo. Entonces hay esas variaciones. podrían usar vectores de embeding ya preentrenados y se ahorran este paso de entrenar un embeding de cero o podrían utilizar toda la arquitectura para poder crear sus propios embedings, que es lo que estamos haciendo ahora. Y luego esos entran a la parte de las capas de recurrentes. En este caso estamos usando dos LCSTM con un dropout al medio que es diferente a esta y le ponemos unas capas densas al final para poder hacer la clasificación, ¿no? Estamos una densa para procesar y otra densa para clasificar. E y sumando todos los parámetros, pues si se dan cuenta, la mayoría están en los embedings.
+
+
+01:53:07
+
+lse posgrados: Es es una parte grande de lo que estamos entrenando. Porque bueno, en este caso estamos creando vectores de 50 y eh en total estamos necesitando de eh un poco más de un millón de parámetros. Entonces es un modelo chiquito, pero es mucho más grande que un modelo de machine learning tradicional, ¿no? Pero es chiquito a comparación de los LLMs actuales. ¿Alguien sabe más o menos a qué escala se mueven los modelos que usan en GPT cloud? ¿A qué escala de parámetros están ahorita?
+CARLOS AGUSTIN BERDAGUER: andan por los millones. millones de parámetros. Igual quería preguntar si eso se refería a los de entrada o o los que o en total los sonentrenables.
+lse posgrados: Mm. una hasta 7 billions, 32 billions Astra Facebook, como dice ahí Denis otra vez. A ver, denme un segundo que me voy a mover mejor, ¿eh? Un segundito, dos minutitos, 2 minutitos o si quieren aprovechamos mejor. Aprovechamos para un break, un descansito de 15, me muevo y continuamos, ¿les parece? Eh, volvemos a las 9:15.
+
+
+01:55:29
+
+lse posgrados: 9:15. No vemos. Hola, ¿qué tal? Me avisan si ya están y también me avisan si se escucha bien. Ya veo varios. Si no me dicen que no se escucha bien, asumiré que está bien. Voy a volver a compartir a ver. Y ya de hecho tuve que volver a ejecutar porque me había desconectado y antes, de hecho, estaba usando una T4 y no me asignaba una nueva T4, entonces tuve que cambiarle a 100. Cuando ustedes eh ejecuten traten de hacer la T4, que es la la que da gratis Google en Colab. Lo malo es que como es gratis y, o sea, es gratis la que todos usan porque también es la más barata GPU que sirve para modelos grandes, a veces no están disponibles. Entonces en este caso tuve que cambiarle una a 100 y ahí sí me asignó una. Así que si no me equivoco es porque le he metido créditos por acá en no me acuerdo si le dejé créditos o no, pero eh cuando ustedes prueben eh traten de colocarle la T4 eh si es que pueden asignarle crédito, si quieren prueban con una más grande, ¿no?
+
+
+02:11:21
+
+lse posgrados: Eh, ¿cómo cómo llegan a eso? Pues en esta parte, en cambiar entornos de de ejecución, ahí seleccionan el GPU que vayan usando. Solo ese comentario adicional que me olvidé de decirles y con eso he estado entrenando ya otra vez el modelo. Ahora voy a hacer solamente un recap de lo último por si no se escuchó bien. Habíamos estado hablando, ¿no? De del arquitectura que vamos a usar para para este modelo que es una capa de embeding, en este caso lo estamos entrenando desde cero. También podrían usar embedings preentrenados y simplemente eh eh hacer la búsqueda del vector correspondiente a las palabras y a y traer el vector de una matriz ya preentrenada. Entonces, cambiarían esta parte por por esos envedis preentrenados. Y bueno, en cualquiera de los dos casos, los vectores de Bins entran como input en en la parte de las capas e eh de redes recurrentes, en este caso las el STM, y le ponemos return sequence true a las a las capas inferiores y le dejamos sin sin el return sequence a la última capa porque estamos tratando de predecir un elemento, ¿no?
+
+
+02:12:49
+
+lse posgrados: Entonces es un many to one al final. Y bueno, las últimas capacidad de de todo el vocabulario. Entonces, este es el la arquitectura que estamos usando. Tenemos un poco más de un millón de parámetros y por ahí estábamos conversando sobre cuál es la magnitud de parámetros que se usa ya en el estado del arte actual y les estaba contando, ¿no?, que hay modelos más chiquitos que son open source que usan billions, o sea, miles de millones de parámetros, eh, que son considerados chiquitos porque se pueden correr en una sola GPU, por ejemplo, diferentes modelos de Quen que tienen desde 1.5 billions hasta 7 32 y ahí sube más de 200, que son modelos eh considerados chicos. Y por otro lado están los modelos estado del arte, como ya no sé, los que usan en los en los chats eh comerciales, ¿no? Cloud, chat GPT, eh Gemini, que ya están a nivel de trillions de parámetros, ¿no? Como decía Denis en el chat. Entonces, eh estamos haciendo un modelo muy muy chiquito en resumen. Por tanto,
+
+
+02:14:12
+
+CARLOS AGUSTIN BERDAGUER: M.
+lse posgrados: no esperen que se acerque siquiera lo que hace un CHG GPT. No, no va a ser mucho vamos a aspirar a hacer palabras eh oraciones coherentes, pero digamos que un modelo de mejora eh conforme le vas incrementando la cantidad de parámetros y conforme vas le cambias la arquitectura, por ejemplo, a alguna tipo Transformers y mejora su tokenización a nivel de negras, ¿no? Entonces, no estamos tan lejos de lo que se hace ahora, pero no podemos llegar a la escala que se usa en esos modelos porque pues no tenemos esa cantidad de GPUs actualmente, ¿no? Yeah. Estamos haciendo un ejemplo inicial. Es solo para que tengan en cuenta las diferencias. ¿Alguna duda de esto de la arquitectura? ¿Algo que de repente no se haya escuchado bien antes de de que me cambie de lugar? Elian dice que todo bien. Ya, ya. Genial. Entonces, sí, sí, sí se entendió,
+CARLOS AGUSTIN BERDAGUER: Perdón,
+lse posgrados: ¿eh?
+CARLOS AGUSTIN BERDAGUER: la cantidad de parámetros influye directamente en la cantidad de memoria que hace falta para ejecutar el todo el modelo tiene estar o cargado en
+
+
+02:15:25
+
+lse posgrados: Sí. Ajá.
+CARLOS AGUSTIN BERDAGUER: memoria.
+lse posgrados: Sí. Entre más parámetros necesitas eh más más memoria. La la de la GPU. Eh, ¿por qué GPU? Pues porque lo que hace por detrás es básicamente una multiplicación de matrices, ¿no?, de estos tensores y la GPU son ideales para hacer este tipo de operación. Y normalmente eh los modelos grandes incluso no entran en una sola GPU, entonces se tiene que configurar en varias, ¿no? Se hacen varias en paralelo, incluso hay GPU sería más especializadas para modelos de lenguaje. Entonces sí, eh el tamaño, la cantidad de parámetros va a condicionar si es que vas a poder correrla en una GPU y en qué GPU necesariamente o si en varias GPUs, ¿no? Ahora si hay una variante, hay ciertos tipos de arquitecturas que se llaman mixture of experts. No sé si alguno lo has escuchado. Moe aparece como el abreviatura Moe, no sé si alguno lo ha escuchado. Gonzalo dice que sí. No sé si si te gustaría como explicar lo que has escuchado, Gonzalo, de de ese tipo de modelos.
+
+
+02:16:49
+
+lse posgrados: o simplemente escuchaste el nombre y todavía no sabes qué es.
+Gonzalo Castro: No lo escuché cuando estaba viendo modelos en Hargin Face, pero no me acuerdo bien qué significaba. Creo que era como que segmentaba la red y hacía como que ciertas neuronas eh hagan tales cosas, como tían funciones específicas, algo así era.
+lse posgrados: Ajá. Algo, sí, algo así en simple. Básicamente la arquitectura está dividida como en expertos, ¿no? Como en mini mini partes de la red que están especializadas en cierto tipo de tareas. Entonces, lo interesante de estas arquitecturas es que si bien las entrenan en una cantidad de parámetros grandes, no sé, un ejemplo, 32 billions, no necesitas usar los 32, solamente usas una parte. Entonces, por ejemplo, cuando vean ese tipo de modelos, les va a salir 32 billions y tres eh billions activos. Significa que cuando hagan la inferencia solo necesitan 3 billons eh de memoria, o sea, es un poco más eficiente porque utiliza menos cantidad de parámetros en el momento de la inferencia y es porque hace este roteo de de expertos por detrás.
+
+
+02:18:02
+
+lse posgrados: Es una variante que les comento que que les podría interesar si es que quieren ahondar un poco en este tema de de los parámetros y como eh eh todas las variantes de modelos que hay según sus tamaños. De hecho, a ver, déjame ver si si es que encuentra alguno. E acuerdo, por ejemplo, a ver, este si tiene 27 billions. E había un creo que era 32. Hay hay una serie de modelos bastante variados. Em, creo que era 7, algo así, ¿no? Bueno, por aquí no. Ah, esto. Vamos a ver si me sale algo. Ya creo que este no es el que busco, pero bueno. Acá cuando busquen en Haring Face, cuando busquen los modelos, acá pueden ver el tamaño. Entonces, por ejemplo, este 3 tiene 32 billions, ¿no? Y así como como vieron, existe una gran variedad de quens diferentes de tamaños variados. Por ejemplo, este más chiquito, 4000. Entonces ustedes podrían probar con algunos de estos. Eh, por ejemplo, este capaz que sí le les entre una GPU.
+
+
+02:19:40
+
+lse posgrados: Eh, y hay algunos que en vez de solamente decir los bilions eh también dicen AB o algo así, ¿no? Esos son los mixture of expert que usan menos eh menos cantidad de parámetros. Entonces, h si les interesaundar en el tema, pues dense una una vuelta por Haging Face, van a encontrar una cantidad variada de modelos de diferentes tamaños y eh acá pueden ir ir eh leyendo. De hecho, algunos tienen incluso papers asociados, entonces pueden ir también investigando sus sus diferentes arquitecturas si es que les interesa el tema. Eso sale como como extra. Eh, bien. Y sí, eh, retomando el tema ante la pregunta, el tamaño va a depender también de del hardware que necesiten. Entonces, por eso para la clase y para no complejizarlo, estamos haciendo uno chiquito y solamente para ver todo el proceso que se necesita. Eh, bien. ¿Alguna otra duda? Todo bien. Ya. Si no hay dudas continúan. Ya. Ahora viene la parte del callback. Eh, básicamente un colback es eh bueno, como acá dice una una rutina que se puede agregar dentro del proceso de entrenamiento de queras personalizadas, ¿no?
+
+
+02:21:10
+
+lse posgrados: Entonces, a veces hay métricas que o métricas o datos que se que se tienen dentro del entrenamiento que nosotros queremos calcular y que Keras no los tiene precalculados, ¿no? Entonces, a veces los tenemos que construir a mano. Este es el caso de del de la perplejidad. Eh, la hemos creado su propio colback. con el cálculo acá van a tenar dos opciones. Esta es la perplejidad e creada desde cero. Acá está el el un poco el el la fórmula que les había presentado acá, ¿no? La del logaritmo, la sumatoria de los logaritmos de las probabilidades y el exponencial el final, ¿no? Toda esa lógica está acá metida en esta en este col. Entonces, ya lo tienen precalculado. Y la otra opción es la versión simplificada que usa e la crossentrop. Entonces, por ejemplo, acá no le habíamos le habíamos agregado como los acá en en cuando creamos la arquitectura le habíamos puesto la spars categorical cross entropy y en la diapositiva habíamos dicho que podíamos usar esta cross entropy para poder calcular la perplejidad, ¿no se acuerdan que que les mostré?
+
+
+02:22:38
+
+lse posgrados: Entonces, es lo que estamos haciendo en esta segunda versión. Si se dan cuenta, este callback segundo está mucho más corto porque usa ese atajo, ¿no? Acá tenemos la crucéntropy ya calculada por quereras y le estamos sacando el exponencial. Entonces es un atajo para poder tener la perplejidad. Entonces son dos formas que pueden utilizar, no son exactamente iguales porque, bueno, esto esta esto de acá toma en cuenta eh eh padco que el orden el que hace el promedio es diferente entre esta y la de acá, pero pueden usar eh pueden probar con ambas. Esta va a demorar más en correr porque calcula desde cero y esta va a ser mucho más rápida porque ya tiene la croscentropic calculada, ¿no? Entonces pueden usar cualquiera de las dos versiones. Eh, para la clase, si no me equivoco, le dejé esta, la simplificada para que corra un poco más rápido. Entonces, esta es la que vamos a estar usando para el ejemplo de la clase. Eh, ¿alguna duda de acá? Esto ya está pre preconstruido, así que no es necesario que lo construyan de cero, pero sí que entiendan más o menos de dónde sale.
+
+
+02:23:55
+
+lse posgrados: Ya, genial. Bien, entonces eh hacemos el fit para entrenar. Le ponemos 50 e le ponemos el callback de la perplejidad y bueno, en un batiz de 300. Vemos que la perplejidad inicia de 1000. No me acuerdo cuánto era el vocabulario. A ver, déjenme recordar. Vocabulario era de 15,000. Entonces, de todos los 15,000 comenzó adivinando prácticamente de entre 1000, no estaba haciendo un no un azar por completo, pero sí muy indeciso el modelo al inicio, ¿no? y después fue acotando y pudiendo ser un poco más específico entre qué palabras elegir y al final hemos llegado a una perplejidad de ocho entre nueve y ocho que está bastante bien para hacer un modelo chiquito. Entonces eh vemos que se ha aprendido, ¿no? hemos visto de de casi elegir al azar entre 1000 palabras a poder distinguir o diferenciar y quedarse solamente con con unas nueve al final más o menos, eh, tomando en cuenta la perplejidad. Entonces, nuestro modelo ha podido ir aprendiendo en base a eso. Guardamos el modelo y con eso ya tenemos nuestro primer modelo de lenguaje.
+
+
+02:25:20
+
+lse posgrados: Ahí podemos ver cómo fue disminuyendo la perplejidad.
+CARLOS AGUSTIN BERDAGUER: Perdón,
+lse posgrados: Sí.
+CARLOS AGUSTIN BERDAGUER: las métricas de y los esas no dicen mucho en este tipo de problemas.
+lse posgrados: Eh, no tanto porque Ah,
+CARLOS AGUSTIN BERDAGUER: valores.
+lse posgrados: perdón, no, no te te corté lo último.
+CARLOS AGUSTIN BERDAGUER: No, no, que no, no se ve que estén llegando a valores muy se ve que alguno fluctúa, ve que hagan que digan mucho.
+lse posgrados: Sí, la perplejía es la que más nos va a ayudar. O sea, si la sí baja, entonces sí está relacionado de cierta manera. El accuracy no tanto porque recuerden que en un lenguaje puedes completar una oración de más de una manera, ¿no? Entonces no va a haber una única respuesta, ¿no? No es tan útil, digamos, porque suponiendo que no sé, tienes una oración que dice eh, "El perro comió su y tienes que completar." Eh, puedes completarlo con hueso, puedes completarlo con croqueta, con carne y ninguna está mal, ¿no? Entonces, por eso que no se puede medir tanto con así porque no hay una sola respuesta correcta, pero la perplejidad sí nos ayuda más porque estás acotando, o sea, no puedes decir el perro comió su silla, esa no, esa no debería entrar, ¿no?
+
+
+02:26:46
+
+lse posgrados: Entonces, el campo es más de uno, o sea, la profilo nunca podría ser uno porque probablemente hay más de una palabra que pueda llenar esa oración, pero tampoco puede ser todo el vocabulario completo, ¿no? Porque no le puedes decir, "El perro comió su nube" o algo así, ¿no? Entonces, eh, por eso la perplejía nos ayuda mucho más, porque te está dando más o menos de entre cuántas palabras el modelo está acotando, ¿no? Y a medida que va aprendiendo va a ir disminuyendo. Una pregunta. Entonces vemos la perplejidad como va evolucionando y va bajando eh hasta tener estos niveles que hemos visto. Ahora lo que vamos a hacer es la predicción de de la palabra. Entonces, acá tenemos gradio. Eh, podemos a ver h el per el perro. Vemos que va a ir va a ir generando de una en una. Entonces, lo que tenemos que hacer para generar unación es le damos lo que arroje vuelve como input y vuelve a generar el perro. Bueno, ahí que como que se desvió, pero veamos hasta dónde llega.
+
+
+02:28:07
+
+lse posgrados: Uy, ¿qué hice? Parece que arrojo algo. Bueno, voy a poner otro ejemplo. La casa la casa de y le volvemos a dar los inputs nuevamente para que continúe la predicción. La casa de la casa de la espuma. Y ahí un poco vemos que ya está comenzando a adivinar, ¿no? Está tratando de completar las oraciones una por una y lo que tiene que hacer es ir eh, o sea, adivina una de las palabras y luego esa oración la la retoma como input y adivina la siguiente. Entonces, así es como tiene que eh así es como se va haciendo. Ahora yo le estoy haciendo manual para que sepan cómo funciona, ¿no? El output de una primera iteración se vuelve el input de la siguiente. Entonces así eh va va ejecutándose a un poco que salido más o menos el modelo. Podríamos ir iterando y viendo más más o haciéndole cambios de repente de parámetro, agregando otros otras capas. A veces, a veces me ha salido mejores oraciones. A ver, vamos a ver otra cosa.
+
+
+02:29:34
+
+lse posgrados: La calle Lineers. Ah, mira, eso tiene sentido. Bueno, Linear sí ha estado por por Linearse ahí en Buenos Aires. La calle Linear nos nos gritó. Bueno, eso ya no tiene sentido, pero bueno, Eh, acá podemos ir viendo, ¿no? Si es que nuestro modelo fue está generando algo interesante o o no. Ahora, esta es la primera la primera eh la primera versión. Eh, pero si se dan cuenta acá lo estamos haciendo manual. Entonces voy a pausar este gradio para poder ejecutar lo demás. un segundo. Ah, lo que lo que normalmente se hace es esto automatizarlo, ¿no? Entonces, acá hay una función que se llama generate sequence y acá le podemos dar cuántas palabras queremos eh queremos que se creen. Entonces, eh ah, bueno, acá acá ya se ejecutó solo. creamos la función, le damos el input, es decir, unas palabras para que inicie la la generación y le ponemos cuántas palabras, ¿no? En este caso, eh 12. Y le tenemos que también poner cuál es la ventana del contexto para que eh pueda tomarlo en cuenta en la generación.
+
+
+02:31:01
+
+lse posgrados: Entonces, con esto ya y esta función ya no tenemos que hacer esto manual, ¿no? De estar copiando lo que salió y volviendo a generar, sino que eh lo va haciendo automático hasta poder completar la cantidad que le hemos dicho en este caso 13. Y bueno, nos sale esta de acá, la casa de la espuma que un remo levantó en el tercero breve y un poco está más o menos, está más o menos, pero ya ya estamos creando eh o ya estamos viendo cómo se va apareciendo un modo de lengua. ¿Alguna pregunta de esta parte de la generación? ¿Cómo se hace autorregresivo? regresiv esto que estamos haciendo del output, dándoselo como input y iterando para generar la la oración. sintácticamente sí está poniendo eh sujetos donde corresponde que un tiene sentido que vayan juntos remo levantó más o menos que tiene sentido. Entonces está capturando cosas de lenguaje. Eh, me han salido en otras corridas me han salido mejores modelos que este, pero bueno, ahí cuando cuando jueguen en su casa seguramente lo mejoran. y le va a salir eh oraciones interesantes.
+
+
+02:32:20
+
+lse posgrados: Eh, ¿qué más? Ah, ya. E en esta parte de la ejecución estamos agarrando la e la palabra con mayor probabilidad, pero normalmente no se hace así directamente. Entonces, esa es la la el siguiente paso que se tiene que tomar en cuenta que también lo hacen los grandes modelos de lenguaje. ¿Cómo seleccionas la palabra de entre todas las probabilidades que tien? Entonces, Aquí para esta parte regresamos a la lámina y les muestro las diferentes opciones que hay. Actualmente estamos usando para el ejemplo que hemos visto un gried search. ¿Cómo funciona el gridy search? es tenemos las palabras iniciales o la frase input o puede ser una palabra o varias y a partir de eso generamos las probabilidades de todo el vocabulario y de ahí elegimos la palabra con mayor probabilidad que sería por ejemplo esto, ¿no? Andábamos sin Luego con estas dos palabras de input volvemos a generar todas las probabilidades y elegimos otra vez la palabra con más probabilidad que sería esta, ¿no? Y así se va generando la oración. Andábamos sin rumbo fijo y hemos elegido en cada punto la palabra con mayor probabilidad.
+
+
+02:33:48
+
+lse posgrados: Esta forma de elegir se llama great search. Eh, y ahora, eh, ¿qué piensan? ¿Va a salir el mismo resultado siempre o podría cambiar de resultado si lo ejecutamos varias veces? ¿Podría cambiar o saldrá siempre lo mismo?
+Hernando Scheidl: puede cambiar,
+lse posgrados: Eh, no, en este caso va a salir siempre lo mismo.
+Gonzalo Rodriguez: No, el mismo siempre.
+lse posgrados: ¿Sí? ¿Por qué? Porque los pesos de nuestro modelo no van a cambiar, van a ser los mismos. Los inputs que le estamos dando y los vectores también van a ser los mismos siempre. Y por tanto todas las probabilidades van a salir iguales y la mayor probabilidad siempre va a ser la misma. Entonces, cuando uno usa greedy search, está usando modelo de terminista, ¿no? Es un modelo que siempre te arroja lo mismo. Pero ahora les pregunto, cuando ustedes usan CH GPT u otros modelos, ¿Desarja siempre lo mismo o varía?
+Hernando Scheidl: Ahí sí cambia.
+lse posgrados: Sí.
+Hernando Scheidl: Yeah.
+lse posgrados: Sí. Eh, los modelos de lenguaje que usamos cambian y es porque no lo hacen de esta manera, no no eligen la palabra con mayor probabilidad, no usan grid search como tal.
+
+
+02:35:05
+
+lse posgrados: Eh, ¿qué es lo que usan? Eh, existe otra forma, de hecho, existen dos formas. Las la siguiente evolución agre search es el beam search. Y cuál es la variante que ya no elige la probabilidad por eh por cada paso, sino que elige una cantidad de ramas, es decir, una cantidad de ramas con probabilidades altas y compara todas las las oraciones de de esas ramas, ¿no? Entonces, por ejemplo, compara la probabilidad de esta oración completa, la probabilidad de esta otra, de esta otra. En este caso tenemos 1 2 3 4 5 6. Bueno, de las que estamos viendo tenemos seis ramas. M. Sí, seis, seis, seis oraciones. Y lo que hace Bin search es multiplica las probabilidades de cada elemento para poder sacar la probabilidad de la rama completa de de esta rama. Entonces, por ejemplo, esta rama de acá tiene una probabilidad combinada de 0.108. En cambio, la rama que salió en Greedy Search, que era esta otra, si retrocedemos, la probabilidad de esta rama era 0.045. Entonces esta probabilidad de la rama era menor a la probabilidad de esta otra rama.
+
+
+02:36:28
+
+lse posgrados: Pero, ¿por qué no se seleccionó esta rama? Si era mejor en teoría, ¿no? Su probabilidad combinada es mayor porque en el otro método estábamos comparando paso a paso. Entonces la que terminamos seleccionando era distinta. En cambio, en en beam search, perdón, combinamos la probabilidad completa de la rama y seleccionamos la rama con mayor probabilidad conjunta. Entonces es por eso que en este caso se termina decidiendo una rama diferente, pero si se dan cuenta acá también va a ser determinista, ¿no? En beim search igual siempre se va a elegir la misma rama. Estamos eligiendo de forma distinta, pero sigue siendo determinista porque van a vamos multiplicando los mismos probabilidades. Entonces, eh hasta acá dos formas de de elegir, una viendo paso por paso y otra viendo un poco la vista completa. Ahora, ¿cuál es la que se usa? es una versión de Beam search, pero como estrebo. Entonces, en vez de simplemente eh tomar en cuenta las palabras eh mayores, o sea, con mayor probabilidad para cada vez, eh se toma en cuenta en base a una probabilidad o perdón, un maestro aleatorio.
+
+
+02:37:54
+
+lse posgrados: Entonces, lo que se hace en los modelos actuales es no tomas directamente la mejor palabra, sino que haces un muestro en base a las probabilidades de las palabras. Entonces, normalmente las palabras con mayor probabilidad son obviamente más probables de ser seleccionadas, ¿no? Entonces, por eso es que te salen las palabras correctas, ¿no? No es que estás eh seleccionando eh sin ningún tipo de información. Las palabras con mayor probabilidad son eh las que salen con más frecuencia, pero existe eh una probabilidad también de que se seleccionen palabras diversas, ¿no? Entonces, por ejemplo, si es que dices adopté aún, probablemente haya un una serie de probabilidades que una serie de palabras que tienen probabilidad alta, por ejemplo, un perro, un gato, un loro. Y en vez de seleccionar simplemente la que tenga mayor probabilidad, que sería por ejemplo perro, va a ser un muestrero entre esas y va a poder salir de repente en un momento gato, en otro momento hámster, en otro momento eh no sé, lor. Entonces, esa es la forma como se hace actualmente con este muestre.
+
+
+02:39:09
+
+lse posgrados: E y acá aparece un concepto interesante o bastante usado. No sé si alguno ha escuchado este concepto de temperatura. ¿Alguien lo ha visto? Carlos dice que sí.
+Nicolás Moguilner Reh: Sí, ahí cuando uno implementar la la API, por ejemplo, Open AI, que puede decir el modelo, le puede enviar también con el prompt la temperatura como para ir jugando y que no alucine mucho con la respuesta.
+lse posgrados: Ajá. Sí, tal cual. ¿Y cómo lo has usado tú, Nicolás, por ejemplo? ¿Cuándo lo has cambiado?
+Nicolás Moguilner Reh: No, no recuerdo en algún momento que implementé, creo que fue con GBT4 mini. iba probando con distintos valores,
+lse posgrados: Ajá.
+Nicolás Moguilner Reh: pero pero fue algo medio piquito.
+lse posgrados: Ya, genial.
+CARLOS AGUSTIN BERDAGUER: A mí me pasaba que para realizar tareas más determinísticas necesitaba ponerle menor
+lse posgrados: Sí.
+CARLOS AGUSTIN BERDAGUER: temperatura para que no delire y si necesitaba que sea algo conversacional que que fluya más, que sea más variado, le le subía la temperatura.
+lse posgrados: Genial. Sí, sí. Tal cual.
+
+
+02:40:15
+
+lse posgrados: Para eso se usa la temperatura. Entonces, como hay por detrás un muestro aleatorio que le estamos agregando, podemos un poco modificar las probabilidades de que salga una palabra u otra agregándole este e este elemento de la temperatura, que lo que hace básicamente es dividir los logits que salen de de nuestro modelo. Entonces, si es que originalmente teníamos, por ejemplo, estas probabilidades de elegir estas palabras, e si es que le aumentamos la temperatura, lo que va a hacer es dividir eh eh los logar básicamente las probabilidades, ¿no? Entonces, por ejemplo, acá Nice y Carl estaban más separadas, tenían más distancia y en cambio con una temperatura más alta la distancia se cortó entre los dos. Entonces, ¿qué hace? Que sea más probable que salga otra palabra diferente a Nice. No está cortando, está aplanando la curva y hace que que sea más probable que el modelo seleccione otras palabras. Entonces el modelo va va a variar más sus respuestas cuando le aumentas la temperatura y se va es más probable que salgan combinaciones de palabras más inusuales, ¿no? Si es que simplemente tomas la más probable, pues te va a salir la la palabra promedio y te va a crear oraciones promedio.
+
+
+02:41:41
+
+lse posgrados: Pero si queremos que el modelo se atreva a hacer cosas más diferentes, entonces le subes la temperatura y eso va hacer que vayan saliendo combinaciones mucho más variadas. Yeah. Entonces, por ahí, como decía Carlos, cuando quieres que mon te arroje cosas más variadas, de repente estás haciendo lluvias de ideas, eh, o quieres que el modelo eh cambie un poco la forma como habla de un momento u otro, entonces le subes la temperatura y se va eh va a salir combinaciones un poco distintas. Ahora sí tiene un riesgo, ¿no? Obviamente si es que planas la curva es más probable que elija también una palabra que no tenga sentido. Entonces hay un límite entre cuánto le puede subir. Si le subes ya demasiado, el modelo va a comenzar a hablar cualquier cosa y su performance se va a empeorar. Entonces, normalmente hay un rango en el que tú puedes ir variar sin sin eh sin malograr el resultado en sí. Y por otro lado, si es que le baja la temperatura, va a ser lo contrario, no va a aumentar la distancia entre las palabras.
+
+
+02:42:49
+
+lse posgrados: Entonces ahí como decía Carlos, si es que quieres que el modelo sea que casi siempre te responda a algo similar, entonces le puedes bajar la temperatura e y con eso es más probable que casi siempre, no siempre, pero casi siempre salga esta palabra seleccionada, ¿no? Entonces ese es un eh un parámetro importante. Ahora sí, una acotación nota. Originalmente los modelos, las APIs de estos laboratorios si te dejaban manipular la temperatura. Mi experiencia con los últimos modelos que han salido como Luna, eh TR, los últimos, es que ya no te deja modificarla porque ya tiene como que un valor de temperatura ideal y lo tienen preseteado y ya no te dejan cambiar. Entonces sí, tómeno en cuenta. Los modelos que usan de proveedores con API, a veces te dejan modificar, a veces no, pero cuando usas un modelo open source, ahí sí tienes libertad completa de de modificar. Eh, y un extra es que existen otros otros dos e otros dos elementos que son el top K y el top P, que también sirve para un poco direccionar el muestreo que se va dando.
+
+
+02:44:12
+
+lse posgrados: Acá no tengo una lámina. Déjame ver si encuentro algo que que nos ayude, que me olvide agregar. Eh, toca el eh bueno, veamos si no nos ayuda esta página. Falta de lámina. Bien, ¿Sabe mi pantalla? No, ya estábamos hablando de la temperatura. Eh, lo que hace a mayor temperatura, plana la curva, menor temperatura hace más eh crea más diferencias entre las palabras. Luego tenemos el top K, que lo que te hace es limitar entre cuántas eh entre cuántas palabras vas a elegir, ¿no? un topk, por ejemplo, de uno, significa que vas a seleccionar la primera, la mejor, y entonces haces el muestro letr que bueno, prácticamente va a ser esa le vas aumentando el topc, significa que puedes elegir entre más palabras que serían el top, o sea, el número que tú elijas de top de entre todas las probabilidades. Entonces, por ejemplo, un top tres, un top K de TR vas a hacer un muestro aleatorio entre esas tres nada más, ¿no? Entonces, ese es otro parámetro que se usa.
+
+
+02:45:48
+
+lse posgrados: Y luego está el top P, que básicamente lo que hace es una una probabilidad absoluta, ¿no? Perdón, sí, una probabilidad acumulada. Entonces va comenzando desde el top, desde el de mayor probabilidad y si defines, por ejemplo, el 90%, entonces vas acumulando la probabilidad hasta que llegue al al 90, ¿no? Entonces, por ejemplo, en este caso eh he seleccionado las de acá, que más o menos su su probabilidad acumulada en este caso creo que es 75, si estoy sumando bien, porque tiene una probabilidad total de de 80. Entonces ya no entraba. Sí, como un percentil, ya no entraba roof porque de ahí ya se iba a pasar de 80, ¿no? Ahí hubiera sido 85, hubiera salido el acumulado. Entonces se quedó en 75 de acumulado y se quedaron solo estas tres palabras y entre esas palabras va a seleccionar aleatoriamente. Entonces son algunos eh de los parámetros que se pueden seleccionar al momento de hacer el sampling de las palabras. Entonces estas estos elementos sí e sí existen y se usan en en modelos grandes de lenguaje también y están eh eh relacionados a este este hecho de tener que eh hacer un muestro relatorio entre las probabilidades de las palabras.
+
+
+02:47:20
+
+lse posgrados: ¿Alguna duda de acá de de esta eh forma cómo se selecciona? ¿Todo bien? Ya. Genial. Entonces, volvemos al notebook rápidamente. No está acabando el tiempo, pero aquí tenemos algunas funciones para encodear, es decir, llevar el ID del token a la palabra y viceversa y también hacer el el padding, que esto, bueno, funciones que nos van a ayudar a hacer eh la inferencia. Y acá tenemos Estas funciones de selección de candidato. Entonces, acá eh ya tenemos hecho nuestro BIM search. Acá está, por ejemplo, la temperatura ya está incorporada en el cálculo para hacer el el muestro aleatorio. Y eh acá, bueno, también le podemos agregar el número de BIMs que se van a tomar en cuenta. Entonces, acá ya lo tienen eh ya lo tienen hecho. Básicamente vamos a probar con con esta función cómo va a variando. Si quieren ahí le dan una chequeada del código, pero le ponemos el ejemplo que habíamos visto arriba de la casa. Eh, queremos generar eh cinco palabras por cada vez y le ponemos el número de BIMS que se tienen que considerar y la temperatura.
+
+
+02:48:45
+
+lse posgrados: Entonces ahí generamos oraciones. Entonces acá ya vemos que ya nos sale lo mismo, ¿no? Arriba no salía la casa de la espuma, creo, algo así. La casa de la espuma que un rem. Y ahora estamos teniendo variedad de oraciones. La casa de la casa de pensar, la casa de un concepto vago de la casa de la Bueno, eh no varía tanto. Capaz que a ver, le aumento la temperatura. Ojalá no se me no se me ha desconectado. Le voy a poner dos y vamos. La casa que la serie del puerto, la casa de más hombres. Acá se repite un poco la casa que la compañía es. Entonces vemos que varía bastante, ¿no? Ahora sí ya te está dando variedad de oraciones y ya no te está arrojando la misma. Entonces acá eh va a servir bastante. De hecho, si se dan cuenta, el aleatorio a veces incluso mejora, ¿no? Eh, incluso acá a veces ya salen oraciones con un poco más sentido que la que habíamos visto arriba.
+
+
+02:49:57
+
+lse posgrados: Entonces, eh en la práctica se usa de esa forma, no se usa aleatorio, se usa bien search y se va jugando con la temperatura para ver cuál es el el punto ideal para nuestro modelo. Entonces, como conclusión, eh nuestro modelo está más o menos, obviamente el corpus es grande, el modelo es chico, eh podemos agregarle más capas, podemos darle más ejemplos hacia un cuerpo un poco más grande, podemos utilizar preentrenados para mejorarlo. Entonces, existen una serie de cosas que que se pueden hacer, pero igualmente ya ya han visto, digamos, el proceso de generar texto desde el corpus hasta la selección de de la palabra. Eh, ¿alguna duda acá antes de de presentarles el desafío 3? M.
+CARLOS AGUSTIN BERDAGUER: Se había usado del STM para este, ¿no?
+lse posgrados: Eh, sí, L. Usamos dos capas de LSTM. Sí.
+CARLOS AGUSTIN BERDAGUER: Y ahí entre el STM y Gruiera que que se ven las oraciones que a medida que va llegando al final la oración va perdiendo bastante más sentido.
+lse posgrados: Sí, en las oraciones. Sí.
+CARLOS AGUSTIN BERDAGUER: ahí capaz la selección de de la arquitectura del modelo en sí de la selección de esos bloques no no influiría.
+
+
+02:51:26
+
+lse posgrados: Sí,
+CARLOS AGUSTIN BERDAGUER: Ok.
+lse posgrados: en parte también es porque como es un modelo chiquito se hace overfitting, entonces sí se van a dar cuenta cuando hagan sus ejemplos que a veces se queda en un look y repitan las mismas palabras. Por ejemplo, acá creo que justo vimos uno acá eh de la casa de la
+CARLOS AGUSTIN BERDAGUER: Sí, de la casa. La casa.
+lse posgrados: casa de la casa, algo así, ¿no? Y podría seguir con de la casa infinitamente porque es un modelo Sí,
+CARLOS AGUSTIN BERDAGUER: Eso es
+lse posgrados: es estadofiteado y a veces entra el loop. Incluso he visto que pasa con el LMS. No sé si alguno se ha puesto a conversar dos LLMs juntos. Eh, a veces mi trabajo lo hacemos para probar los agentes de forma automática y a veces entran en look. Es decir, uno dice, no sé, por ejemplo, yo trabajo en un banco, uno le dice, "Necesito que pagues mañana." Y el otro dice, "No puedo pagar." Y el otro, "Necesito que pagues mañana, no puedo pagar." Y así se quedan infinitos.
+
+
+02:52:19
+
+lse posgrados: Entonces ocurre el overfeitting y ocurre que a veces se quedan entrampados en un loop, eh, porque justamente la probabilidad de la siguiente palabra es parecida, ¿no? Entonces, a veces justo la temperatura ayuda, o sea, este muestro aleatori ayuda a que no caigan ese tipo de loops. Van a ver cuando la temperatura es más baja, más probable que les llegue un loop y cuando van jugando con la temperatura, ya se destraban de caer en esas cosas. Pero sí, también a medida que el módulo sea más grande, pues menos probable que caiga en eso. ¿Alguna otra duda? Ya. Genial. Entonces, eh voy a nada más esto ya lo colgué, justo aprovechando el último break colgué eh la clase cuatro. Ya tienen esta este ejemplo y también el PDF. Voy a ver si les incluyo esas imágenes de Topkai y Top después. Y también ya colgé el desafío tres. Entonces, eh, déjame ver si acá lo tengo. No, esto es otra corte. A ver, ya les voy a mostrar rápidamente.
+
+
+02:53:39
+
+lse posgrados: El desafío 3 es parecido a lo que hemos visto ahora. Y de hecho esto ya lo va a corregir Fernando, pero yo se los presento igual. Eh, tienen que hacer un modelo de lenguaje como lo que hemos hemos hecho ahora. La diferencia fundamental es que la tocenización va a ser por caracteres. Entonces, la idea es que ustedes generen, o sea, carácter por carácter. Eh, esa es la diferencia, ¿no? No se vayan a confundir y vayan a usar el otro notebook que es por palabras. Tiene que usar esta plantilla que acá si tiene tokenización por caracteres. Eso es lo primero. Entonces, tienen que seleccionar un corpus. Pueden usar el del desafío dos, como les dije, o si quieren prueban con otro corpus diferente para entrenar el modelo. Hacen su preprocesamiento, si es necesario limpiar cosas, lo limpian, eh toquenizan, eh lo dividen por sus documentos y lo separan entrenamiento y validación. Luego tiene que proponer su arquitectura de redes neuronales basadas en en unidades recurrentes, es decir, usen RNN, LCTM o y prueben combinaciones eh de diferentes capas de Dropout para ver que que le salga un un modelo decente.
+
+
+02:54:54
+
+lse posgrados: Como les digo, no esperen un chat GPT, pero vayan probando a ver qué cosas les da mejores resultados y van documentando lo que vayan encontrando, ¿eh? con el modelo que que consideren que les ha ido mejor, genera sus secuencias y tienen que probar la estrategia GDY search, la de BMS determinístico, es decir, sin el muestreo, y la estocástico que es con el muestreo. Y en este último, que es el estocástico, prueben con diferentes niveles de temperatura y saquen sus conclusiones. La más importante como siempre es en cada punto escribir conclusiones para que nosotros sepamos lo que han ido experimentando. No, no, no nos dejen, por ejemplo, la última arquitectura nada más. No, no, no solo dejen la última, sino comenten si han probado otras, cómo les fue, si les fue mal, qué creen que pasó. Todo eso eh suma puntos para para su entrega. Eh, ¿algunas sugerencias? Eh, guíense por la perplejidad para ver si el modelo está prendiendo. Tienen el callback, acá abajito está pegado el callback, el callback creado de cero. Si quieren usar el otro callback, lo pueden copiar también de acá, no hay problema.
+
+
+02:56:16
+
+lse posgrados: Lo copian tal cual. de este otro notebook, el colback chiquito, si es que si es que les demora mucho en correrlo, pueden copiar el de acá y este les va a correr un poco más rápido. Eh, de ahí exploran simple RN, LSTM y bueno, este es el optimizador recomendado y si quieren explorar otros también pueden hacerlo. Y acá tienen la plantilla. Entonces, le voy a dar un vistazo rápido a la plantilla. Básicamente cargan su dataset. Acá tiene uno de ejemplo. No, no se queden con este dataset porque la idea es que usen su propio. Pero bueno, acá tienen un ejemplo con el libro de la vuelta al mundo en 80 días. Entonces, bueno, se carga, se define el tamaño de contexto. En este caso, pues es a nivel de caracter, recuerden. Entonces, tiene que tener una un tamaño de contexto más grande porque estamos generando carácter por carácter. El vocabulario sí va a ser el más chiquito, ¿no? Caraces, si no me equivoco, van a obtener 65 caracteres.
+
+
+02:57:23
+
+lse posgrados: Entonces, un vocabulario más pequeño. Y la forma de división también solamente es división de a nivel de vocabulario. Entonces, eh cuando le hacen este set, si no me equivoco, ahí ya ya estar dividiendo todo en en base a los caracteres. Entonces eh es una toquización diferente a la que hemos eh usado. Entonces lo dividen a base a caracteres, luego le asignan su identificador y e de ahí, bueno, básicamente organiza su data, se la dividen en train eh validación, que es lo mismo que vimos antes. E y bueno, eh de ahí definen el modelo, ¿no? Acá tienen un ejemplo de estructura. La idea es que no usen esta así tal cual. Esta es una simple, no solo tiene una capa y y la densa. E si se dan cuenta, acá no le estamos poniendo en beding porque recuerden que estamos usando caracteres. Entonces no tiene tanto sentido hacer vectores de caracteres porque no tiene significado semántico. Entonces es otra variante que van a ver en este en este ejemplo. Pero si usamos las redes recurrentes igual y la densa.
+
+
+02:58:41
+
+lse posgrados: Acá pueden probar, como vimos en el ejemplo de la clase, con dos capas, ponerle dropout al medio, pruébenla el STM, la GRU y cómo les va con eso. De ahí entrenan el modelo, eh hacen la predicción del próximo carácter. Acá e tienen algunos eh ya funciones eh listas para poder hacer el encoding y las predicciones. Y acá tienen el mismo la misma función de generación de secuencia que vimos, ¿no? para que no tengan que estar eh copiando y pegando el output al input una y otra vez. Acá tienen la función para que les ayude. Y e acá también tiene las funciones para poder hacer eh el muestreo o bueno, la selección de candidatos según diferentes variantes, ¿no? Acá tienen eh por ejemplo el mode, pueden seleccionar un beam search determinista. si le ponen mode igual de o mode igual stock, si es que quieren el estocástico, es decir, con el muestre aleatorio. Y también tienen la temperatura. Entonces, utilicen esto para poder eh jugar acá. Yeah. son diferentes temperaturas y acá hacer sus predicciones y comparar resultados.
+
+
+02:59:59
+
+lse posgrados: Entonces, eso es el desafío tres. Si se dan cuenta, muchos de estos bloques son parecidos a lo que ya hemos visto. Eh, la diferencia es el el corpus que vayan a elegir, que va a ser propio, la la tocenización por caracteres que está por aquí, ¿no? y un poco que el la ausencia del eding también es otra diferencia, pero acá igual la arquitectura si puede ser parecida a la que hemos hecho antes, pero la idea es que vayan ahí probando con diferentes combinaciones. Em, ¿alguna pregunta de acá antes de cerrar?
+Gonzalo Rodriguez: consulta, eh,
+lse posgrados: Sí.
+Gonzalo Rodriguez: para ir haciendo todas las pruebas con LCTM, Group, cambiar los distintos tipos de de estoico, no estocástico, o sea, si hay que registrar todas esas pruebas que se hace, va a quedar larguísimo para que se vaya viendo toda la prueba que se hizo,
+lse posgrados: Sí. Eh,
+Gonzalo Rodriguez: porque vos cada vez que que querés correr algo para ver cómo anda, tenés que que correrlo entero. No.
+lse posgrados: sí, o sea, no es necesario que dejen el código, por ejemplo, si hacen muchas muchas combinaciones de arquitectura, pueden nada más, por ejemplo, tomarle un pantallazo, a lo que le salga y como que escribir, ¿no?
+
+
+03:01:22
+
+lse posgrados: Anteriormente probé tal combinación y no me fue bien. algo así, pero sí que lo comenten al menos para que sepamos que han hecho han hecho pruebas, ¿no? Entonces, no es necesario que que dupliques el código para para que no se te haga tan largo, pero sí comenta lo que hayas probado para no considerar que solo has hecho un uno, no el el final, sino para que sepamos que has probado diferentes combinaciones.
+Gonzalo Rodriguez: Bien. M.
+lse posgrados: Mm. Y la parte de abajo, eso sí, no no ocupa mucho espacio porque nada más van variando. Eh, por ejemplo, el mod le van cambiando de de estocástico determinista y le cambian con la temperatura cada, ¿no?, por ejemplo, y es solamente una línea de código cada variación. Entonces ahí sí pueden dejar en código sus diferentes combinaciones de temperatura.
+CARLOS AGUSTIN BERDAGUER: ¿Alguna recomendación para caracteres no alfabéticos? ya sea número, signos, de puntuación, espacio, también hay criterios
+lse posgrados: Eh, al final van a entrar como parte de vocabulario, en verdad no habría como un tratamiento especial, creería. Ahora si quieren los pueden limpiar, pero claro, no no los tendrían eh ya en la generación no lo va a tomar en cuenta el modelo, no sería nada más oraciones planas.
+
+
+03:02:53
+
+lse posgrados: Yeah. Yo recomendaría que lo dejen y lo prueben con todos los caracteres. Bien, ¿alguna otra duda de acá? Una última recomendación, si no hay más dudas es háganlo con tiempo porque como ven, a veces no está, por ejemplo, la T4 disponible o a veces te cortan la conexión a la mitad. Si es que tienen muchos problemas y pueden, pues pueden agregarle algunos créditos y eso les va a facilitar. Eh, pero sí eh háganlo con tiempo por si surge alguno de esas complicaciones. Y eso es eso es, chicos. Si no hay más dudas, esta sería la clase. Perdón que nos hemos alargado un poquito y ya la próxima semana van a continuar con Fernando, pero igual cualquier cosa, cualquier pregunta me me la pueden hacer por correo y ahí seguimos en comunicación. Igual les debo las notas de desafío uno y dos, que las voy a estar corrigiendo, si probablemente esta este fin de semana vaya avanzando con con una buena. Así que ahí eh cualquier duda también me pueden hacer eh por correo sobre esos desafíos. Eso es. Gracias, chicos. Eso sería. Ya nos vemos. Hasta luego. Gracias.
+
+
+La transcripción finalizó después de 04:21:11
+
+Esta transcripción editable se generó por computadora y puede contener errores. Los usuarios también pueden cambiar el texto después de que se cree.

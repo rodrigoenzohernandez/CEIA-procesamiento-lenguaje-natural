@@ -1,7 +1,7 @@
 # Desafío 1 — Vectorización de texto
 
 - **Se presentó:** clase 1 (jueves 22/10/2026).
-- **Nota 10 hasta:** jueves 05/11 (clase 3), a última hora de Argentina. Desde el 06/11 baja un punto; ver la [tabla de notas máximas](../README.md#nota-máxima-según-la-fecha-de-entrega).
+- **Nota 10 hasta:** jueves 05/11 (clase 3), a última hora de Argentina. Después vale 9 hasta el 19/11, 8 hasta el 26/11, 7 hasta el 03/12 y 6 hasta el 10/12; ver la [tabla de notas máximas](../README.md#nota-máxima-según-la-fecha-de-entrega).
 - **Entrega:** por el [formulario](https://forms.gle/wsWkQJWAFeh6g6qv5), con el link a este repo o a un Colab. Individual o en pareja.
 - **Resolución:** [`desafio-1.ipynb`](desafio-1.ipynb). Es la plantilla de la materia (`Desafíos/Desafio_1.ipynb`: el ejemplo de la clase y la consigna) con los 4 puntos resueltos al final, cada uno con su análisis.
 - **Teoría:** [resumen de la clase 1](../../clases/01-introduccion-vectorizacion/resumen.md): TF-IDF (§18), similitud coseno (§20), Naïve Bayes (§22) y el ejemplo de la plantilla (§24).

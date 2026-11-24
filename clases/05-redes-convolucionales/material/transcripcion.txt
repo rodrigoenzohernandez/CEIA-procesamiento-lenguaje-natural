@@ -1,0 +1,613 @@
+nov 19, 2026
+Procesamiento del Lenguaje Natural I (5/8) - a264b26 - Transcripción
+00:03:01
+
+lse posgrados: Hola, buenas noches. ¿Se me escucha bien?
+Vicky: Hola, buenas. Sí.
+lse posgrados: Buenas, gracias. Bien. Bueno, buenas noches. Vamos a empezar con la clase de hoy. Bueno, yo creo que usualmente vamos a empezar estas horas, ¿no? Tipo 7 y 5 a modo de esperar a sus compañeros, pero igual yo voy a estar un poco más antes por si tienen dudas. tipo 7 y una voy a estar ahí y podemos hablar esos 4 minutos. Bien, bueno, me presento. Me llamo Fernando Silva, voy a ser el profesor de estas cuatro clases que quedan para terminar el módulo de procesamiento de lenguaje natural. Y bien, voy a continuar con el avance de Josselyn. Igual creo que Josselyn se los había comentado, ¿verdad?, el primer día de clases que vamos a ser dos profesores. Entonces les voy a compartir mis diapositivas, ¿eh? Okay, den un segundo. Bien, entonces vamos a empezar la clase de hoy. Bien, antes de empezar la clase creo que podríamos hablar sobre sobre qué es lo que vamos a ver a lo largo de estas cuatro clases.
+
+
+00:04:39
+
+lse posgrados: Bien, para darles una idea. Entonces, vamos a a hacer lo siguiente. Eh, a ver, vamos a hacer lo siguiente. Voy a entrar Githaub. Bueno, aquí está lo que ha estado subiendo Josselyn para ponernos en contexto de qué vamos a hacer ahora. Bueno, como vieron, eh, bueno, vamos a sacar screenshot a todo esto. Eh, este es el slide, bueno, los slides que tuvió Josselyn el primer día de clases, que fue hace 5 semanas, cu semanas. Bien, entonces los primeros cuatro temas ya los vieron, ¿verdad? Ya vieron sobre la introducción a NLP. Bueno, ahí sencillo, ¿verdad? Algunas técnicas clásicas, eh, si no me equivoco, ahí lo más básico, de hecho, tokenización, eh, stem, lemantización, stofws, one horing, back of words, ¿verdad? Entonces, eh eso viene el primer día de clases, el segundo día de clases, W and Bearings. Bueno, ahí ya estaban empezando a hablar sobre cosas un poco más complejas, si no me equivoco, TF y DF. etcétera. Clase tres, redes recurrentes, Elman, LCTM y GRW.
+
+
+00:06:08
+
+lse posgrados: Bien. Y modelos de lenguaje en la clase cuatro y generación de secuencias. Bueno, modelos autodresivos, ¿verdad? Eh, bueno, sí, Carlos, lo siento. Lo puedo agrandar un poco más sin problema. Igual cualquier cosa me escriben ahí por el chat. Entonces, eh bueno, lo que les estoy mostrando esto que Josselyn les había presentado el primer día de clases, ¿no? Sobre el programa del curso. Bien, ahora lo que vamos a ver conmigo va a ser de las 5 a la 8. Hoy vamos a ver CNNs para NLP o bueno, PLN, ¿no? Que es lo mismo en español. Entonces, ¿cómo encaja lo que vamos a ver conmigo eh en relación con lo que han visto con Josely? Bueno, con Joseline esta materia, esta clase, perdón, de la la tercera ya vieron sobre las RNs, ¿verdad? Las redesales recurrentes que son muy interesantes para tratar secuencias. Ahora, eh todo el tema de la materia es lenguaje, ¿verdad? Prochamiento de lenguaje natural. O sea, í hablamos sobre todo de texto, pero las redesunales recurrentes, por si acaso, no solo es para texto, puede ser para audio, puede ser para series de tiempo, etcétera.
+
+
+00:07:20
+
+lse posgrados: Todo lo que sea secuencia puede ser tratado con RNNs. Hasta las imágenes, las imágenes no son secuencias, pero se puede manejar con RNES. Bien, ahora eh las LNS nacen como una propuesta para manejar secuencias porque ya teníamos las CNNs, ¿verdad? Las CNNs que vieron en Computer Vision, bueno, visión por computadora uno, funcionan muy bien para imágenes. Pero, ¿qué hago ahora si quiero texto? Bueno, me voy a las CNNs. Ese es un puente usualmente. Ahora lo que vamos a ver es un poco al revés. Tengo las LNs, ¿okay? funcionan y podemos programarlas y demás, pero no tengo otras alternativas mejores a las Recur Neal Networks. Sí tenemos otras alternativas, de hecho tenemos una que es muy poderosa que lo vamos a ver después, pero una alternativa, digamos que suena interesante son las CNNs, las convolutional new networks que han visto para imágenes, lo vamos a ver hoy día para texto. Ahora, ¿cuál es la ventaja? ¿Por qué hacer esto? ¿Por qué eh por por qué irse hacia otra arquitectura?
+
+
+00:08:28
+
+lse posgrados: ¿Qué qué pasó con las LNs? Como para querer ver otras opciones. Eh, lo que pasa es que las CNNs eh como manejan los filtros sí pueden ser más rápidas al momento de procesar la información. Lasn rápidas porque son secuenciales. Por ejemplo, si yo le paso hoy me siento triste, va a recibir hoy hace un proceso. Luego me hace un proceso, luego siento un proceso triste, un proceso y luego recién te va a decir negativo. Funciona, pero tiene ese detalle. Y si yo quiero quiero entrenar un modelo grande de lenguaje, o sea, con mucho texto, vamos a tener problemas ahí. Por eso estamos viendo otra alternativa y ahí entra la CNNs. Otra razón es para ver que las CNNs también entran en el juego de procesamiento de lenguaje natural. Bien, por esa razón también estamos viendo esto. Bien, eso vamos a ver hoy día. Ahora también tiene sus limitaciones las CNNs, ¿no? O sea, suenan interesantes, pero ah, a ver, tienen una ventana muy corta, bien, que lo vamos a comprobar después.
+
+
+00:09:47
+
+lse posgrados: Luego en la clase seis tenemos los modelos sequen to sequence. Bueno, los modelos sequen to sequence los estamos viendo más como una excusa para entender cómo funcionan los transformers. Los modelos into sequence son cuando ustedes agarran un bloque que puede ser una CNN, una RNN, lo que ustedes quieran. Digamos que una RN. Volvemos a la RN, lo conecto con otra RN y estos dos me van a resolver tareas más complejas, por ejemplo, la traducción. Bien, entonces esto es un bloque, bueno, esto es una arquitectura encoder decoder. Ahora también podría hacer por si acaso CNN RN. O sea, podemos combinar lo que ya sabemos, ¿verdad? RNS y CNNs. O solo RNNs, eh, igual o solo CNNs, que no es muy común, pero también se podría. Bien, entonces esta arquitectura es es interesante, tiene sus detalles también. Pero, ¿por qué vamos a ver entonces eso? Porque esto nos va a dar la noción de cómo funciona un transformer. Y eso es justamente lo que vamos a ver la clase siete, la que le continúa vamos a ver el mecanismo de atención y el transformer.
+
+
+00:11:04
+
+lse posgrados: Es otra dinámica. Bien, igual se manejan redes neonales y demás, pero es diferente a las CNNs y a las RNs. Pero esto esto del transformer, si lo ponemos de una manera muy simplista, es esto empoderado con mecanismo de atención. Entonces, por esa razón la clase seis vemos eso para entender las bases de la clase si. Bien, y una vez que hayamos visto eso del transformer, ya se nos va a hacer más fácil entender los large language models, porque los large language models o también conocidos como grandes modelos de lenguaje se entrenan utilizando la arquitectura transformer. Entonces ese es el storyting de lo que vamos a ver en estas cuatro clases que quedan y cómo llegamos de CNNs a lls. Bien, esa es la idea. Ah, bien. No sé si alguien tiene dudas tal vez hasta ahí o comentarios. Gracias, Lucas Gonzalo. Bien, genial. Entonces, empecemos con el avance. Vamos a empezar con esto de acá. Bien. Ah, igual una pregunta para ustedes. Quizás ya incorporaron esto en alguna otra materia, no estoy seguro.
+
+
+00:12:33
+
+lse posgrados: Eh, ¿vieron esto del modo funcional de cómo armar redes neuronales? CNN, CNN, lo que sea. ¿Lo vieron antes? Tal vez o solo han visto sequenal. Tal vez si lo vieron antes pueden poner un bien y si no lo vieron pueden poner un mal. Okay, gracias Lucas, Carlos, Nicolás. Bien, S, no pasa nada. De todas maneras he preparado esta este colap donde vamos a ver qué significa esto del functional y qué significa esto del sequential, que de hecho creo que aquí ya lo podemos entender. Igual lo voy a dibujar porque usualmente las redes las vemos de manera horizontal, ¿verdad? Entonces continuamos con esa dinámica. Por ejemplo, si yo tengo una red neuronal, la más simple, que va a ser clasificación de perros y gatos, entonces yo aquí tengo mi dataset donde tengo un gato. Eh, y bueno, como voy a usar una red neonal muy simple, lo que voy a hacer es aplanarlo, ¿verdad? No voy a usar convoluciones, nada de eso. Por un momento, olvidémonos de todo eso y solo pensemos en una red muy simple.
+
+
+00:13:48
+
+lse posgrados: Entonces, esto primero, ¿qué hago? Lo aplano. Okay. Pasa por una capa que se llama flattend. Bien, luego esto lo conecto con una red. Entonces aquí yo defino la capa culta, ¿verdad? Digamos, no sé, por poner un número 128 y esta otra capa que tiene 64 nodos. Y aquí la capa de salida, ¿verdad? ¿Cómo es binario solo un nod? Bien, todo esto sabemos que está conectado, ¿verdad? Todo con todos y ya. Eso es lo de siempre. Ahora, esto es es secuential, ¿verdad? Es secuential porque esta imagen viene aquí y se aplana, ¿okay? Luego viene aquí y se conecta con todos los nodos de la capa oculta. Bien. Luego viene aquí y se conecta con todos los nodos de la capa oculta. Viene aquí y termina. Es un proceso secuencial, es un flujo. Bien, así que ahí le pongo seal. Y bueno, en código también está así, ¿verdad? En código. Vamos a ver en un momento que hacemos.
+
+
+00:14:52
+
+lse posgrados: Bla, bla, bla, bla. Seuential. Bueno, hago esto un poco más grande. Así. Entonces ahí pongo bla bla bla bla secuencial paréntesis. Si aquí empiezo a poner, ¿verdad? Primero tengo una layers punto tense de cuánto, de 128. Bueno, perdón. Listo. Luego, ¿qué hago? Luego le conecto con una Layers punse de 64 y bla bla, ¿verdad? Todo es así. O sea, ahí, por ejemplo, yo no digo por si acaso después de esta eh tiene que venir esta de acá, etcétera. O sea, eso ya este eso ya se supone, ¿verdad? Porque como es secuencial, la primera línea hace el proceso, la segunda línea le continúa y así sucesivamente. Bien, eso es lo que hemos hecho hasta el momento en todas las en todos los módulos, ¿verdad? En cambio, ahora lo que vamos a hacer es el functional. El funcional me puede armar este tipo de redes también, pero también me puede armar redes más complejas. Por ejemplo, una que probablemente la van a ver en una materia más avanzada de visión por computadora, supongo que el dos, el tres, no estoy seguro, pero una un poco más avanzadas eh podría ser la Inception.
+
+
+00:16:15
+
+lse posgrados: Entonces, en la Inception lo que tenemos es algo así. Yo tengo acá otra vez el gato, ¿verdad? Bueno, está aquí. Y bueno, lo aplano, digamos. Bueno, más que aplanarlo, voy a pasarle una convolución. Convolución, luego hago un pulling, max pulling, convolución. Y por alguna razón en el paper mencionan que es mucho mejor cuando ustedes van viendo diferentes niveles, bien, eh la información de las imágenes. ¿A qué me refiero con diferentes niveles? Con diferentes valores del kernel. Entonces, cuando ustedes manejan una convolución 7x7, por ejemplo, están viendo una región espacial grande, ¿verdad? Son 49 píxeles que están viendo cómo se relacionan esos vecinos. Ahora también si usan convolución uno por uno, están viendo a nivel píxel. Entonces, si ustedes combinan diferentes niveles puede ser muy útil y eso es una de las premisas que presenta Inception. Entonces, acá, ¿cómo se ve visualmente? Acá digamos que hago max pulling otra vez y luego lo divido. Aquí va a ser una convolución 1 por un. Aquí hace una convolución 3* 3. Aquí una convolución 7* 7. Luego uno todo los resultados.
+
+
+00:17:33
+
+lse posgrados: Voy a ponerlo así. Y aquí hago un max pooling, bueno, hago un concatenate, de hecho, ¿no? Para concatenar todo y luego hago un max pulling. Luego otra vez lo divido en tres caminos o en cuatro o en cinco y así sucesivamente. Y digamos que aquí llego a la red neonal y aquí hace la clasificación. Entonces, como pueden ver, esa bifurcación que tenemos acá no la podemos armar con secuencial. Bien, y eso es un detalle muy importante porque a medida que las eh que nuestras redes se hagan más complejas, esto no nos va a ayudar secuenchal. Bien, así que necesitamos este paradigma no solo para las bifurcaciones, sino también para muchas cosas más. Bien, pero creo que un buen ejemplo es esto de la bifurcación. Igual, por ejemplo, lo van a ver a ver dónde, en la GAN o en el autoencoder o no sé, en técnicas más complejas donde pueden manejar la red por pedazos. Bien, o sea, yo podría entrenar esto. Ya está entrenado. Okay. Ahora yo quiero que solo, bueno, yo solo quiero saber qué pasó hasta esta convolución.
+
+
+00:18:41
+
+lse posgrados: Entonces, yo puedo, como está todo despedazado, puedo decir, "Bueno, quiero que me des hasta aquí." Entonces, eso es bueno también. Eso es una propiedad muy útil de la functional. Bien, y esa es la idea. Entonces, cuando nosotros manejamos functional, ya no vamos a escribir así, obviamente, ¿no? Ya no ponemos secuenal, layers, dance, nada de eso. Vamos a armarlo eh por pedazos y luego lo vamos a poner como un sándwich, bien, como si fuese una hamburguesa o bueno, sándwich, lo que sea, como si tuviese dos panes. Pero esa es la idea de secuencia a nivel funcional. Entonces, eh, perdón, vamos a ver cómo se ve esto. Vamos a ver aquí en el código. Y bueno, aquí igual lo muestra, ¿no? Aquí está de manera vertical. Yo les he explicado de manera horizontal, pues lo mismo, ¿verdad? Aquí hay dos bifurcaciones. En este caso hay dos entradas también. Eso, eso igual es muy útil cuando ustedes tienen dos entradas, dos salidas, cinco entradas, ocho salidas, etcétera, manejan esto.
+
+
+00:19:36
+
+lse posgrados: Functional. Ahí se necesita el funcional. Entonces, veamos cómo se ve esto. Bien, este código. Bueno, por si acaso todos los códigos les voy a compartir en el GitHub, pero igual ahora les comparto sin problema. Bien, así que me imagino que ahora no se ve nada. En un momento hago zoom mientras les comparto esto por si quieren seguirme. Bien. Ah, bueno, ahí creo que se me coló un Bueno, ahí está. Okay. Entonces, acá lo que vamos a hacer es una red muy simple, ¿bien? No, no, aquí no hay nada de magia, no hay nada de NLP, ni CNN ni nada por el estilo, pero vamos a armar la misma red de manera functional y secuencial y van a ver que me da los mismos resultados porque es la misma arquitectura. Sí, claro. Lo voy a hacer un poco de zoom. Bueno, un poco mucho. Eh, bien, aquí tenemos el ejercicio resuelto de secuencia versus funcional. Entonces, primero vamos a empezar con con lo básico, ¿verdad?
+
+
+00:20:45
+
+lse posgrados: Vamos a importar Namperas, layers, models, input. Bien, aquí ya vemos que hay cosas nuevas, ¿verdad? Por ejemplo, este models y este input que lo vamos a abrir un momento. Bien, vamos a importar emnis, el más fácil de todos. Algo TF. ¿Por qué era? datasets. Load data. Cargo los datos. Como este es un dataset de juguete, pues ya me da todo dividido y aquí lo recibo. Recibo todo lo que está dividido en Xtrain, Y train, XTH test. Listo. No es necesario hacer el train test split. Aplanamos las imágenes y normalizamos. Bueno, en este caso eh yo ya directamente lo aplano, hago un reshape, ¿verdad? Al aplanar una imagen de 28 por 28 que resulta 784 elementos, ¿verdad? Por eso aquí dice que mi shape de Micky Strain va a ser 784. Eh, y esto obviamente solo lo voy a hacer con las imágenes. Y las imágenes están en Xin y NX test. Y de paso lo normalizo, hago la división con el valor más alto.
+
+
+00:21:46
+
+lse posgrados: Como estamos manejando 8 bits en las imágenes, 2 a la 8 256 van valores de 0 al 255. El máximo 255 lo divido y tengo aquí todo esto con valores entre 0 y 1. Bien. Ya tengo eh todo esto eh aplanado y normalizado. Ahora defino mi tamaño de entrada, ¿verdad? Esto es lo mismo que hacíamos en el sequential. Tengo que poner el input shape va a ser de eh 28 o en este caso 784, que es el tamaño de la entrada, es el tamaño de las imágenes que están aplanadas. Y el número de clases 10. Bien, es el emnis del cer al 9, ¿verdad? Así que son 10 clases. Vamos a empezar definiendo el modelo secuencial. Lo que siempre hacíamos. Ponemos esto de TF que era útil set random seat 42 para que después la próxima arquitectura que armemos, que va a ser la misma en funcional maneje los mismos pesos iniciales. Porque obviamente si no hacemos esto, las dos redes nos van a dar resultados diferentes a pesar de tener la misma arquitectura.
+
+
+00:22:55
+
+lse posgrados: Entonces definimos ese valor aleatorio fijo para empezar de igual manera, ¿verdad? Porque así sería una comparación justa. Bien, entonces luego, ¿qué hago? Models. Como les comentaba, ¿verdad? Models.se paréntesis, ponemos los brackets y ahí pongo layers.d 128 nodos activación relu. La entrada, ¿de qué tamaño es? 784. Y bueno, aquí le pongo alias, ¿no? Esto de los names eh es opcional por ahora. Hay situaciones donde es muy útil cuando ustedes quieren obtener en bearings, es muy útil que pongan los nombres. Por ahora, bueno, lo ponemos solo como como un detalle. Bien. Entonces, esta primera capa se va a llamar oculta uno. Okay. Luego armo la segunda capa. Luego la última, ¿verdad? Que va a ser la clasificación. Va a darnos entre 10 elementos. usa la activación softmax porque esto es multiclase y listo, ya tengo mi modelo secuencial como siempre lo habíamos armado. Bueno, hasta ahí todo toda esta parte. Ahora voy a armar eh la parte del entrenamiento.
+
+
+00:24:02
+
+lse posgrados: Bien, entonces acá hago la compilación, le pongo el optimizador Adam, el loss, la métrica, lo entreno, ya sabemos todo eso, ¿verdad? Y luego lo evalúo. Okay, voy a pasar un poco rápido esto porque no es no nos interesa mucho profundizar en este bloque, ¿verdad? El punto es que esto me da una cura así de 0.97, 97 el secuencial, o sea, lo hace muy bien. Ahora armémoslo en functional, lo mismo, pero en funcional. Y debería darnos el mismo accuras en el test. Entonces, aquí está el funcional. Vamos a sacar un screenshot y lo vamos a ver aquí para manejar eh los el lapicero. Bien, entonces ese es el modelo funcional. Es lo mismo que hemos definido hace rato, pero como pueden ver está en pedazos. No hay un sequential con paréntesis que agrupa todos. está todo eh suelto. Entonces, acá empecemos con bueno, esto de acá estamos poniendo los mismos el mismo valor fijo, ¿verdad?, de random se 42 para que sea una comparación justa, ya sabemos. Y bien, aquí definimos la entrada.
+
+
+00:25:22
+
+lse posgrados: La entrada es igual a input shape, input dim, lo mismo que habíamos hecho antes, ¿verdad? Estamos definiendo cuál va a ser el tamaño de la entrada para este modelo y le ponemos un alias nombre de entrada. Bien. Luego aquí defino la siguiente capa. La siguiente capa es una layers dense 128 activación relu y tiene un nombre. Ahora creo que es muy útil leer en funcional para que sea más, o sea, más entendible, no leerlo de izquierda a derecha, sino de derecha a izquierda. Entonces, en esta línea de código vamos al final. Al final tengo entre paréntesis entrada. Entrada es lo que he definido arriba, ¿verdad? Esta entrada la tengo aquí en paréntesis. Entonces, esto está viniendo aquí. Bien, ahora está en paréntesis al lado de todo esto porque está manejando un concepto de programación funcional, bien, que se llama la currificación. Entonces, aquí está como paréntesis, pero esto por si acaso va a ser la entrada para todo lo que definamos al lado. Por eso les decía que es útil verlo de derecha a izquierda.
+
+
+00:26:36
+
+lse posgrados: Entonces, yo estoy definiendo aquí la entrada para toda esta capa. ¿Okay? ¿Y qué es esta capa de acá? Pues es una D 128 con activación Ru que se llama oculta. Bien, esto va a ser la entrada a eso y todo lo que vaya a pasar se va a guardar en X. Bien, ahora voy a la siguiente línea.
+Esteban Leonardo Torres Martin: Okay.
+lse posgrados: En la siguiente línea está el x en paréntesis. Bueno, eso ¿por qué? Porque es va a ser la entrada para este siguiente bloque. Ahora otra vez este x que lo había definido hace rato, que ya tengo el resultado, ahora va a fungir como entrada para la siguiente parte. Bien, esto qué es una D 64, bla bla bla. Okay, todo esto me va a dar un valor, lo voy a poner en X. Este X va a ser otra vez la entrada para la siguiente capa. Es una de una última capa, ¿verdad? La Dens de número de clases, bla bla. Y esto me da la salida.
+
+
+00:27:32
+
+lse posgrados: Bien. Y eso es todo. Entonces, como pueden ver, esto es zigzague, ¿verdad? Tal vez aquí se ve líneas rectas, pero vamos a hacer esto. Voy a acar aquí. Estoy poniendo ese espacio para que vean que es zigzagueante. Entonces, aquí al lado pongo lo mismo, el mismo bloque de código y vamos a ver esta entrada que he definido. Voy a poner en rojo. Esta entrada se vino aquí y eso me ayudó a definir el x, ¿verdad? Luego este X se vuelve la entrada para la siguiente parte. Luego abajo, ¿qué pasa? Lo mismo. Este X se vuelve la entrada para esto. Bien. Entonces va así. Zigzag. Zigzag. Bien. Ya he definido el todo esto, ¿verdad? Ya ya tengo desde la entrada hasta la salida. Ya tengo toda la arquitectura que necesitaba. Ahora aquí yo voy a definir todo esto bien porque recordemos que está suelto, no hay un bloque que los está acomodando.
+
+
+00:28:47
+
+lse posgrados: Entonces aquí pongo models pun model y aquí es la parte que les decía que es como un sándwich. Yo pongo inputs igual a entrada. Estoy poniendo el primer pan output salida, el último pan, todo lo que pase dentro de esto ya se está definiendo, así que solo es necesario eso, definir la entrada y la salida. Y eso es todo. Así definido mi redonal de manera funcional y de paso le pongo un nombre, ¿no? Name model funcional. Y lo demás es lo mismo. Aquí ya definí eso. Listo. Aquí hago un summary para ver los pesos que se van a entrenar. Bueno, no importa. Y todo esto que ven aquí es copy paste de lo de arriba, compilar, entrenar y evaluar. Y me va a dar lo mismo. Me dice accuracient test 0.9749, lo mismo que tuve aquí, 0.9749. Entonces hemos armado lo mismo, solo que ahora por pedazos. Bien, hasta ahí. ¿Qué tal se entendió? ¿Tienen alguna duda o comentario quizás?
+
+
+00:30:00
+
+lse posgrados: Yeah.
+CARLOS AGUSTIN BERDAGUER: La misma librería que venimos usando siempre. ¿Soporta esta otra forma de definir las redes?
+lse posgrados: Sí, sí, es lo mismo. Estamos manejando queras, solo que ahora estamos armando redes eh sueltas, ¿verdad? Bueno, aquí quizás no no parece muy guow, ¿no? Pero luego nos va a servir mucho para armar en bifurcaciones, pero sí, ese mismo quedas. Genial. Bien. Y bueno, aprovechando esto, bueno, a ver, por un ejemplo, aprovechando esta red muy sencilla, bien para que se vea el potencial que tiene. Un ejemplo muy simple. Voy a irme abajo y voy a poner aquí ejemplo. Sí. de potencial de fondo. Tengo todo esto. Bien, luego, ¿qué hago? Lo entreno. Okay, ya tengo listo el model. Modelo funk. Está listo para hacer inferencia. Imaginemos eso. Bien. Entonces, ya está listo para hacer inferencia. Ahora resulta que en realidad mi objetivo nunca fue clasificar números. Yo no quiero hacer eso, o sea, eso es muy fácil.
+
+
+00:31:35
+
+lse posgrados: Lo que yo quería en realidad era entrenar una red neuronal para aprovechar una información intermedia que tiene. Recordemos que las redes neuronales, bueno, que lo podemos buscar acá network. Ah, no, es otra cosa. Extraen información a diferentes niveles, ¿verdad? En diferentes niveles de abstracción. Entonces, eh bueno, supongamos que la red que he armado era esta, ¿sí? Entonces, tengo esta red y yo ya la entrené y ya hice todo, ¿verdad? Entonces, ya esta red que he armado ya me sirve para hacer clasificación. Okay, pero como les decía, mi intención nunca ha sido eso. Lo que yo quiero es aprovechar una de esas representaciones internas que captura para armar en beedings, porque ustedes pueden hacer en beedings con este tipo de redes. ¿Qué tendrían que hacer? Le cortan la cabeza y se quedan con esa última capa. Porque en esta última capa está mayor nivel de abstracción antes de clasificar. Entonces, ¿cómo hago eso? Bueno, con el funcional fácil. Vengo acá y bueno, yo ya sé que este modelo está entrenado, todas estas capas están entrenadas.
+
+
+00:32:47
+
+lse posgrados: Entonces voy a hacer modelo, digamos, modelo para obtener en es igual a models. model. inputs. Paso la entrada. Las outputs, ¿cuál va a ser? Bueno, en este caso el outputs ya no va a ser salida, ¿verdad? Porque si pongo salida estoy armando lo mismo. Voy a poner oculta dos. Entonces ahora yo puedo hacer inferencia con este modelo. Va a recibir la imagen y me va a devolver los resultados hasta este x. Me va a devolver un vector de 64 elementos. Y así ya tengo un modelo que me da en bearings. Bien, entonces puedo hacer ese tipo de cosas, puedo cortarlo, puedo ponerle más entradas, bifurcaciones, muchas entradas, muchas salidas, etcétera. Entonces, por eso es muy útil utilizar este funcional. Bien. Eh, y bueno, eso como detalle. De todas maneras, vamos a ver más cosas de esto más adelante. Bien, entonces ya que tenemos conocimiento de esto, continuemos con el contenido. Bien, acá tenemos un diagrama del un Ah, bueno, esto es un detalle de drive, creo que les aparece negro, ¿verdad?
+
+
+00:34:10
+
+lse posgrados: Entonces vamos a manejarlo así no más con de pantalla completa. Bien, entonces acá tenemos un diagrama que nos muestra lo que pasa, ¿verdad? Cuando nosotros entrenamos un modelo de de lenguaje y demás. Bueno, modelo de de NLP. Agarro mucho texto, hago un preprocesamiento, tokenizo, hago lematización, stops, lo que sea, lo limpio y así armo mi dataset. Ya tengo mi dataset, ahí hago un entrenamiento, ya está entrenado mi mi modelo, ¿verdad?, que yo quiero aplicar. Entonces, yo ya estoy listo para recibir nuevos datos. ¿Okay? Esos nuevos datos yo los vectorizo. Muy importante la parte de vectorización. De hecho, ese es el punto más importante que tenemos en redesales. Si nos ponemos a pensar, creo que hay dos cosas muy importantes, ¿no? Hay muchas cosas importantes. Lo más importante es el Lost function. ¿Cómo definen el Lost function? Para que funcione bien el modelo. Y lo segundo más importante es que los vectores que vayan a utilizar sean bien hechos, porque si no están bien hechos de nada sirve todo lo demás.
+
+
+00:35:19
+
+lse posgrados: Así que ese feature vector vectoriza mi texto, ¿verdad? no sé, mis noticias, lo que sea que esté en texto, se lo paso al modelo y me da una predicción. Bien, ya sabemos esto, ya lo hemos hecho con RNS, etcétera. Ahora, esta parte del feature vector es muy importante, ¿verdad? Entonces, nosotros lo que vamos a ver ahora es un breve repaso de lo que han visto con Josselyn, si no me equivoco, en los primeros días de clases. Entonces, aquí está otra vez eso. ¿Cómo obtengo ese feature vector? Bueno, necesito de alguna manera convertir mi texto en vectores o también conocidos como feature vector o word presentation os. Bueno, al final todo esto habla de una vez de presentación vectorial para recién pasárselo a mi algoritmo que puede ser una red neuronal. Entonces este proceso de convertir palabras a vectores se puede hacer de muchas maneras. Bien, ¿qué maneras tenemos? Tenemos la clásica, la de deep learning y la de Transformers. La clásica, puo que han visto con Josel y lo que vamos a ver conmigo un poco ahora.
+
+
+00:36:30
+
+lse posgrados: Manejamos horing, back of wars, TFIDf, matrices de conocurrencia, etcétera. Funcionan, ¿sí? ¿Son eficientes, no del todo, eh, son sensibles, ¿verdad? Son sensibles a muchas cosas. El back of words, por ejemplo, es es útil como baseline, pero después tiene muchos problemas. Si ustedes le pasan, no sé, una palabra que puede cambiar de significado. A ver, eh, estoy, no sé, una palabra que cambie de significado. Eh, me gustan los perros y pero no me gustan los gatos, digamos. No, lo de banco no, eso es una buena buena palabra, pero lo de banco va más en deep learning. Por ejemplo, en Bag of Wars, yo me refería más a esto, ¿no? Eh, me gustan los gatos. Bueno, porque tengo tengo un gato, pero no los per Bueno, me gustan los perros, ¿no? Pero voy a poner, Me gustan los gatos, pero no los perros. Bien, esta representación vectorial de esto según Bag of Words, digamos que me dice, es con conteos, ¿verdad? me va a decir en este caso, bueno, no estoy repitiendo ninguna palabra, ¿no?
+
+
+00:37:46
+
+lse posgrados: Bueno, el dos, entonces va a decir 2 1 0 1 bla bla bla, no sé, algo así. Okay, todo eso, okay, es la lo que me devuelve bag words, pero si yo pongo me gustan los perros, pero no los gatos, me va a decir lo mismo, ¿verdad? Porque simplemente está haciendo conteos. Entonces ahí tenemos un gran problema con esto, o sea, no no está tomando en cuenta el orden ni nada por el estilo, así que ahí hay problemas y bueno, hay muchos más problemas, ¿verdad? Tienen muchos ceros, eh son muy grandes porque toman en cuenta todo el vocabulario, etcétera. Esos son problemas de los enverings clásicos. Bueno, voy a leer los comentarios. Eh, bueno, pues sí, ya había leído lo que Walter y Denis dijeron sobre banco. Lucas menciona, oraciones que repiten palabras, pero tienen distinto significado. Los vectores tienen simitud coseno uno. Sí, claro, claro. Sí, sí. Eh, o sea, son totalmente similares según B words, pero está mal, ¿verdad? porque hemos cambiado el orden y no es lo mismo, pero según Bago Words pues está bien.
+
+
+00:39:00
+
+lse posgrados: Es un buen Lucas, gracias. Bien, entonces que por esa razón nosotros no usamos los clásicos, a no ser que sea para baseline. Luego tenemos deep learning. Bueno, deep learning es mucho mejor, ¿verdad? Maneja redes neonales, maneja una gran cantidad de datos y lo bueno es que ya tenemos entrenados, ya tenemos Glob, Fastx, Word to back, eh, y de diferentes dimensiones, ¿no? Así que eso igual es muy útil. Ahora, ahí entra el problema que mencionaban los compañeros. Lo malo de estos modelos, bueno, de estos basados en modelos de predicción es que no toman en cuenta el contexto. Banco es una palabra muy buena, ¿no? Es un ejemplo muy bueno, de hecho. Eh, ¿por qué? Porque banco cambia de significado. Si yo digo, "Mañana te banco en el partido de fútbol", estoy diciendo banco en el sentido de apoyo, ¿verdad? En cambio, puedo decir, "Mañana voy al banco a sacar dólares. Ahí estoy hablando de una institución financiera." Entonces, el significado de la palabra va a cambiar en en torno al contexto, pero deep learning no lo toma en cuenta.
+
+
+00:39:59
+
+lse posgrados: Los vectores son fijos. Entonces, por más de que es banco para silla, como menciona Geraldine, o banco para apoyar o banco para eh entidad financiera, lo que sea, pues va a seguir siendo ese vector de 100 números. Ahora, son vectores muy útiles, pero tienen ese detalle. Y una mejora esto son los Transformers que vamos a ver más adelante, que a través del mecanismo de atención se actualiza y toma en cuenta las demás palabras. Bien, entonces ahí el vector de banco pues va a ir cambiando acorde al contexto donde está. ¿Por qué? porque toma en cuenta las demás palabras y eso hace que sea mucho más eficiente. Bien, así que eh eso es un breve resumen de estos los wordings. Vamos a empezar viendo este clásico, luego vamos a ver esto y las siguientes clases ya vamos a ver esto de acá, ¿de acuerdo? Eh, ese detalle. ¿Qué más quería decirles? Bueno, una cosa más. Esto pues nos hace pensar que Transformers pues sí es tan bueno, para qué estamos viendo todo lo demás, ¿no?
+
+
+00:41:01
+
+lse posgrados: O sea, ¿qué sentido tiene saber lo clásico y deep learning si transformer ya resuelto el problema? Es una buena pregunta, pero eh va a depender. Bien, como todo depende. El clásico usualmente no lo usamos, a no ser que tengamos situaciones donde eh por ejemplo queramos inferencia rápida o también no tenemos acceso a internet. o también tenemos recursos limitados, ¿no? Ahí se usa mucho el clásico y también el deep learning. Si tenemos GPU con deep learning estamos muy bien. Ahora, si tenemos acceso a internet e y bueno, contamos con buen poder computacional y digamos que no queremos que las respuestas sean muy rápidas, a pesar de que ahora ya sí es muy rápido, ahí ya podríamos darnos el lujo del transformer, ¿no? Pero esa sería la razón de por qué estamos viendo estos otros métodos y también los vemos para probar. O sea, si yo quiero probar un nuevo eh embeding hecho con Transformer, quiero saber qué tan bueno es. Tengo que compararlo con un baseline, ¿verdad? con un modelo base que yo sé que no es muy bueno, pero si mi nuevo modelo no lo supera, entonces realmente lo que estoy proponiendo no sirve, ¿verdad?
+
+
+00:42:10
+
+lse posgrados: Entonces los papers casi siempre hacen eso, proponen un nuevo embeding y lo comp perdón y lo comparan con back of words y con word to back, digamos, ¿no? Entonces también nos sirve para eso, para entender cómo funcionan esos baselin baselines. Bien, entonces esa es una justificante. Bien. Eh, Lautaro menciona, "En Transformers losing son dinámicos." Entonces, sí, sí. Eh, cuando nosotros estamos en el paso del self attention, ahí vamos a ver que los embedings van a ir ajustándose acorde a la al otro texto, ¿no? Al texto que está al lado. De hecho, eh podemos hacer lo siguiente. Pueden pueden estar viendo sobre este tema y cuando llegue el momento pues hablamos más a detalle. Este es un blog que es muy bueno de Elena Boita que bueno tiene diferentes temas sobre NLP y los explica muy bien. En cuando yo estaba haciendo el máster veíamos mucho de Lena Boita y otros papers. Bueno, entran acá. Ah, aquí. Bueno, no, aquí. A ver, a ver, a ver.
+
+
+00:43:30
+
+lse posgrados: Sí, aquí. Bueno, ahora no lo voy a explicar porque creo que vamos a hablar muchos temas y lo explico, pero les comparto esto, bien, para que lo revisen porque después van a ver que muchos slides que les voy a presentar están basados en lo que dice Elena Boita. Bien, ahí les compartí para que lo vayan revisando. Además es que es muy fácil de entenderlo, lo explica muy bien. Bien, entonces eh eso. ¿Tienen dudas hasta ahí? Tal vez comentarios sobre estos. Bien, gracias por el feedback. ¿De acuerdo? Entonces vamos por el clásico, ¿bien? Eh, y después vamos viendo hasta la parte de deep learning. Es un es un repaso sencillo, no vamos a profundizar demasiado, pero creo que es útil para hacer algunas pruebas. Bien, aquí tenemos el one hot vector, ¿verdad? Ya lo han visto antes con Josselyn y me imagino que lo han visto igual en otras materias. Es cuando vectorizamos usando unos y ceros, ¿verdad? Entonces, acá, por ejemplo, tengo la oración.
+
+
+00:44:38
+
+lse posgrados: Hello, I am Iron Man, I have Friday. I Okay, ¿qué hacemos? Bueno, extraemos eh las palabras únicas, armamos el vocabulario y bueno, del vocabulario vamos a poner las todas las palabras de vocabulario en las columnas y en las filas. Entonces acá, por ejemplo, yo tengo AI, Iron Man, Friday, have hello, I am. Bueno, todo Todas esas son las palabras únicas según el modelo, según lo que ha extraído. Y acá en la parte de arriba, en la columna también tengo lo mismo, por si acaso, ¿no? Aquí tengo AI, Iron Man, aquí tengo Friday, half, hello, I am. Entonces, como lo que está aquí coincide con lo que está aquí, la diagonal va a estar llena de unos, ¿verdad? Así armamos un one hot vector. Ahora yo quiero saber el embeding de Friday. Entonces, ¿qué hago? tomo todo este vector, toda esta fila, ¿verdad?, que está asociada a Friday y ese es mi vector según OneHehot Vector. Bien, eso es todo. Entonces, eh como pueden ver, es sencillo de entender y armar, pero tiene muchos problemas.
+
+
+00:45:46
+
+lse posgrados: De hecho, creo que este es el que tiene más problemas, ¿verdad? sobre todo por su alta dimensionalidad y además que es spars tiene alta dimensionalidad porque bueno, el tamaño de esto, de cada vector, de cada embeding que tengamos va a ser del tamaño del vocabulario que estemos manejando. O sea, si yo tuviese un libro de un millón de palabras únicas, bueno, eso es demasiado, ¿no? Digamos 50.000 palabras únicas, entonces yo aquí tendría 5000 columnas. Entonces, cada palabra est representada por 5,000 números donde solo hay bueno, 50,000 números, ¿no? Donde solo hay un un demás son ceros y por eso es spars porque hay demasiados ceros que no aportan información. No generaliza e ignora el contexto. Bien, entonces tenemos muchos problemas con esto. Ahora, lo interesante es que nosotros podemos armar un multihot. Entonces, acá por ejemplo, eh supongamos que yo ya tengo los embedings, ¿no? De very good movie. Entonces acá yo tengo el embeding de very good y the movie. Aquí dice 00100, The good también y the movie.
+
+
+00:46:58
+
+lse posgrados: Ahora yo quiero el embaring, bueno, la representación vectorial de very good movie, la oración, ¿no? Por separado. Entonces armo un multiod y el multihod es eh agregar esto más esto más esto y todo eso me va a dar esto de acá. Ahora, esta representación vectorial que vemos aquí es la combinación de esos tres y lo interpretamos como esos tres en una oración. Así que el vector para Very Good Movie para nosotros es 1100. Bien, entonces hemos armado un multihot y con esto ya podemos pasar solo al modelo. Se lo pasamos como oración, le digo, esto es positivo o negativo. Bien, a través del multihot. Bien, luego tenemos esto del bow. Okay, les voy a mostrar una cosa aquí. Denme un segundo, voy a dejar de compartir. Voy a abrir aquí mi drive. Y les muestro esto del bow. A ver. Bueno, está un poco lento. Okay. Okay, aquí está el bow. Bien, aquí lo tenemos. Les voy a compartir bien.
+
+
+00:49:11
+
+lse posgrados: Entonces lo que tenemos acá es un bow. Bueno, es el código de un bow que vamos a conectarlo con un mlp. Bien, entonces vamos a hacer esto del multihot y se lo vamos a pasar a un MLP, que es una red muy sencilla, ¿verdad? Así que vamos a ver cómo funciona. Importamos lo necesario. Tenemos ahí Nampi Tensor Flow, MAT Plus lif. Eh, de tensor flow que eras, jalamos el dataset, el pad sequences, el modelo, el input, el den, el dropout, el bat norm que nos van a servir para armar la red más adelante. Regularizadores, el callback que va a ser stopping, optimizador, el plot y eh mostrar la imagen. Bueno, eso es para mostrar una imagen con el i Python display. Bien, vamos a empezar comprobando la GPU. Bueno, ya esto yo ya lo he ejecutado antes, ¿no? Entonces, lo ejecuté con la GPU activada y aquí me dice, "Sí, tiene la GPU activada, eh, y la versión de T Flow que estás manejando es el 2.0." Bien, luego definimos el tamaño del vocabulario.
+
+
+00:50:33
+
+lse posgrados: Bien, en este caso, ah, nosotros estamos definiendo el tamaño de vocabulario porque después vamos a manejarlo cuando armemos la red. A ver, les voy a mostrar dónde sí va a ser el tamaño de cómo vamos a armar los edadings. Ahora, hay dos maneras de definir el tamaño vocabulario. Uno con un número grande o bueno, pequeño si es que tenemos alguna limitación, pero usualmente se pone un número grande. Entonces, Aquí le estamos diciendo, por ejemplo, que yo quiero que mis vectores tengan tamaño 5000 de mi bow. Bien, ahora, ¿qué por qué defino el tamaño del bow de esta manera? Recordemos que el bow es básicamente el one hor en cording, pero ya no es binario, ¿no? Entonces, como habíamos explicado hace rato, si yo tengo small dog, cute, cute cat, cute dog, el bow lo que va a hacer es contar. Bueno, ¿cuántas veces dice doc? ¿Cuántas veces dice small? ¿Cuántas veces dice cute? ¿Y cuántas veces dice cat? Bueno, en el caso del primer vector small dog es 0011. Okay.
+
+
+00:51:41
+
+lse posgrados: Su vector va a ser 0011. De cute, cute cat, dos veces cute, una vez cut. Lo demás no lo dice, entonces 1 de esa manera armamos estos vectores, ¿verdad? Con el bow. Ahora, si yo defino 5000, significa que yo estoy definiendo que aquí van a haber 5000 columnas. Ahora, puede que no sea verdad, ¿verdad? Puede que en realidad tengamos 6,000 palabras únicas y nos falta, he puesto 5,000, aún falta espacio para 1000 palabras más. Ese puede ser un detalle que podría pasar. Eh, lo que usualmente va a pasar, si es que se da ese caso es que se van a tomar en cuenta las palabras que más veces están presentes en el vocabulario. A esas se las van a dar prioridad y a las demás pues no las vamos a tomar en cuenta. Ahora, eh, por eso se trata de poner un número grande, ¿no? 5000, 10,000, etcétera. Otra opción hubiese sido, igual creo que es una muy buena opción, ir directamente a los datos que yo tengo en mi dataset.
+
+
+00:52:41
+
+lse posgrados: y ver cuántas palabras únicas tengo ahí. Entonces, aquí, por ejemplo, tengo cuatro. Bien, defino cuatro como el bookup size. No, no, no trato de poner un valor muy grande, directamente defino el que el que es, ¿no? Y así no tenemos problemas. En nuestro caso, pues vamos a dejarlo así con uy, ¿dónde está? Está aquí. Bien, con 5,000. Cargamos el dataset de IMDB. Bueno, lo mismo que hemos hecho hace rato cuando hemos cargado el datacaset delis, pues aquí voy a cargar el dataset del IMDB de manera directa. Le pongo eh IMDb.l low data paréntesisw igual bookup size. Le estoy diciendo desde ahí por si acaso lo que les decía, ¿no? Toma en cuenta las 5000 más representativas. Puede que haya más palabras en el vocabulario, pero a mí me interesa solo las 5000 más representativas. Okay, lo carga y lo pone en Xtrain, Jrain, Xest. Así que ya tenemos todo ahí armado, todo en pedazos. Veo el shape. Bueno, en el train, ¿cuánto tengo?
+
+
+00:53:47
+
+lse posgrados: Tengo 25,000 y en el test tengo 25,000. Bien, luego convertimos las secuencias a back of words. Bien, lo que estoy haciendo ahí. M. es una función que recibe secuencias y nos devuelve su representación en Bag Words. Entonces, lo primero que voy a hacer es una matriz de ceros, lleno de ceros, donde voy a tener el número de secuencias en las filas y la dimensión en columnas. Bien, entonces cuál va a ser la dimensión que voy a manejar va a ser el bookup size, ¿no? Porque yo dije, quiero que tomes en cuenta 5000 palabras, entonces eso significa que voy a tener 5000 dimensiones, ¿verdad? Porque ya sabemos que el número de palabras va a definir el número de columnas. Aquí hay cuatro palabras únicas, por eso tengo cuatro columnas. Entonces, hago lo mismo acá. Pues voy a dibujar esto. Bien, perdón, me voy a acomodar un poco. Ya. Acá yo defino las secuencias que decíamos. Bueno, digamos que son 1000 secuencias. Defino la dimensión.
+
+
+00:55:16
+
+lse posgrados: La dimensión, ¿cuánto dijimos? Vo size 5000. Bien, eso va a ser mi dimensión. Aquí lo que hago primero es armar una matriz de ceros. Entonces, la matriz de ceros va a ser de tamaño, va a ser una matriz así, va a tener cuánto, 1000 secuencias, digamos, y 5000 columnas. Bien, es todo eso lleno de ceros. Luego hago un for que va a iterar sobre mis secuencias. Okay, aquí voy a enumerarlo y voy a jalar la secuencia. Entonces, la primera secuencia dice, no sé, Fernando está feliz. Y como lo voy a enumerar, dice cero, ¿verdad? El primer es la primera oración, entonces cer. Bien, lo primero que voy a hacer for index in sequence. Bien, entonces el word index lo que está haciendo en realidad es iterar palabra por palabra, ¿verdad? Entonces, estoy iterando, estoy en esta ahora mismo, estoy en esta secuencia y ahora estoy haciendo un for en esa secuencia. Entonces, lo primero que voy a ver es esta palabra per. Okay. Per eh okay.
+
+
+00:56:31
+
+lse posgrados: Aquí tengo si Fer es menor a dimensión, hacemos esto. Bien. Entonces, acá, ¿qué estamos haciendo en realidad? Eh, lo que estamos haciendo aquí, estamos comprobando si Fernando está dentro de lo que habíamos definido hace rato. Hace rato le dijimos que queremos las 5000, ¿verdad?, más frecuentes. Cuando le dijimos, "Ah, Le le cargamos, ¿verdad?, los datos aquí, acá. No words workup size. Entonces, Fer está dentro de ese número de de ese rango de los más importantes. Supongamos eso que está dentro. Entonces, como Fernando está dentro de esa 5000, entonces, ¿qué voy a hacer? Voy a sumar más un a su posición. Entonces me voy a su índice que va a ser aquí, digamos, no es la primera oración y busco Fernando. Bueno, aquí por ejemplo la primera la primera columna digamos que es para hola, la segunda columna es para chao, etcétera. Entonces en una de esas está fair. ¿Por qué? De cómo sé que está Fer porque ha pasado esto, ¿verdad? Ha pasado la condición.
+
+
+00:57:50
+
+lse posgrados: F está dentro de las más importantes. Entonces, busco el número de la oración, es el cero. Es la primera oración. Ahora busco dónde está la posición de Fer. Está aquí. Bueno, como estoy empezando, todo es cero. Entonces va a ser 0 + 1. Ese es mi nuevo valor para cero. Bien, me voy ahora a la siguiente palabra. Está feliz y hago lo mismo. Ahora llega la segunda oración. Fer no vino hoy. Entonces hago lo mismo, ¿verdad? Busco dónde está. Está en el uno. ¿Dónde está? Está en fair. Y así hago los conteos. Bien, esa es la idea de esta de esta función. Simplemente estoy armando mi matriz de back of words. Ahora, si Fer hubiese estado Fer está feliz, está muy fair, hubiese vuelto ahí y hubiese puesto más uno, ¿verdad? porque aquí lo va sumando y así va armando los conteos que tenemos en las secuencias. Bien, ya tengo todo eso.
+
+
+00:58:57
+
+lse posgrados: Eh, eso se llama sequence to back of words y eso hago tanto para el train como para el test. Entonces, pongo X train bow igual a sequence to bow, le paso el X train, le defino el bookup size que bueno, ya lo he definido antes, lo estoy pasando y lo mismo hago, perdón, con el X test. Al final me da este shape, 25,000 oraciones por 5000 columnas para el train y lo mismo para el test. Bueno, ¿por qué dice por 5000? Porque son 5000 palabras, ¿verdad? Por eso tenemos 5000. Y listo, ya lo tenemos preparado. Ahora definimos la entrada de nuestro MLP. Bueno, vamos a pasarle directamente esto al MLP. Entonces cada uno de esos 5,000 elementos va a tener su entrada a la red neuronal, bueno, al multilayer percept. Entonces acá yo pongo input shape bookup size, o sea, 5000. Bien, defino el primer bloque del mlp. El primer bloque de del MLP, perdón, es una capa oculta es una capa dense que tiene 502 elementos, activación relut kér regularizador L2 y recibe como entrada el input layer.
+
+
+01:00:10
+
+lse posgrados: Entonces acá vemos que ya estamos usando eh del tipo functional. Luego hago batch norm, le paso el dense, luego drop out, le paso ese dense 1 y luego esto se lo paso a a una salida que vamos a ver en un momento y esta es la parte interesante y vamos a hacer esto de muchas maneras. Okay, ¿qué estamos haciendo aquí? Aquí viene lo interesante y la razón de por qué estamos haendo un funcional. Dibujemos esto de acá. Hago eso así, me vengo acá. Bien, voy a dibujarlo con esto. Entonces, lo primero que que hicimos fue agarrar nuestro dataset y lo convertimos en a través de bow en una matriz de 25000 por 50.000, 1000, no, por 5000, perdón, ¿verdad? Y esto es mi entrada. Esta es mi X. Bueno, mi X train, ¿no? Igual el X test es igual, pero no importa. El X train. Ahora estoy armando una red. La primera capa de la red dice que va a tener, eh, bueno, está diciendo la entrada, ¿verdad?
+
+
+01:01:32
+
+lse posgrados: Entonces, la red si lo es que igual por esa razón depende mucho cómo lo interpretemos. En este caso, si yo pongo aquí la red de al lado, estaría mal dibujado, ¿no? Porque estoy asumiendo que son 25,000 entradas y no son 25,000 entradas, son 5,000. Es por palabra. Entonces, la buena representación para esta red que estamos armando sería así. Es como si fuese hacia abajo. Y eso lo digo porque está aquí la entrada a tu red es el bup size, el bookup size es 5,000. Entonces está yendo ese hacia ese lado. Entonces la primera palabra da hola, ¿verdad? El hola viene aquí, el chao viene aquí y así. En otras palabras, cada palabra tiene su nodo de entrada. Bien, luego dice que vamos a definir el primer bloque del MLP que es una Dens de 512 que tiene activación relu regularizer, etcétera. Y todo esto recibe como entrada el Ipus layer. Luego aplica B norm y Dropout. Bien, ¿qué significa esto? Significa que yo estoy armando aquí un primer bloque de MLP, que es una dense de 512 elementos.
+
+
+01:02:53
+
+lse posgrados: Voy a ponerlo con uno más delgado y luego esto se conecta a un Bach nor. Entonces, todo esto se va así, ¿verdad? Aquí ya es donde se ve así como una red. Bueno, todo eso se conecta aquí. Esto se conecta con esta batch norm se conecta con un dropout. Y hasta ahí lo que hemos armado en ese bloque de código. Luego, bueno, voy a poner aquí al lado porque si no rotino el segundo bloque del MLP. El segundo bloque del MLP lo tengo ahí también. Voy a hacer esto más pequeño ahí, digamos. Lo voy a poner con verde. Entonces tengo esto acá y esto acá. Bueno, ¿qué dice acá? Una capa densa de 516 nodos que recibe como entrada el dense 1. ¿Quién era el dense 1? Era el que hemos definido acá, ¿verdad? El Dens 1 le voy a poner eh Okay. Sí. Y luego que sigue eh sigue una batch norm y luego sigue un dropout. Bueno, en realidad el B y el dropout no hacen eso, ¿verdad?
+
+
+01:04:42
+
+lse posgrados: Sirven solo una flecha, una flecha. Aquí es donde se conecta todo con todos. Bien, ya tengo eso. Luego un tercer bloque que va a recibir el dense 2 y ahí ya termino de armar mi red aquí. Bueno, es la misma idea, ¿verdad? Voy a hacerlo con el color naranja y aquí hago un bat norm. Bueno, voy a ponerlo en bloques como hace rato. Y aquí están todos con todos. Bien, de esta manera he armado mi red, pero lo estoy armando por pedazos, no lo estoy armando eh como secuencial. Bien, por eso está así como bloques. Lo puse todo en bloques. ¿De acuerdo? Denme un segundo, por favor. Ahora vuelvo. Bien, perdón. Okay, ya lo tengo todo listo. Bueno, ya está aquí armado. Defino la salida del MLP. Tengo aquí. una dense eh es de un nodo porque es activación sigmoide. Queremos hacer una clasificación binaria. Eh eh ¿por qué? Porque es IMDB, ¿verdad?
+
+
+01:06:13
+
+lse posgrados: Es comentario positivo o es negativo. Entonces esto de acá es la salida. Bueno, podíamos haberlo armado igual así, ¿no? Para que no se vea tan grande. Igual es una capa simple que recibe lo último del den tres. Entonces esto está aquí. una dens de un nodo y aquí me va a decir si es positivo o es negativo. Bien, ya armé eso. Armamos el modelo como sándwich, ya sabemos el input layer, el output layer, todo lo que está en medio se define. Y listo. Compilo el modelo, utilizo Adam binaryentropy porque sigmoide. la métrica de la curacy. Hago un early stopping porque quiero quiero enfocarme en el validation loss y quiero que la paciencia sea de dos. Si en dos iteraciones el validation loss no mejora, nos detenemos y tornamos los mejores pesos. Entrenamos el modelo, aquí lo de siempre, ¿verdad? Model.fit, fit, le paso el X train, que ya está en tipo bow, le paso el jet train, validation split, las épocas, el B size y el call back que es el stopping que he definido antes.
+
+
+01:07:30
+
+lse posgrados: Lo entreno y me funciona muy bien. Bueno, no hay acá como tal lo que el fit, tenemos una distancia entre el train accuracy y el validation accuracy relativamente baja, así que está bien entrenado. Lo evalúo, me da una accuracy de 0.88. Okay, está como en un cerca del validation, o sea, está bien, no está muy lejano y lo grafico. Esto es solo para graficar, ¿verdad? Ya sabemos, es agarramos el history y de ahí sacamos accuracy y el validation accuracy y nos muestra esto de acá. Tiene mucho sentido, ¿verdad? Ambos están relativamente cerca y que ha sido un buen entrenamiento. Y lo mismo hago para los debería ir hacia abajo y ambos están yendo hacia bajo. Todo bien. Bien. Ya hice eso, es un modelo bien entrenado. Hago la diferencia. Lo primero que voy a hacer es obtener el Word Index. Bueno, el Word index lo que hace es decirme qué, o sea, del IMDB tenemos muchas palabras, ¿verdad? Y esas palabras están ordenadas de de la más, digamos, la más frecuente, la más importante.
+
+
+01:08:41
+
+lse posgrados: Sí, la más frecuente podemos decirlo, hasta la menos frecuente. Entonces, digamos que en primer lugar está, no sé, cámara, digamos, es la primera palabra. ¿Por qué? porque es la más representativa. La segunda palabra es película y así sucesivamente. Entonces, eso por ejemplo nos ayuda porque nosotros cuando le decos quiere usar solo 5,000 palabras, está viendo eso, las 5,000 más importantes. Bien, entonces lo que yo voy a hacer aquí con este Word index es aprovechar de que esto me va dando un número. Yo le digo Argentina y me dice, no sé, eh, 85, digamos, ¿no? Es ese va a ser su índice. Entonces, aquí yo lo que voy a usar es ese Word index para hacer lo siguiente. Voy a hacer una codificación con el text bow. Entonces, yo recibo un texto, ese texto lo hago minúsculas. Hago un split, construyo un vector del tamaño del bup size que está llena de ceros y luego voy viendo token por token, ¿verdad? Palabra por palabra en los tokens. ¿Cuáles son los tokens?
+
+
+01:09:49
+
+lse posgrados: El texto dividido en pedazos. Entonces, mi texto, digamos que era, no sé, hoy viajé a Argentina, entonces el primer pedazo va a ser hoy. Bueno, Word Index va a buscar cuál es el el número de hoy. El número de hoy es eh 51. Bueno, 51 lo va a buscar en el bup size. Bueno, va a ver si está en el bookup size, perdón, de los de los 5,000 más frecuentes. Luego se va al vector que está lleno de ceros y le va a poner más un. Bien, entonces acá lo que está haciendo en realidad es armar un back of words, un back of words muy simple porque solo es una oración. Hace rato nuestro back of words era más complejo porque manejaba muchos oraciones, ¿verdad? Llamaba una matriz. En este caso, como solo maneja un una oración, es más fácil. Entonces, con esto armamos un back of words y luego lo que voy a hacer es hacer esa función que predice sentimiento. Aquí yo le paso mi oración hoy viajo a Argentina.
+
+
+01:10:55
+
+lse posgrados: Esa oración hoy viajo Argentina se lo pasamos al encodex bow, que es lo que vamos a explicar. Eso me devuelve un vector back of words. Eso se lo paso a mi modelo que ya ha sido entrenado con Back of Words y me va a dar una predicción y me dice qué piensa de eso. Yo le paso this movie was amazing. I love it. Todo esto que hace lo vuelve en Bago Word, se lo pasa al modelo y me dice predicion score 0.95. Bueno, 95% que sea positivo. Este esta película fue terrible y aburrida. ¿Qué piensa de eso? 0.0. Entonces, ¿qué es? Eh, es 1% positivo, 99% negativo. O sea, piensa que es negativo. Aquí lo dice, ¿verdad? Sentimiento negativo. Y así los actores fueron fantásticos y la historia fue muy hermosa. Positivo. La peor película de la vida, negativo. Entonces, funciona y funciona manejando Back of Wars y un MLP simple. Bueno, muy simple tampoco es no es una red de hecho porque maneja cuatro capas.
+
+
+01:12:01
+
+lse posgrados: Entonces, eh ahora sí funciona muy bien y me da predicciones interesantes. Bien, hasta ahí, ¿qué tal? ¿Se entendió todo lo que hicimos? ¿Tienen dudas quizás? Okay, gracias por el feedback. Bien, entonces eh hemos armado ahí un back of words y se lo hemos pasado un mlp y hemos manejado oraciones. Eso es lo interesante. Entonces, lo que sigue es hacer un poco más complejo. Ya no queremos usar Bag of Words, ya sabemos, es muy sencillo, funciona, pero hasta cierto punto. Ah, bueno, esto otra vez está así. Entonces vamos por una una representación un poco más rica que nos va a servir para cosas más complejas, pero sobre todo nos va a servir como puente para la parte de deep learning. Tenemos las matrices de cocurrencia. Ahí, por ejemplo, tenemos tres oraciones, ¿no? Tenemos una vez mi papá vio un Borochi cuando fue a Santa Cruz. Podemos ver al Borochi comiendo unas frutas silvestres. Actualmente muchos ganaderos cazan al Borochi por verlo como una amenaza.
+
+
+01:13:17
+
+lse posgrados: Esas tres oraciones, pensemos que son, bueno, oraciones, frases, pensemos que son eh cosas que dicen las personas de manera aleatoria, ¿no? Entonces yo eh estoy hablando con mi amigo y mi amigo me dice, "Una vez mi papá vio un Borochi cuando fue Santactus." Okay, es la primera vez que escucho Borochi. Digo, "Okay, interesante." No sé qué es un Borochi, pero suena interesante. Luego estoy haciendo una tarea y escucho en la radio, bueno, en la TV, lo que sea, que alguien dice, "Podemos ver al Borochi comiendo unas frutas silvestres." Bueno, no alcanzo a ver qué es el Borochi, pero vuelvo a escuchar esa palabra. Es un borochi. Bueno, mi amigo me dijo que su papá lo vio en Santa Cruz y ahora dicen que come frutas silvestres. Y luego un día voy, no sé, a x lugar de la ciudad y en la radio suena. Actualmente muchos ganaderos cazan al Borochi por verlo como una amenaza. Bueno, es la tercera vez que escucho del Borochi y en base a las palabras aledañas, pues creo que ya estoy construyendo un significado para Borochi.
+
+
+01:14:23
+
+lse posgrados: Borochi pues parece que es un animal, parece que es omnívoro, por algo lo consideran una amenaza, así que debe ser medio grande y bueno, vive en el llano porque, bueno, Santa Cruz es una ciudad en el llano. Entonces, en base a todo eso, pues creo que tengo una idea de que es el borochi. O sea, si alguien me dice, "¿Tú crees que el borochi sea una sopa?" Bueno, yo sé que no es una sopa, no, no es comida, es un animal. Entonces, busco en internet y me encuentro con esto. Ese es el borochi. Es el también conocido como el lobo de Cren. Es como un zorro que tiene patas largas, ¿no? Que vive en el llano. Pero yo, ¿cómo le he atinado? Ah, bueno, Agora Wasú, bueno, Nicolás, me imagino que así también lo conocen al Borochi, no estoy seguro, pero bueno, parece que lo conocen de diferentes maneras. Bueno, en Argentina, genial. Sí, sí, me imagino que tiene diferentes nombres, ¿no? El broch lobo de Cream.
+
+
+01:15:19
+
+lse posgrados: Pero bueno, igual esa palabra que acabas de mencionar no es muy usual, ¿no? Todo ese nombre. Entonces, una persona la va a empezar a construir un significado en base a las palabras aledañas. En el caso de este ejemplo, pues frutas silvestres, ganaderos, amenaza, Santa Cruz, etcétera, todo eso ya construye una idea y esa es la idea de la matriz de cocurrencia, ver una palabra, pero no solo la ver la palabra, sino sus vecinos también. Y como dice FTH, que es un lingüista muy conocido, deberías conocer una palabra por la compañía que tiene, ¿no? O igual yo creo que aquí aplica el dime con quién andas y te diré quién eres, ¿no? Que es muy conocido. Porque es cierto, ¿no? Con las palabras que están cerca de una determinada palabra, pues van a decir su significado de alguna manera. Entonces esa es la idea de la matriz de concurrencia. Y esto, ¿cómo lo podemos hacer computacionalmente? Pues la misma idea que tenemos en mente, pues la vamos a trasladar a código.
+
+
+01:16:21
+
+lse posgrados: Lo que voy a hacer es iterar sobre las palabras y voy a ver cuáles son sus vecinos. Entonces, los vecinos los voy a definir yo. Voy a decir, tome en cuenta, perdón, toma en cuenta cuatro palabras a la izquierda y cuatro palabras a la derecha. Esos son sus vecinos. Entonces, por ejemplo, acá tenemos parte de una oración donde dice, "Por eso el pollo frito es comida rápida." ¿Qué? Bla bla bla. Bien, yo ahora mismo esta ventana que se está deslizando la estoy enfocando en frito. Bien, quiero saber qué palabras están cerca de frito. Las palabras que están cerca de frito por la derecha y por la izquierda, pues las cuatro son por eso el pollo y es comida rápida. ¿Qué? Bien, ahí hay palabras que son ruido, ¿verdad? O también conocido como stockws, como el el o qué. Pero hay palabras interesantes que realmente están apoyando el significado de la palabra frito. Está pollo, comida y rápida. Tiene sentido, ¿verdad? La palabra frito, pues está muy cerca de esas palabras, porque frito usualmente se usa para comida que se fríe en aceite y usualmente la comida que se fríe en aceite es comida rápida.
+
+
+01:17:28
+
+lse posgrados: Así que el significado de frito se está armando poco a poco en base a esos vecinos. Ahora, no lo vamos a hacer oración por oración, no lo vamos a hacer en matrices. Vamos a tomar en cuenta muchas palabras. Entonces se va a ver así. Acá, por ejemplo, yo tengo una construcción de una matriz de la misma manera que he construido en el one encoding. ¿Recuerdan? El one encoding yo tenía el número de filas, eh, las palabras únicas y el número de columnas también. Entonces, acá eh la construcción es diferente, eso sí. M. Esa parte de filas y columnas es lo mismo, pero la parte de cómo rellenamos va a ser diferente. ¿Por qué? Porque voy a contar, por ejemplo, acá Cherry, ¿cuántas veces Cherry está al lado de art bark, que la verdad no tengo ni idea de qué significa bark? Pues cero veces. Bien, nunca en nuestro dataset de texto han estado juntos estas dos palabras. Al lado de Computer, tomando en cuenta la ventana de cuatro a la derecha y cuatro a la izquierda, ha habido dos situaciones donde Cherry estaba cerca de Computer.
+
+
+01:18:34
+
+lse posgrados: Bien, y ahí pues eh son situaciones muy puntuales, ¿no? Tal vez eh sin querer hice queer el cherry en mi computadora. Bueno, ahí están juntas, ¿no? Pero es muy muy puntual, es una situación no muy común. Al lado de data ocho veces, al lado de result nueve veces y al lado de P 442 veces. Entonces eso sí tiene sentido, ¿verdad? Porque pie de cherry pues, ¿cuántas veces se usará? Pues muchas veces. Mañana voy a comprarme un pie de cherry o no sé, a mi novia le gusta el pie de cherry o quiero un un cherry encima del pie. O sea, esas palabras casi siempre van a estar juntas. Bueno, sugar también, ¿no? No mucho, pero sí va a estar cerca. Y lo mismo pasa con las otras palabras, ¿no? Strawberry, digital information. Bueno, aquí, por ejemplo, digital aparece muchas veces cerca de computer, de data, de result y de las demás muy pocas veces. Bien, entonces eh esa es la idea de cómo construimos con la matriz de ocurrencia.
+
+
+01:19:34
+
+lse posgrados: Ahora tenemos vectores que están mucho mejores, ¿verdad? mucho mejor que Oneen Coding, mucho mejor que Back of Words, eh, y bueno, aquí estamos tomando conteos, así que eso es muy útil, pero tenemos problemas. El problema de siempre, ¿cuál es el problema de siempre de los eh de los enverings clásicos? es que nosotros tenemos matrices o bueno, mejor dicho, representaciones spars, tenemos muchos ceros y aquí estamos viendo eso. Digital tiene muchos números con ciertas palabras, pero después tiene valores muy bajos y muchos ceros. Aquí puede haber muchos ceros más, ¿no? Tal vez ahí está cosas más extrañas para digital, no sé, gato, perro, no sé, lo que sea, ¿no? Entonces va a haber muchos ceros. Entonces es una mejor representación, pero aún no es lo que queremos. Entonces estas representaciones que hemos visto hasta el momento son largos y son spars. Largos porque tienen el tamaño del vocabulario y spars porque tienen muchos ceros. Lo ideal es que sean cortos y densos. cortos en el sentido de que no sean tan grandes, que no tengan el tamaño del vocabulario en el número de columnas y que sean densos, que haya muchos valores, que signifiquen algo, que no sean ceros.
+
+
+01:20:55
+
+lse posgrados: Entonces, una idea que podría ser buena e interesante es agarrar esta matriz. de cocurrencia y comprimirla. Lo que han hecho en PSA, ¿verdad?, de machine learning, podrían usar el SBD. Al final el SBD y el PSA son básicamente lo mismo, ¿no? El cómo obtienen el PSA, agarran los datos, los centran y aplican el SBD truncado y listo, ya lo tienen. Bien, entonces más allá de cómo funciona el PCA, la idea es agarrar esas matrices que tienen muchos ceros y que son muy grandes y comprimirlas y sabemos que al comprimirlas se van mezclando entre los valores y al final me da una representación más pequeña. Obviamente hemos perdido información, pero es más manejable y cumple con lo que queremos. Son cortas y son densas. Bien, así que esa es una buena opción para evitar tener estos vectores grandes. Pero también hay otra opción. La otra opción es no hacer conteos, bien, no estar contando nosotros explícitamente, no hacer un for dentro de un for que vaya contando esta palabra está junta esta, no hacer nada de eso, sino hacer predicciones.
+
+
+01:22:09
+
+lse posgrados: Yo podría predecir, ¿cuántas veces aparece la palabra pollo al lado de tucumana, no? Que es una empanada. Bueno, antes lo que hacía era buscar, ¿no? Bueno, parece que pollo aparece 552 veces cerca de Tucumana porque la Tucumana como empanada de pollo, pues sí, siempre están cerca. Eso hacíamos antes, pero ahora yo quiero predecir, voy a predecir cuántas veces aparecen juntas. Y cuando yo hablo de predicciones, hablo de redesales. Entonces ahí entra los prediction based methods, globe, word to back, fast. que son los más conocidos, ¿verdad? Y bueno, aquí hay unos papers que mencionan eso. Aquí está efficient estimation, estimación eficiente desde presentaciones de palabras en un espacio vectorial. Bueno, y aquí lo interesante es que hay dos personas muy conocidas, ¿no? Está Thomas Mikolov, que bueno, ha escrito papers word to back, ¿no? Word to back, si no me equivoco, lo escribió Thomas Mikolov. Aprovechemos. Word to back paper. Ah, bueno, ese es el paper de Word to back. Fast text, creo que es igual escribir.
+
+
+01:23:20
+
+lse posgrados: Bueno, Fasttex no lo hizo Thomas Mikolov. Bueno, está como cuarto autor, ¿no? Así que igual interesante. Bien, está mu estaba muy metido Tomás Micoló en esto. Luego tenemos a Jeffre Dean, ¿no? Jeffre Dean, bueno, que ha sido en eminencia, ¿no? Que es parte de los creadores de Tens of Flow de Google, o sea, muy crack. Y este otro paper que menciona, no cuentes, haz predicciones, ¿no? Que menciona cómo eh cómo podemos evitar hacer los conteos y irnos a hacer las predicciones directamente. Igual los escritores son muy buenos. De hecho, tuve la dicha de tener a Mar. Aroni como mi tutor de tesis del má. Así que igual este paper es muy interesante para entender sobre esto de el salto de code base a prediction base. Bien, entonces con esto estamos pasando al siguiente eh lado, ¿verdad? Al siguiente bloque que sería prediction based warings, que ya lo vieron, si no me equivoco, con Joselin, ¿verdad? Work to back, Glove y Fastch. De todas maneras, vamos a ver conmigo un breve resumen en un slide de cómo funciona Word to back y luego vamos a hacer código con eso.
+
+
+01:24:38
+
+lse posgrados: La idea es que hagamos básicamente lo mismo que hemos hecho antes en el anterior código, pero ya no usando back of words porque ya lo vimos, ya sabemos que funciona hasta cierto punto estamos subiendo de nivel. Entonces lo vamos a ver aquí. Este es el word to back. Así funciona el word to back. Internamente son dos eh tipos de métodos, el CBO y el skip RAM. De hecho, ustedes pueden modificar, pueden decir quiero cbow o quiero skip RAM. Y eso lo hacen en un como un parámetro en el código que les da Jensin. Ahora, ¿cómo funciona esto de word to back en entrenamiento? Bueno, funciona como lo que se ve ahí. nosotros enmascaramos. Por ejemplo, en el Cbow, en el Cbow yo tengo una arquitectura de muchos a uno, many to one. Y ahí, por ejemplo, yo le puedo pasar esta frase, mi gato eh tiene dos orejas, ¿verdad? Ahora, para que el modelo aprenda las relaciones entre las palabras, porque tienen que aprender relaciones de palabras para darnos buenos enverings, ¿verdad?
+
+
+01:25:48
+
+lse posgrados: No, no, no consiste en darnos vectores por palabra, tienen que ver la relación de las palabras. Entonces, para eso, ¿qué va a hacer? Va a enmascarar. Va a hacer de cuenta que no existe ese tiene, pero ya lo sabe, ¿verdad? Ahí me está diciendo, "¿Qué falta ahí?" Pero se está ocultando la respuesta. El target se ha vuelto eso tiene. Entonces, la idea, ¿cuál es? Yo le voy a pasar al modelo esto. Mi gato, algo, dos orejas. Quiero que el modelo me dé la predicción de esto y para asegurarme que el modelo aprenda, yo estoy guardando la palabra que le he quitado para comparar lo que dice el modelo. Entonces, el modelo me va a decir, "Mi gato vino dos orejas." Bueno, vino no es lo mismo a lo que yo esperaba. Yo esperaba que me diga tiene. Entonces, vuelve a aprender, vuelve a aprender, vuelve a aprender hasta que en algún punto me diga tiene. Entonces ahí nos damos cuenta el modelo ya aprendió, ¿verdad?, la relación de las palabras y ya entiende que lo que falta ahí es la palabra tiene.
+
+
+01:26:48
+
+lse posgrados: Bien, esa es la idea de CBO. Ahora, personalmente se me hace muy interesante esta idea porque esta idea del enmascaramiento es muy propio del aprendizaje autosupervisador. El aprendizaje supervisador. Lo vamos a ver en la clave hace eh un poco en la clase siete y un poco en la clase ocho. Eh, pero lo interesante del aprendizaje auto superupervisado es que nos permite entrenar grandes modelos de lenguaje. Bien. Y bueno, esa es la idea de CBO. Entonces, como dice acá, el modelo CBO predice una palabra objetivo usando su contexto. Bien, el skip RAM es al revés. Yo le paso el tiene y quiero ver qué palabras piensa que van a estar al lado de tiene. Bien, entonces está haciendo lo opuesto a lo que hacíamos en Cow. Predice las palabras del contexto usando una palabra objetivo. De esa manera nosotros vamos entrenando el word toback. Ahora, para que funcione bien el entrenamiento, más allá de la arquitectura, necesitan muchos datos. ¿no? Entonces, si no me equivoco, eh aquí se usan libros, no se usa Google Google Books, eh noticias, Wikipedia, etcétera, que bueno, suena obvio hoy en día, ¿verdad?
+
+
+01:27:58
+
+lse posgrados: Pero en su momento eh era una idea muy buena, ¿no? Estamos hablando de casi 10 años atrás. Hoy en día suena obvio porque los LLMs pues entrenan en grandes cantidades de datos. Bien, hasta ahí la parte del word to back y losings. Bueno, no sé si tienen dudas o comentarios hasta ahí, tal vez antes de continuar si está todo claro. Eh, Carlos menciona Os hormiguero. Bueno, me imagino que te refieres a Darback, ¿no? A esa palabra que decíamos que no está al lado de ninguna otra palabra. Ahí está, ¿verdad? Bien, gracias Carlos por el aporte. Curioso que significa hormiguero. No, no lo sabía. Bien, entonces eh vamos a continuar con lo siguiente. Esto de acá es lo mismo que hemos hecho hace rato, es el multihot. ¿Recuerdan que habíamos hablado de multihot? Pues aquí está igual el multihot, pero bueno, ya no se va a llamar multihot, no se llama multihot por el multi one hot coding. Ahora es, no sé, multiwor toback.
+
+
+01:29:08
+
+lse posgrados: No, que lo que está haciendo es obtener los embings de cada palabra y sumarlas para obtener la representación de toda esa oración. Bien, entonces eh lo que quiere decirnos esta diapositiva es que la idea sigue siendo la misma, solo que hemos cambiado los embings que representan cada palabra. Antes eran embarings muy simples, ahora son en bearings más complejos, pero el proceso al final va a ser el mismo para obtener estos oraciones. Ahora, ahí una pequeña aclaración. Esto pasa en los en las técnicas clásicas y en las técnicas modernas que utilizan deep learning. En Transformers no se hace así. En Transformers hay modelos que ya han sido entrenados para devolverte en bearings, para tus oraciones. Entonces es otro mundo, por si acaso, ¿no? Eso estamos haciendo para clásicos y modernos deep learning. Bien, entonces ahora yo no nosotros no queremos pasarle esto a un MLP. Hace rato hemos usado un MLP, funcionaba bien, pero queremos hacer algo un poco más complejo. Ahí entra en juego la CNN. Bien, la CNN va a ser nuestra alternativa un poco más compleja que el MLP y también funge como alternativa a la Recure Newal Network que ya han visto antes.
+
+
+01:30:38
+
+lse posgrados: Entonces, acá tenemos CNN para secuencias. Las convolutional Newal Networks ya las vieron antes ustedes en en la clase de visión por computadora, ¿verdad? Pero la vieron en dos dimensiones. Aquí estamos viendo en una dimensión, así que hay una diferencia y es una diferencia muy sencilla que lo van a ver en un momento. Bien, ahora eh estas CNNs manejan, perdón, esto filtro, ¿no? Este kernel, este kernel se va a ir deslizando. Por eso aquí dice idea uno, sliding window de tamaño N. Bueno, es una ventana deslizante que va a tener tamaño N. Ya no es N por N. Antes cuando ustedes definían un una convolución, ¿verdad? Necesitaban definir un filtro. Ese filtro ustedes ponían 3* 3. Era una matriz pequeña 3x 3 que se enfocaba en una región espacial de la imagen y hacía el cálculo de convolución les da un nuevo valor, ¿verdad? Eso era antes. Ahora con una dimensión pues solo definen un n, ya no es n* n. Yo aquí pongo n = 3. Como n es = 3, se va a enfocar de tres en tres.
+
+
+01:31:53
+
+lse posgrados: Los primeros tres va a haber la relación start, I went. Bueno, ahí va a sacar un número. Ese número representa la relación entre esas tres palabras. Luego I went to lo mismo, ¿no? Y así sucesivamente. Entonces la idea sigue siendo la misma. Es una ventana que se va deslizando. Aquí tiene salto stright 1. Seguimos manejando la stri. es un salto que está dando y así va a ir viendo la relación de palabras con otras palabras. Esa es la idea de la CNN para secuencias. Bien, entonces eh perdón, para manejar esto en código hay que hacer unas cosas un poco más complejas. Aquí se ve muy fácil, ¿no? Bueno, es una ventana que se desliza mi oración, pero nosotros para entrenar no le vamos a pasar una oración, le vamos a pasar muchas oraciones, ¿verdad? Entonces, esas oraciones que le vamos a pasar van a armar una matriz. Entonces, como menciona acá, en vez de píxeles de imágenes, la entrada en tareas de NLP son oraciones o documentos representados como una matriz Yeah.
+
+
+01:33:01
+
+lse posgrados: esta matriz queemos, cada fila corresponde un token, típicamente una palabra o un carácter. Bueno, esta palabra, esta parte de típicamente una palabra es porque seguimos hablando de técnicas clásicas y modernas, ¿verdad? Vieron con Josselyn que un token es básicamente una palabra, pero cuando veamos Transformers vamos a ver que un token no siempre va a ser una palabra, va a ser algo así como una sílaba, pero por el momento pensemos que es una palabra o un carácter. Entonces, eh cada fila es un vector que representa una palabra. Bien. Eh, luego tenemos esos vectores típicamente son word andings o one hot vectors. Bien, bueno, esto nos está diciendo en resumen que para armar las representación de nuestra información, de nuestras oraciones del dataset, tenemos que armar una matriz. Entonces esa matriz se ve así. Ahora acá hay unos bloques morados que creo que nos van a confundir. Bien, así que voy a poner este mismo ejemplo en Scalidra. Por si acaso, igual aquí les puse los créditos, ¿no? Estos créditos van a Christopher Manin, que es un investigador muy conocido de Stanford y él tiene unos slides sobre CNN y me parecieron buenos ejemplos, por eso los copié, pero bueno, ahí van los créditos.
+
+
+01:34:30
+
+lse posgrados: Bien, entonces vamos a ver esto en Scalidow. Antes de continuar, eh algo que no les he mencionado al inicio de la clase. Eh usualmente lo queo hacer en las clases es manejar los descansos al final y si la clase es muy pesada, tener un descanso al medio. Bien. Entonces, si manejamos los descansos al final, significa que vamos a salir media hora antes y si tenemos descansos, no sé, si tenemos dos descansos al medio, tendríamos 15 a 15 minutos, ¿verdad? Entonces, yo creo que hoy día podemos manejar los descansos al final y salir dentro de una hora. Igual lo que vamos a ver no es muy pesado. Bien, eso quería comentarles. Así que si a veces salimos 9:30 es porque los descansos lo hemos llevado al final. Pero entiendo que va a haber clases pesadas, va a haber clases donde vamos a tener descansos intermedios. Bien, gracias por el feedback. Igual si alguien quiere comentar algo sobre eso, voy a estar atento al chat, ¿eh? Okay, veamos esto aquí. Bueno, ah, como les decía, aquí esos cuadrados morados pues creo que nos van a confundir.
+
+
+01:35:47
+
+lse posgrados: Ah, eh, okay. ¿Saben qué? Voy a hacer algo mucho más interesante. A ver, denme un segundo. Bien, a ver. Bueno, honestamente no se me había ocurrido antes hacer esto. Creo que ya es la quinta vez que doy esta clase, pero bueno, si tanto hablamos de IA, ¿por qué no usar IA para borrar eso? No, así que voy a borrar esos cuadros morados. Bueno, lo que hacía antes era transcribir todo eso a mano, pero bueno, es es un poco tedioso, así que ahí lo tenemos. Bien, voy a aprovechar en copiar esto de acá y esto de acá. Bueno, voy a aprovechar esto aquío lo pongo ahí y el otro al lado. Ya. Bueno, ya tenemos toda la información ahí. ¿Qué es lo que estamos haciendo acá? Eh, hemos armado una matriz, como decíamos en los slides, y estamos tomando en cuenta las representaciones por token. Ahora, les decía que en la parte clásica y en la parte moderna, o sea, deep learning, los tokens son palabras usualmente.
+
+
+01:37:37
+
+lse posgrados: Ahora acá dice tentative deal reach to keep government open. Bueno, en realidad eso no era así. En realidad eso era una oración donde decía tentative, reach, bla, bla, bla. Todo eso era una oración. Lo hemos dividido en pedazos, en tokens y ahora cada token está representado por números. Estos números que ven aquí son sus embedings. Ahora acá hay cuatro números que se presentan a cada palabra, ¿verdad? O sea, es muy poco. Imaginemos que eso nos da word to back. Bien, no tendría mucho sentido poner aquí 300 números, ¿no? Entonces, imaginemos que word to back nos devuelve cuatro números por palabra, ¿okay? Son números que tienen sentido, que representan esa información semántica de cada palabra. ¿De acuerdo? Ya tengo esos números. Ahora, ¿qué sigue? Bueno, sin quererlo he armado una matriz. He armado una matriz donde tengo el número de filas, el número de palabras, bueno, de tokens por las dimensiones de loss. Bien, lo que sigue es aplicar un kernel.
+
+
+01:38:39
+
+lse posgrados: El kernel es la misma idea que en convoluciones 2D. va a ser una matriz que va a ir encima de esto y va a deslizarse. Por acá yo le Bueno, Christopher Money puso ese ejemplo de usar un kernel de tamaño 3. Pero acá dice 3 * 4. ¿Alguien sabe por qué tenemos cuatro elementos ahí? ¿Por qué no es un 3* 3?
+Hernando Scheidl: El tamaño de los embedings.
+CARLOS AGUSTIN BERDAGUER: para contemplar el tard.
+lse posgrados: Bueno, bueno, primero escuché Hernando que decía por el tamaño de y es correcto. Es por esa razón. Carlos, no te escuché muy bien. ¿Qué comentabas?
+CARLOS AGUSTIN BERDAGUER: No decía que incluía el target, pero se ve que no.
+lse posgrados: Ah,
+CARLOS AGUSTIN BERDAGUER: Okay.
+lse posgrados: ah, okay, okay. No, no, no incluye el target, Carlos. Bueno, es no es una idea interesante, pero no, no incluí el target. En realidad estamos poniendo 3* 4 porque el tamaño de los embedings es cuatro, ¿verdad? Acá tenemos cuatro números que representa el ember ening de cada uno de estos.
+
+
+01:39:53
+
+lse posgrados: Ahora, ¿cómo se va a ver esto? Yo voy a poner esta matriz encima de esto, al igual que hacíamos en las imágenes, ¿verdad? En las imágenes teníamos la imagen original. A, lo voy a dibujar acá. Esta es la imagen del gato. Y encima le ponemos un filtro, un kernel de 3x 3, ¿verdad? Entonces había un filtro 3x3 que se iba moviendo y luego bajaba y seguía moviéndose. Vamos a hacer la misma idea. Entonces, en este caso no es un 3x 3, es un 3x 4 y esto va a ir encima de esto. Entonces, voy a mantener, voy a ponerle como verde. Si yo le pongo encima, se va a enfocar en esto, ¿verdad? En 3* 4, el mismo shape. Bien. Entonces ahí vemos la razón de por qué es 3* 4. Si yo no le ponía esto del mismo tamaño de sus embedings, digamos que yo le ponía un 3* 3. Se iba a ver así, ¿verdad? se iba a enfocar en estos 3x, pero estos que están acá, toda esta fila no lo iba a tomar en cuenta y lo íbamos a hacer un lado y eso está mal porque esto significa algo.
+
+
+01:41:04
+
+lse posgrados: Por alguna razón tenemos esos números, se han entrenado, así que no podemos desechar eso. Tiene que ser el tamaño del embering. Entonces el kernel va a ser el tamaño que ustedes definan K por la dimensión del embering. En este caso, el k que hemos elegido es 3 por la dimensión deling es 4, por eso es 3 por 4. Bien, entonces con eso ya tenemos esto del kernel. Voy a ponerlo encima de esto. Así que a ver, voy a borrar esto. Voy a poner ahí encima y se va a ver así. Bien, ahora ya tengo el kernel encima, ¿verdad? Ahora lo que sigue es el proceso de la convolución. Bueno, ¿cómo se hace eso de la convolución? Lo mismo que hacían en imágenes. Voy a hacerlo posición por posición. Esto por lo que tenemos en esa posición. M. más esto por lo que tenemos en esa posición más y así sucesivamente. Todo eso me va a dar un valor y ese valor lo tenemos acá. Acá dice la relación entre t de r está resumida por -1.
+
+
+01:42:20
+
+lse posgrados: Bien, la misma idea que hemos hecho en convoluciones 2D, pues aquí lo hacemos en una dimensión. Bien, ya hice eso. ¿Qué sigue? Saltar. Voy a irme un nivel abajo. Entonces este kernel va a bajar. Baja y se viene aquí. Ahora se va a enfocar en estos en esta zona. Hacemos lo mismo que decíamos y me va a dar este valor, la relación entre DRT deal Richard 2 y así poco a poco voy a ir bajando bien. Eh, de esa manera funciona esto. Hasta ahí, ¿qué tal se entendió? Está fácil, ¿verdad? Es un kernel que va deslizándose hacia abajo en una dimensión, no va en dos dimensiones, solo es una dimensión. Bien, gracias por el feedback. Entonces, esto lo vamos a ver acá. Bueno, aquí por eso había dos bloques, ¿no? Ahora creo que tiene más sentido. Lo que aquí estaba explicando Christopher Manning era que ese primer bloque pues se enfoca en eso y luego va bajando. Ahora nosotros también podemos hacer esto.
+
+
+01:43:36
+
+lse posgrados: Voy a copiar esta imagen porque lo bueno es que está eh Uy, no sé qué hice. Ah, okay. Lo bueno es que esto está sin esa cosa morada, así que ah, bueno, lo dejo ahí. Esto es lo mismo, por si acaso, ¿no? Es los mismos datos, la misma idea, solo que aquí estamos agregando el padding y van a ver que es fácil. Entonces, en este caso, ¿cómo agrego el padding? Bueno, el padding lo estoy agregando arriba. Si recuerdan, el padding son los bordes, ¿verdad?, que vamos a poner en las imágenes. Hacemos eso. A ver, voy a poner acá. Yo tengo la imagen del gato, ¿verdad? que se vea así. Ahora, esta imagen del gato, si yo pongo un filtro encima, no me va a alcanzar llegar hasta el final por el por el tema de los strides. Entonces, lo que yo hago es poner ceros alrededor. Cer y ahí, bueno, lo que estoy haciendo en realidad es ponerle un margen, por eso se llama pad.
+
+
+01:44:37
+
+lse posgrados: Estoy poniendo un margen de ceros. Entonces ahora cuando yo aplique a mi kernel va a poder llegar hasta el final. Así que toda esta zona que antes no se veía, ahora sí se va a ver. Eso es en imágenes, ¿verdad? En nuestro caso también tenemos el concepto de padding, pero el padding lo vamos a poner arriba y abajo. ¿Alguien sabe por qué no ponemos el pading aquí?
+Hernando Scheidl: Porque es un una convulsión de una sola dirección, de una sola dimensión.
+lse posgrados: Ya. A ver, siguiendo lo que menciona su compañero, digamos que yo pongo 0 0. Este kernel yo lo adapto y ahora tiene aquí valores también -1 2 -1, digamos. Aún así podría bajar en una dimensión, así que no. No es la razón.
+Hernando Scheidl: Y, pero no aportaría nada. cer
+lse posgrados: Okay, va por ahí. Muy bien. Lucas dice, "Porque estaríamos alterando el emberi." Bien, justo como decía Hernando y Lucas, esa es la razón. Esos números son cuatro por una razón.
+
+
+01:45:46
+
+lse posgrados: No podemos eliminar uno de esos valores ni tampoco podemos agregar otros valores porque estaríamos alterando el invering, por eso no se ponen los ceros al lado. Así que muy bien. Así que adiós todo esto y lo dejamos como estaba. Por esa razón solo ponemos arriba y abajo. Luego lo que hacemos es lo mismo de hace rato. Voy a poner una convolución. Bueno, la convolución que va a ser esto de acá lo ponemos encima. De hecho, el Kner sigue siendo el mismo de hace rato, pero ahora voy a tomar en cuenta el pad, así que se enfoca primero en estos tres. El resumen es esto. Y acá dice, ¿verdad? Bueno, aquí dice con teta teta td. Eso es -6 el resumen. Luego va bajando hasta el final, hasta que llega aquí la relación entre government open y teta pues es esto. Geta men 0.5. La misma idea. Ah, solo hemos agregado padings arriba y abajo. Bien, entonces eh lo que vamos a hacer aquí es lo siguiente.
+
+
+01:46:45
+
+lse posgrados: Vamos a Bueno, esto era un slide extra que creé, así que vamos a venirnos aquí y vamos a hacer esto en código. Van a ver que es lo mismo que hemos mencionado. Entonces, acá estoy copiando justo ese escenario que acabamos de ver, nuestra matriz que hemos construido con las representaciones vectoriales, el padding encima, el kernel y resultado. Entonces, la idea ahora es que esto se desplique en código. O sea, yo en código lo que voy a pasarle va a ser miserings y el kernel que quiero usar. El padding yo no le voy a poner. Debería poner el código tal como lo hemos explicado y estos resultados debería darme el código, ¿verdad? Porque si al final esta es la lógica que se utiliza, pues debería darme lo mismo. Entonces, vamos a ver, vamos a comprobar esto. Bien, denme un segundo, voy a activar una cosa aquí. M. Bien. Eh, bueno, es un tema de mi laptop. No sé si alguna vez les ha pasado que están en una reunión y se acaba la batería.
+
+
+01:48:13
+
+lse posgrados: En mi caso, mi laptop eh se queda colgado y es todo un list bien. Sí. Okay. Eh, lo que vamos a hacer aquí es lo siguiente. Ah, vamos a importar lo necesario. T of flow inampy. Bien. Así que aquí yo lo que estoy definiendo primero son mis embedings. Estos valores que ven ahí, 0.2, 0.1 - 0.3, 0.4, etcétera, es lo que está arriba. Así que voy arriba y ahí está. 0.2 0.1 - 0.3 0.4. Toda esa fila que ven ahí es el enven de tentative y también lo tengo ahí abajo 0.2 0.1 - 0.3 0.4. Así que tengo todos los enverings puestos, no tengo los paddings. Los paddings los va a agregar el código. Bien, ya tengo mi miser que están en matriz. Le vamos a añadir el batch. Eh, ¿por qué le añadimos el batch? ¿Por qué no lo dejamos así? Lo que pasa es que cuando ustedes quieren utilizar datos en su red neonal, lo que tienen que hacer es manejar lotes, ¿verdad?
+
+
+01:49:21
+
+lse posgrados: O sea, ustedes usualmente no van a entrenar una red con una imagen, entrenan una red con 100 imágenes, 1000 imágenes, no sé. Entonces ese batch se agrega en la dimensión. Ahora, yo estoy probando, así que yo en realidad no quiero hacer un entrenamiento serio, simplemente quiero probar qué va a pasar si hago una convolución. Entonces, mi shape actual no está bien para ser pasado una red. Tengo que agregarle el batch. Entonces acá yo le agrego con spam dims el batch y ahora va a ser 1* 7* 4. Uno porque es solo un ejemplo el que estoy manejando. Siete porque son siete palabras y cuatro porque las dimensiones, ¿verdad? Cuatro columnas. Y ahora se ve así. Bueno, en realidad como pueden ver es lo mismo, solo que hemos agregado un bracket más. Lo demás sigue siendo igual. Bien, luego defino el filtro. El filtro estoy definiéndolo de manera manual. Ya sabemos nosotros que los filtros, los valores que tiene, no los definimos en redes neuronales. Se supone que el entrenamiento de la red neuronal convolucional consiste en encontrar los mejores valores para esos filtros para resolver un problema.
+
+
+01:50:34
+
+lse posgrados: Entonces, si yo defino esos valores de los filtros, no necesito entrenar una red neuronal, ¿verdad? En este caso, yo sí lo estoy definiendo para ver el proceso de la convolución, así que para definirlo, lo defino así. Estos valores que ven son los mismos que tenemos en el slide, así que ya lo tengo definido tanto la entrada como los filtros. Ahora, ya que tengo esos dos, voy a definir también la convolución. Ah. como ilusión como proceso. Acá pongo tf.layers.1d. Estoy usando como una dimensión. Voy a usar un solo filtro. El tamaño del kernel le pongo solo tres. No le pongo 3* 3 o 3,3. Solo tres. Y además en mi filtro yo ya le puse que es 3* 4. De todas maneras esto ya sabe que se tiene que adaptar a los enverings porque si no fuese el caso me va a dar error más adelante, ¿verdad? Pero cuando yo le diga usa estos valores, no da error porque sabe que esos son los valores ideales para esto.
+
+
+01:51:37
+
+lse posgrados: Tiene cuatro dimensiones en el lado de eh tiene espacio para cuatro columnas, ¿verdad? Y es lo que se espera. Así que solo defino el tamaño del kernel. Un valor pading same y el bas no lo voy a usar. Bien, construyo la capa. Este com layer le voy a pasar este X y también voy a asignar los pesos manualmente. Com layer. Weights filters. ¿Qué es filters? Lo que hace rato he definido, los valores de mi filtro. Y eso es todo. Entonces ahora lo que voy a hacer es comp layer, le paso mi X, me va a dar el comput output voy a ver su ampli. Bien, entonces aquí me da, perdón, no su ampli su resultado en formato ampio. Lo que me da es -0. -1 0.5 bla bla bla. Voy a copiar todo esto y vamos a comprobar si la o no. Y sí, como pueden ver, la atinó - 0.6 -1 -0.5 - 3.6 -0.2 0.3 y - 0.5. Me dio los mismos valores, no definí el padding y los resultados, pues me da por la convolución.
+
+
+01:52:58
+
+lse posgrados: Ahora, la parte del padding, ¿dónde se ha definido? Bueno, la parte del padding lo tenemos, eh, ¿dónde está esto? Bueno, eso es otra cosa. Ah, eso es de acá, ¿verdad? Acá lo tenemos. Padding same. Ahí le estoy diciendo, utiliza un padding. Bien, entonces ahí ya está resuelto. Ahora, antes de ver el siguiente punto, volvamos a los slides. Ya vimos que esto lo podemos hacer en código. S. Puedo hacerlo más complejo. Sí, puedo poner más filtros. La idea va a ser la misma. Acá, por ejemplo, estoy definiendo otro filtro que es también tamaño 3* 4, pero aquí los valores son diferentes, ¿verdad? Entonces esto multiplicado por eso me va a dar otro valor. Entonces los valores que me da este segundo filtro van a ser una segunda columna. Y así puedo poner cinco filtros, voy a tener cinco columnas. Y así sucesivamente. La idea sigue siendo la misma. Y lo extra eso esto de acá, el max pulling.
+
+
+01:53:58
+
+lse posgrados: ¿Cómo hago el max pulling? Mucho más fácil. Voy aar. el máximo de toda esa columna. En este caso, el máximo es 0.3, en este caso 1.6 y aquí 1.4. Fácil, ¿verdad? Entonces ese max pooling, ¿cómo lo voy a hacer en código? Vengo acá, ya tengo todo listo. Ahora hago un max pooling de una dimensión. TF.layers.global maxpulling 1D. Bien, le paso la salida de la convolución y me dice 0.3. Tal como lo dijimos, ¿verdad? El máximo de todo esto es 0.3. Y eso es todo. Bien, de esta manera nosotros hemos armado un pequeño bloque convolución con pulling. Todo esto en una dimensión manejando como entrada en bearings. Ahora, perdón, esto suena muy fácil, ¿verdad? O sea, realmente creo que la complejidad del convolutional 2D ha bajado mucho en relación con esto, pero podemos hacerlo más complejo. Puedo armar toda una red. Bien, esto es un paper. Bueno, aquí está mencionado, ¿no? Eh, los autores, pero eh lo que hace es esto, lo mismo.
+
+
+01:55:16
+
+lse posgrados: Acá yo tengo palabras, I like this movie very much. Cada palabra tiene su embing sucesivamente armamos una matriz y a partir de ahí vamos a tomar eh convoluciones, pulling, convoluciones, pulling, convoluciones, pulling y al final vamos a pasárselo una red y la red me va a decir positivo o negativo. Así que eso es lo mismo que hemos hecho nosotros, solo que está haciéndolo, digamos, un poco más elaborado, ¿no? Está manejando la misma secuencia que hacíamos en convolutional 2 de convolusión pulling. como lo hicieron, pulling, se lo pasamos a la red y nos da el resultado. Bien, esa es la idea. De esa manera nosotros armamos esto.
+CARLOS AGUSTIN BERDAGUER: Perdón, qué ventaja. O sea, más complejo, pero busca algo esta arquitectura más compleja.
+lse posgrados: O sea, ¿cuál es la ventaja de hacer una arquitectura CNN para las secuencias?
+CARLOS AGUSTIN BERDAGUER: No, no, no. Este último ejemplo en el que hace convolusión,
+lse posgrados: Ah,
+CARLOS AGUSTIN BERDAGUER: pulling, convolusión, con respecto al anterior.
+lse posgrados: ah, okay. Gracias, Carlos. Bueno, eh es una buena pregunta y la razón es la misma que en las convoluciones 2D.
+
+
+01:56:28
+
+lse posgrados: Queremos extraer diferentes niveles, ¿no?, de abstracción con las convoluciones para poder pasar la información más limpia a la red neuronal. O sea, acá sí es cierto. Miren, aquí ya tenemos una representación que creo que está interesante y se lo podemos pasar en la red, pero en la vida real pues la el texto va a ser mucho más largo, va a tener más complejidad, ¿no? Entonces por eso necesitamos agregarle más capas para ir extrayendo lo más importante poco a poco y así pasárselo a la red. es para eso, sobre todo Bien, gracias Carlos. Entonces, lo que vamos a hacer es lo siguiente. Vamos a hacer esta arquitectura. Bueno, si la anterior era interesante, creo que esta es más interesante aún, ¿no? Es una CNN bifurcada que va a manejar diferentes niveles, ¿bien? Y va a ser una clasificación. Entonces, eh, ¿cómo resolvemos esto? Lo vamos a hacer utilizando funcional. Bien, veamos este código. A ver, eh, okay. Bueno, voy a hacer una prueba y luego les comento qué vamos a hacer con esto.
+
+
+01:58:20
+
+lse posgrados: Eh, a ver, a ver. Bueno, mientras va cargando, eh les confieso que este es un ejercicio para ustedes, no es un TP, es un ejercicio que deberían resolverlo eh durante la clase y luego yo les mostraría el resultado final. Bien. Ah, y bueno, para eso quiero ver qué tanto va a tardar esta parte de la de la descarga de los erings. Okay. Ah, perdón, esto no lo esto de Jensim es un dolor de cabeza. Bueno, creo que esto sí va a ayudar mucho, pero bueno, como consejo, nunca instalen un Gen Simando una versión porque mejor si lo instalan así. Bien, vamos a hacer lo siguiente. Voy a ver qué tanto tarda esta parte del cargado de los embings y si tarda mucho lo hago yo. Bueno, creo que no tardo nada, ¿no? Entonces, s, esto van a hacer ustedes. Vamos a hacer lo siguiente. Van a tener 15 minutos para resolver este ejercicio. Bien, entonces a ver, veamos unas cosas más. Sí. Okay. Bueno, eh el ejercicio no es no es realmente largo.
+
+
+02:00:00
+
+lse posgrados: Bien, es eh Eh, es simplemente, bueno, perdón, no es complicado, es un poco largo, pero no es complicado. Es lo mismo que hemos hecho hace rato, solo que lo armamos en pedazos. Mm. A ver, a ver, quiero ver si en 15 minutos podrían hacer esto. A ver, tampoco quisiera darles un ejercicio que se quiere más tiempo y van a tener poco tiempo. Okay, ¿saben qué? Voy a explicarles cómo resolverlo. Vean, la próxima clase sí vamos a hacer un ejercicio en clase y sí nos vamos a dar un buen tiempo para hacerlo. Es mejor hacerlo con calma. Creo que va a ser mucho lío. Sí, mejor hacemos así. Entonces, voy a explicarles cómo resolver esto. Aquí lo tengo. El mismo código resuelto. Bien. Entonces, perdón, vamos a hacer lo siguiente. Vamos a hacer lo mismo que hemos hecho hace rato también, ¿no? ¿Recuerdan cuando hacíamos el backup words? Se lo pasábamos a un mlp, funcionó. Luego hicimos eh usamos un una CNN, ¿no?
+
+
+02:01:18
+
+lse posgrados: No, una sí una CNN, ¿verdad? Usamos una CNN. Bueno, no una CNN, pero una red neonal. A ver, vamos a verlo. Aquí lo tenemos por acá. Esto de acá, ¿verdad? Usamos una red neonal. Bien. Y usamos el back of words. Okay. Es lo que hemos hecho nosotros, perdón. Luego hemos visto que el back of words pues igual tiene sus detalles y hemos visto la matriz de ocurrencia y decíamos que es mejor utilizars hechos por redes neuronales. Bien, ya hemos visto eso de los embedings y vimos cómo podríamos usar eso en convoluciones. Ahora nos queda pendiente eso, hacer ese flujo, pero cambiando. Ya no B of Worlds, usar en edings y ya no una red neonal, sino usar una convolution al neuronal network. Y eso es lo que vamos a hacer. Entonces, acá tenemos una CNN para secuencias. Vamos a armar esa arquitectura que les he mostrado en los slides para una tarea de NLP. Bien, aquí instal de todo esto.
+
+
+02:02:23
+
+lse posgrados: Lo más necesario es el Gensim. Bien, Gensim nos permite cargar el word toback. Lo que ven acá e es lo de siempre, ¿no? Aquí cargo el IMDB otra vez, agrego el pad sequences, el model para eh armar una red neuronal functional, el input, embeding, conf, global max pulling, dance, drop out, concatenate, patch normalization, todo lo que ven ahí es lo que me va a ayudar a armar la red neonal convolucional. regularizadores, stopping, Adam, plot model para visualizar cómo se ve nuestro modelo, el cargador de Jensim y la imagen para visualizar Verificamos si tenemos GPU. Lo tenemos, todo bien. Definimos los parámetros. Bueno, aquí voy a definir lo mismo de Acerato, ¿verdad? Acerato, definidas 5000 palabras de de las 5000 más importantes que tenemos en el eh en el cargado de datos, ¿verdad? Ahora voy a poner el 20.000. Quiero hacerlo un poco más representativo. El maxl de las oraciones va a ser de 200 palabras y elinding va a ser de 100. Bien, entonces acá voy a cargar el dataset imdb, lo mismo que antes.
+
+
+02:03:37
+
+lse posgrados: Y aquí le digo, toma en cuenta que yo quiero las 20,000 más frecuentes. Okay, lo cargo en X, Jin, Xtest, Y test. Ya sabemos, aquí ya lo hemos cargado. Hacemos un preprocesamiento de los datos y hacemos el padding. Bien, pausa. Aquí han visto padding con Josselyn, esta parte de pad sequences. Okay, s, gracias, Lucas. Entonces, eh, bueno, genial. Lo que vamos a hacer es eso. Aplicamos el pad sequences, le pasamos el Xrain, le digo, "Toma en cuenta el max." ¿Cuánto era el max? 200. Entonces, yo le voy a pasar una oración, ¿verdad? Le paso, "Hoy me siento feliz." Bueno, hoy me siento feliz. Tenemos que rellenarlo hasta que tenga 200 elementos porque ese es mi max. Entonces, ¿qué voy a hacer? Pongo hoy me siento feliz y le pongo ceros. ¿Dónde voy a poner los ceros para rellenarlo? Lo voy a poner después cuando termina la oración. Por eso dice padding post. Entonces va a ser hoy me siento feliz.
+
+
+02:04:49
+
+lse posgrados: 00 hasta rellenar los 200, ¿verdad? que en este caso hoy me siento hoy me siento feliz, serían cuatro eh palabras y 196 ceros. Ahora puede darse la ocasión de que un texto, porque son reviews, ¿verdad?, de películas, un, no sé, un usuario realmente no le ha gustado una película y se desquita, ¿no? Y pone, "Esta película es malísima y bla bla bla bla", y pone 500 palabras. Bueno, esas 500 palabras aquí lo vamos a truncar. Por eso dice truncate impost, porque dijimos que máximo 200 y si pongo 500, pues hay 300 de sobra. Entonces voy a truncarlo. Voy a cortar esas últimas 300 palabras y no las tomo en cuenta. Solo toma en cuenta las 200. Bien, eso hago tanto en el Xin como en el X test. Ya tenemos esto listo. Ya todos tienen la misma longitud. Voy a ver cómo se ven y me muestra esto de acá. Padra shape es 25000 por 200. ¿Por qué? porque son 2. 5000 reviews y cada review tiene 200 elementos tal como lo hemos hecho.
+
+
+02:06:08
+
+lse posgrados: Bien, definimos el Word index. Bueno, el Word index ya sabemos, ¿verdad? De IMDB voy a obtener su Word index que me va a decir el índice de cada palabra. Yo tengo la palabra Fernando. Bueno, Fernando es el número 2011. Eh, gato, gato es 199. Loro 100 y así, ¿verdad? Cada uno va a tener su índice. Y también defino el reverse word index. Bueno, el reverse Word index es un es la misma idea, solo que al revés. Yo le paso 101 y me dice el loro. ¿Por qué? Porque el índice está relacionado, ¿verdad? Loro es 101. Si yo voy por otro lado. ¿Cuál es la palabra 101? Pues es loro. Es lo que hace al revés. Y defino también, perdón, eh tokens especiales, padding, start, down y no usado. Bien, son tokens comodinas, ¿no? Que bueno, ahora quizás no tiene mucho sentido, solo quizás tenga sentido el padding, pero ya después cuando veamos Transformers vamos a hablar más de esto y van a ver que sí tiene mucho sentido usarlo.
+
+
+02:07:20
+
+lse posgrados: Pero de hecho la próxima clase va a tener mucho sentido usarlo. Bien, ya tengo todo cargado y ha sido preprocesado. Lo último que me falta hablando de cargado sería Glow. Entonces, yo quiero utilizar embedings de Glove. Losings de Glove ya han sido entrenados, ya son números que capturan la información semántica. Entonces uso James Load como lo he cargado hace rato, bueno, lo he importado hace rato así como Jensim Load y le paso, quiero que me des los embedings que tienes de Globe entrenado en Wiki Gigaw y que son 100 números que representa cada palabra. Entonces yo tengo la palabra loro. Loro tiene un vector de 100 números. Por eso yo también al inicio puse embing a 100, porque mis embings tienen tamaño 100. Lo cargo y dice glow loaded. Bueno, ya cargué todos los en de Glow. Esta parte es la que tarda. Bueno, hace rato creo que he probado otra cosa, pero bueno, qué bueno que estamos resolviéndolo, porque esto sí podía tardar unos minutos. Bien, ya tengo todos los embings de Glove.
+
+
+02:08:32
+
+lse posgrados: Ahora, de todos los embings de Glove, yo no necesito todos los embedings, ¿verdad? Porque ahí tendré en verings de no sé palabras en inglés, en español, en portugués, etcétera. Ahora, yo en mi dataset no tengo todas esas palabras que tengo en glov, entonces voy a filtrarlo. Por eso voy a crear la matriz de edings. La matriz de edings eh va a tener valores aleatorios. Bien, son valores aleatorios y tiene un shape de bookup size por ende tiene sentido, ¿verdad? Yo estoy usando un determinado número de palabras, si no me equivoco, 20,000, ¿verdad? Son 20,000 palabras que yo estoy usando y cada palabra yo quiero que esté definida por 100 números. Ahora, ese de que yo quiero que sea definida por 100 números tampoco es algo que yo me inventado. Lo puse así porque el glob me está dando 100 números, así que eso va a encajar. Inicialmente tengo eso. Entonces, ahora la palabra loro está definido por 100 números aleatorios. No importa. ¿Por qué? Porque lo voy a rellenar.
+
+
+02:09:39
+
+lse posgrados: Así que aquí hago un for en el bookup size, ¿verdad? Va iterando palabra por palabra de de mi bookup size y va a buscar, bueno, de esta primera palabra, esta palabra que yo tengo originalmente solo veo el índice, no dice el loro, dice 101. Okay. ¿Qué palabra es el 101? uso el reverse war index get punget get y me va a decir, "Bueno, este número 101 es loro." Okay, loro está dentro de las palabras que tiene glove como edings. Sí, glove en algún momento de su entrenamiento ha encontrado los emberings del oro. Entonces, ¿qué voy a hacer? Voy a jalar ese bering del oro y se lo voy a poner a mi matriz aleatoria. Entonces, mi matriz que tenía valores aleatorios y en loro oro tenía 100 números aleatorios, ahora va a tener un vector de valores que Glob me ha dado y así voy a ir rellenando toda esta matriz. Ahora, ¿por qué le pongo valores aleatorios? Porque puede darse el caso de que una palabra que está en mi dataset en glow.
+
+
+02:10:48
+
+lse posgrados: Digamos que en la review alguien puso, esta película la veo porque me gusta mucho a mí y a mi loro que se llama Cocoliso. Bueno, cocoliso es una palabra, bueno, es un nombre muy peculiar, ¿verdad? No creo que Glove se haya entrenado con la palabra cocoliso. Entonces, no existe el ember enering de cocoliso, pero sí existe en mi vocabulario. Entonces, no lo voy a dejar sin presentación, ¿verdad? porque al final es parte de mi de todo mi proceso que estoy haciendo. Así que como no lo he encontrado, se va a quedar con valores aleatorios. Obviamente esto va a influir un poco, pero no tanto como el hecho de descartarlo. Entonces por eso pongo valores aleatorios. Bien, ya tengo mi eding matrix rellenada. Las 20,000 palabras que tienen 100 columnas, es decir, 100 números que representan cada palabra, ya está todo lleno. Bien, ahora voy a definir la entrada de la CNN. Bueno, aquí todo lo que vamos a ver acá ya empieza a hablar de la red neuronal convolucional que vamos a armar para entrenar este modelo.
+
+
+02:11:58
+
+lse posgrados: Entonces, antes de continuar Ar este primer bloque se entendió bien o tienen dudas. Genial, gracias por el feedback. Bien, entonces acá empezamos el segundo bloque, armar la red neonal. Primero define el input. Bueno, en el input va a ser el max l, el la máxima longitud que tenemos, ¿no? Entonces, eso igual ya lo hemos definido antes. Definimos la capa de embeding. Bueno, la capa de embeding, en este caso eh estamos haciendo un transfer learning de tipo feature extraction, ¿no? ¿Por qué feature extraction? Porque yo estoy usando en beings que se han entrenado y además yo no los voy a tocar, no voy a ajustarlos. Si yo los ajustara sería un fine tunit, pero yo no quiero ajustarlo. Entonces eh eso es importante porque yo lo voy a definir aquí. Trainable false, no quiero que se toquen los valores de mi embeding matrix. Entonces acá pongo de este embeding, pues su input de va a ser el bup size, el output dim va a ser el embeding dim y los pesos son los que tengo guardados en mi embeding matrix.
+
+
+02:13:15
+
+lse posgrados: y no quiero que se modifiquen. Bien. Y la entrada, toda esta capa de ining, ¿cuál es? El input layer. Está al lado en paréntesis porque estamos haciendo de manera funcional. Bien, luego hago un dropout, ¿no? Un espcial dropout, que es la misma idea que el dropout, solo que se aplica para este caso de una dimensión y uso 0.2. Bueno, ya sabemos que 0.2 es que va a omitir el 20% de los elementos que tengas ese momento para esta parte del entrenamiento. ¿Y cuál va a ser la entrada todo esto? El being layer, el que he definido aquí. Bien. Bueno, aquí veo el eding, perdón, el embeding layer shape y bueno, 200%. Luego defino la rama uno, ¿eh? Okay. Luego la rama dos. Okay. A ver, denme un segundo, quiero mostrarles algo de todo esto. Okay. Bien, entonces vamos a hacer esto. Voy a sacar el screenshots a toda esta parte para verlo visualmente cómo lo hemos ido construyendo.
+
+
+02:14:30
+
+lse posgrados: Esto lo vemos acá. Bueno, aquí defino la entrada de la CNN. Lo tengo aquí. Uy, perdón. Luego defino el special drop out. Lo tengo aquí. Bien, hasta ahí. Bueno, no voy a dibujarlo a detalle, pero aquí yo tengo mi input layer y ese input se fue a qué? a un ining layer. Voy a poner layer. Y esto se fue a un otra vez le llamé eding layer, ¿no? Sí, otra vez le llamo eding layer. Bueno, pero aquí le voy a poner layer y aquí he puesto el dropout, ¿verdad? Aquí voy a poner eh más, o sea, que le hemos agregado el dropout, más el dropout. Bien, hasta ahí he armado. Ahora, eh lo que sigue es lo siguiente. Tenemos una rama uno. Esta rama uno es como hemos armado nosotros hace rato, una convolución de una dimensión. En este caso, yo voy a usar 64 matrices pequeñitas, ¿no? Antes yo usaba uno, luego dije que puedo usar tres, ¿verdad?
+
+
+02:16:01
+
+lse posgrados: Aquí estoy usando tres. Ahora yo quiero 64. 64 que tienen tamaño 3 por el número de dimensiones, en este caso 3%. Aplico padding activation relu regularizador L2 y listo. Esto, ¿dónde lo voy a aplicar? A mi embeding layer. Bien, luego de hacer esto, hago B normalization y global max pulling. Ahora este edad eding layer está yendo a esta convolución. Es lo que me dice esto, ¿verdad? Entonces, lo voy a graficar, hago un screenshot, vengo aquí, lo pongo al lado. A ver, voy a poner ahí. Bueno, y aquí voy a voy a hacer un pequeño zoom, lo voy a bifurcar. Entonces, esto de acá dice en ver ining layer es la entrada todo esto. Entonces acá pongo conf y el confecta queé al pull, ¿verdad? Aquí el conf luego va a ser entrada al otro conf. Bueno, aquí otra vez confe al pull. Entonces, aquí tengo pull 1 y eso es todo. Ahora vengo acá a la CNN, bajo un poco y aquí dice la rama dos.
+
+
+02:17:20
+
+lse posgrados: La rama dos maneja en este caso kern size de tamaño cuatro. Antes manejaba de tres, ahora usa cuatro. Lo demás es lo mismo. Y como pueden ver la entrada esto es en being layer, o sea, otra vez está tomando la entrada de hace rato, no es consecuente. Esto no sigue a la anterior convolución, esto es en paralelo. Entonces acá voy a poner eso. Pongo este screenshot acá, voy un poco más al costado y voy a ver si se da o no se da lo que hemos mencionado acá. ¿Cómo se llama? Ening layer. Bien. Eleding layer lo había usado como entrada a la primera convolución. Ahora eledingayer también va a ser la entrada para la segunda convolución y después de hacer eso voy a hacer com 2D y pull, lo mismo que hemos hecho acá. Entonces, como estos dos comparten entrada, estos dos son paralelos. Acá yo pongo con dos, ¿verdad? Y este tiene luego un com 2 más el batch non más el pull. Esto es el pull 2. Bien.
+
+
+02:18:28
+
+lse posgrados: Y esto se está yendo aquí. y así. Entonces, esto va a pasar también después con el otro escenario donde tengo el com 3. La misma idea es en paralelo, tiene el eleding layer también aquí, así que sabemos que es en paralelo y listo. Entonces vamos a terminar de graficar poniendo esto al lado, ya que hemos avanzado mucho, así que voy a poner esto al lado y pongo naranja, ¿no? Entonces aquí nuevamente el embeding layer es de entrada a esto. Luego pasa por todo esto, lo mismo de siempre. Entonces aquí pongo com 3, luego el com 3 le sigue otro com 3 con batch norm. Luego le sigue un pull, el pull 3. Ya tengo todo eso. Ahora, ¿qué sigue con catenate? Vengo acá y dice, "Concatenamos las salidas de las ramas. concatenate, pull 1, pull 2 y pull 3. Okay, voy acá, veo mis pull, pull 1, pull 2, pull 3, todos esos se concatenan en concatenate. Bien, ya lo tengo todo junto. ¿Qué sigue? Sigue definir dropout, dropout y una salida dense de un nodo porque estamos haciendo clasificación binaria.
+
+
+02:19:55
+
+lse posgrados: Entonces, la misma idea. Esto de acá se conecta a un dropout, ¿verdad? A un dropout. Y esto se conecta a un dence, un dense de un solo nodo que me va a decir o el review es positivo o el review es negativo. Y bien, con eso ya estamos listos. Ya tengo toda mi red. Armo la CNN, defino la entrada, la salida como un sándwich, lo compilo usando lo de siempre. Adam, Learning rate, los, Binance Crossentropy, la Curacy, el early stopping, ya sabemos cómo funciona. Entré en el modelo, ya sabemos todo esto y me va subiendo poco a poco va subiendo, le pongo 80 épocas. Bueno, va subiendo y aquí se detiene porque tenemos un early stopping, por eso se detiene. Evaluamos el modelo y vemos las gráficas. Bueno, el modelo seguía aprendiendo, quizás iba a llegar hasta un 85, ¿no? Si le dábamos tal vez, no sé, un poco más de paciencia en el callback. Eh, Bueno, hasta ahí llegamos. Podríamos hacerlo mejor. Si podríamos hacer la arquitectura, no sé, con una un proceso paralelo o cambiar alguna cosa, etcétera, pero funciona y nos da un rendimiento relativamente bueno.
+
+
+02:21:16
+
+lse posgrados: Vemos el los misma idea al revés, nos está diciendo lo mismo. Y ahora hacemos la inferencia. Esta inferencia lo que hace es lo que hemos visto hace rato, ¿verdad? Eh, en Word to back hacíamos algo similar. O sea, replicábamos la parte, perdón, no en Word to back, en Back of Words. En back of Words, la inferencia hacía un resumen de todo lo que le habíamos hecho a nuestros datos de entrada. Aquí la inferencia hace lo mismo, eh, hace el padding, ¿verdad? Todos esos procesos que hemos hecho al inicio, pues los va a repetir para que este texto de entrada esté listo para pasárselo al modelo para que me dé la predicción. Entonces, esto hace eso, simplemente está haciendo los mismos procesos, lo vuelve minúscula, lo divide en pedazos, hace pading, etcétera. Y ya que está listo para pasar al modelo, entonces se lo vamos a pasar en Code text, lo vamos a codificar y le pasamos al modelo. El modelo me va a decir ahí su predicción. Entonces, acá yo lo voy a usar.
+
+
+02:22:14
+
+lse posgrados: This movie was amazing. I love it. Esa película estaba buena. Lo amé. Predicción. Positivo. La película estaba aburrida. Negativo. Los actores fueron fantásticos. Positivo. La peor película de la vida. Negativo. Funciona para hacer clasificación y hemos usado una CNN de este tipo bifurcado. Así que funciona. ¿Qué tal? ¿Se entendió esta parte? ¿Tienen dudas tal vez? ¿Por qué el reunimiento de test fue mejor que el de train? A ver, veamos esa parte. ¿Qué te refieres aquí? Eh, acá, ¿verdad? Bueno, eso suele pasar, es normal que pase, pero si el rendimiento del test hubiese sido, o sea, si hubiese pasado el overfeitting, pero al revés, el validation score, bueno, el validation accuracy, perdón, digamos de 90 y el train accuracy de 70, o sea, una brecha grande, significa que el modelo eh se está mal diseñado, o sea, en algún punto se ha quebrado y no funciona bien. Pero en este caso la diferencia es baja, eh, suele pasar, es por la arquitectura, eh, Denis, pero como te digo, si la brecha crece, no sería overfitting, sería un modelo dañado.
+
+
+02:23:43
+
+lse posgrados: Bien, entonces con esto terminamos esta parte del código y vemos estos últimos tres slides que justo nos dio para 4 minutos. Vamos a terminar tiempo. Bien, las CNN para secuencias funcionan, ya vimos, pero no son lo más óptimo para en P lo acabamos de ver. Podemos mejorar ese modelo, sí, pero no creo que lleguemos al 100%. Ahora, ¿por qué no funciona muchas veces? Porque el contexto largo que maneja es pobre. No maneja realmente un contexto largo. Por ejemplo, yo si tengo esta oración, el libro que compré en la tienda que está cerca de la universidad que visitamos el año pasado. Es interesante. Bueno, ¿qué es interesante? el libro, pero el libro lo he mencionado hace rato, ¿verdad? Entonces esa relación de esas dos palabras está muy lejana y para CNN es demasiado lejana porque la CNN maneja un tamaño de filtro tres tres digamos, ¿no? Entonces va viendo de tres en tres y obviamente en algún punto se va a olvidar lo que ha visto del libro al momento de llegar al interesante.
+
+
+02:24:50
+
+lse posgrados: Entonces no va a haber una buena relación. Si la si las oraciones fuesen cortas, entonces eh sí podría hacerlo bien. Usualmente cuando tenemos oraciones cortas lo hace bien la CN. Eh, bueno, voy a leer un una pregunta de su compañero. Eh, ¿eso no se resolvería aumentando el alto del kernel? En sí, es verdad. podría resolverse con el alto de Ken, o sea, podría ponerle un valor más grande, ¿no? Ya no tres, aquí le puedo poner 20, digamos, pero eh el problema va a ser que las relaciones, o sea, no están a distancia 20, podría estar a distancia 50, podría estar a distancia 5, entonces no es un valor fijo, eso es un detalle. Y además no tiene atección global. Bueno, es la misma idea, ¿no? Hay palabras, hay relaciones donde, bueno, como vemos están muy distantes. Entonces, esta palabra no le va a dar mucha importancia quizás esta otra palabra y además no sabe que debería darle mucha importancia. Quizás aquí internamente dentro de la CNN libro le está dando mucha importancia a universidad.
+
+
+02:26:00
+
+lse posgrados: Tendría sentido, pero en realidad al que debería darle más importancia es al interesante. Ahora, esa tensión se tiene que aprender. La CNN no aprende eso, aprendes relaciones, no hace resumen de un grupo de unidades, así que no es bueno también. Por eso, una CNN procesa en ventanas que usualmente son pequeñas, por lo que pierde esa relación larga distancia. Necesitamos otro mecanismo. Bien. Eh, y bueno, como dice acá Carlos, si si aumentamos el tamaño del kernel, en realidad estamos pateando el problema, no no estamos resolviéndolo, solo lo estamos dejando para después. Bien. ¿Y qué es ese otro mecanismo? Ese otro mecanismo se llama atención. Un mecanismo de atención es una transformación de secuencias de embings a secuencias de forma ponderada y paralela. Bien, no vamos a hablar ahora mucho sobre atención porque eso es para la clase 7 y 8, pero ahí vamos a ver el self attention, que justamente es lo que se usa Inter. former y lo que ha permitido que hoy en día tengamos eh grandes modelos de lenguaje.
+
+
+02:27:09
+
+lse posgrados: Y bien, acá les dejo como digamos lectura para la clase siete. Bueno, de hecho para la siguiente clase. Esta parte de atención para encoding decoding lo vamos a ver en la clase siete. Sí, la idea del encoder decoder lo vamos a ver la siguiente clase, pero la atención aplicado a esto lo vamos a ver la clase siete. Y esto también a clase siete. Por si acaso, esto no es tarea, no es obligatorio que lo lean, pero si les interesa avanzar un poco más, pues pueden leer esto, que es el mismo link que les he pasado al inicio de la clase. Bien, y eso es todo. Eso es todo el avance por hoy. No sé si tienen dudas o comentarios tal vez de todo lo que vimos. Genial, gracias por el feedback y los aplausos. Genial, gracias. Entonces, vamos a quedar en esto y vamos a continuar el siguiente jueves con el tema de sequence to sequence. Cualquier duda que tengan pueden escribirme a mi correo que les he dejado en el primer slide. Voy a estar atento. Bien, muchas gracias a todos. Nos vemos el siguiente jueves. Buenas noches.
+
+
+La transcripción finalizó después de 02:28:51
+
+Esta transcripción editable se generó por computadora y puede contener errores. Los usuarios también pueden cambiar el texto después de que se cree.

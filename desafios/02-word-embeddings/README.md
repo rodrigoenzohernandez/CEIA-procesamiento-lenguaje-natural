@@ -1,11 +1,11 @@
 # Desafío 2 — Word embeddings con Gensim
 
 - **Se presentó:** clase 2 (jueves 29/10/2026).
-- **Nota 10 hasta:** jueves 12/11 (clase 4), a última hora de Argentina. Desde el 13/11 baja un punto; ver la [tabla de notas máximas](../README.md#nota-máxima-según-la-fecha-de-entrega).
+- **Nota 10 hasta:** jueves 12/11 (clase 4), a última hora de Argentina. Después vale 9 hasta el 26/11, 8 hasta el 03/12 y 7 hasta el 10/12; ver la [tabla de notas máximas](../README.md#nota-máxima-según-la-fecha-de-entrega).
 - **Entrega:** por el [formulario](https://forms.gle/wsWkQJWAFeh6g6qv5), con el link a este repo o a un Colab. Individual o en pareja.
-- **Plantilla:** [`desafio-2.ipynb`](desafio-2.ipynb). Es la copia de `Desafíos/Desafio_2.ipynb` del repo de la materia, con el ejemplo de la clase arriba y la consigna al final. La resolución va en este mismo notebook.
+- **Resolución:** [`desafio-2.ipynb`](desafio-2.ipynb). Es la plantilla de la materia (`Desafíos/Desafio_2.ipynb`: el ejemplo de la clase y la consigna) con la resolución al final, cada experimento con su análisis. De la plantilla se cambiaron dos celdas para que el notebook corra de punta a punta: la descarga del *songs dataset* usa `urllib` y `zipfile` en vez de `!wget` y `!unzip` (macOS no trae `wget`), y la consulta de `diedaa` atrapa el `KeyError` y lo muestra.
 - **Teoría:** [resumen de la clase 2](../../clases/02-word-embeddings/resumen.md): CBOW y skip-gram (§16 a §18), negative sampling (§19), t-SNE (§20), Gensim y el ejemplo de la plantilla (§21 a §24) y la consigna (§25).
-- **Estado:** pendiente.
+- **Estado:** resuelto, falta entregar.
 
 ## Lo que ya hace la plantilla
 
@@ -59,3 +59,47 @@ La slide 36 de la clase agrega un punto: "Intentar plantear y probar tests de an
 - **Analogías:** probar algunas con `most_similar(positive=[...], negative=[...])`, por ejemplo con pares de personajes (hombre y mujer) o con países y capitales si el corpus los tiene. Si fallan, explicar por qué.
 - **Gráfico:** en vez de las primeras `MAX_WORDS` palabras, que son las más frecuentes y en su mayoría stopwords, graficar las palabras sin stopwords o las de interés con sus vecinos.
 - Más detalles prácticos en el [resumen de la clase 2](../../clases/02-word-embeddings/resumen.md#-para-los-desafíos).
+
+## Resultados
+
+**Corpus:** *Don Quijote de la Mancha* ([Project Gutenberg #2000](https://www.gutenberg.org/ebooks/2000)), en español y con las dos partes. Después de cortar el encabezado y el pie de Gutenberg, segmentar en oraciones y tokenizar quedan **10.986 oraciones, 383.640 tokens y 22.950 palabras distintas** (5.321 con `min_count=5`): 27 veces más tokens que el corpus de los Beatles.
+
+**Modelo elegido:** skip-gram (`sg=1`), `window=5`, `vector_size=100`, `min_count=5`, `negative=10`, `epochs=20`, con `seed=42` y `workers=1` para que sea reproducible. Cada experimento cambia un solo hiperparámetro. Además de los vecinos de siete palabras, se miden dos cosas: cuántos de 26 pares que deberían quedar cerca (*mesmo*–*mismo*, *miedo*–*temor*, *lanza*–*adarga*…) quedan en el top 10, con su puesto mediano, y cuántas de 13 analogías acierta.
+
+| Configuración | Vocabulario | Pares en el top 10 (de 26) | Puesto mediano | Analogías top 1 / top 5 (de 13) | Segundos |
+|---|---|---|---|---|---|
+| **Base** | 5.321 | 16 | 4.5 | 7 / 9 | 22 |
+| Base con otras 4 semillas (el ruido) | 5.321 | 15 a 18 | 3.5 a 6.5 | 5 a 7 / 8 a 9 | 22 |
+| `sg=0` (CBOW) | 5.321 | 13 | 9.5 | 5 / 8 | 6 |
+| `window=2` | 5.321 | 11 | 12.5 | 4 / 6 | 12 |
+| `window=10` | 5.321 | 18 | 4.0 | 7 / 9 | 37 |
+| `vector_size=50` | 5.321 | 17 | 3.0 | 8 / 10 | 19 |
+| `vector_size=300` | 5.321 | 14 | 7.5 | 3 / 7 | 41 |
+| `min_count=2` | 11.792 | 12 | 14.0 | 5 / 10 | 27 |
+| `min_count=10` | 3.020 | 18 | 3.5 | 6 / 9 | 19 |
+| `negative=5` | 5.321 | 17 | 3.5 | 7 / 9 | 12 |
+| `negative=20` | 5.321 | 17 | 3.0 | 4 / 9 | 42 |
+| `epochs=5` | 5.321 | 12 | 15.0 | 4 / 9 | 6 |
+| `epochs=50` | 5.321 | 17 | 4.0 | 6 / 10 | 56 |
+
+- **Preprocesamiento:** el texto se corta entre las marcas `*** START/END OF THE PROJECT GUTENBERG EBOOK ***`, se separa en párrafos (línea en blanco), cada párrafo se une en una línea y se segmenta con `nltk.sent_tokenize(..., language='spanish')`. Un documento es una oración, de 28 tokens de mediana (las líneas de los Beatles tienen 7). `text_to_word_sequence` necesita `¿¡«»—…'` en los filtros; si no, deja palabras como "¿de" o "—dijo". Casi la mitad del vocabulario aparece una sola vez (ley de Zipf).
+- **Hiperparámetros:** fue clave medir el ruido de la semilla, porque con otra semilla las medidas se mueven tanto como con varios cambios de configuración. Quedan claramente peores CBOW, `window=2`, `vector_size=300` (tres analogías) y `epochs=5`, el valor por defecto de Gensim. `min_count=2` llena los vecinos de palabras raras. `negative` 5 o 20, `epochs=50` y `vector_size=50` dan lo mismo que la base. `window=10` cambia el tipo de similitud: acerca palabras de la misma escena (*sol*–*luna* pasa del puesto 104 al 9) y aleja los sinónimos (*miedo*–*temor*, del 2 al 22).
+- **Términos de interés:** tienen sentido los vecinos de las palabras con contextos estables: *miedo* → *espanto*, *temor*, *recelo*; *dulcinea* → *toboso*, *aldonza*, *desencantada*; *mesmo* → *mismo* (el modelo descubre solo que la forma antigua y la moderna son la misma palabra). Hay overfitting en *yelmo* → *mambrino* (0.86), *bacía*, *albarda*, que describen un episodio y no un objeto, y en vecinos raros como *jerónimo* (6 apariciones) para *sancho*. *amor* no tiene vecinos con sentido: aparece en contextos demasiado variados.
+- **Menos similares:** `most_similar(negative=[w])` devuelve la similitud con −w. Las menos similares son palabras sin relación, con similitud real cercana a 0, porque en este espacio casi no hay similitudes negativas (0.2 % de los pares). Los antónimos quedan cerca: *blanco*–*negro* 0.72, *loco*–*cuerdo* 0.71.
+- **Polisemia:** *real* (verdadero, moneda, camino real, Ciudad Real, campamento) y *lugar* (aldea, sitio, ocasión) tienen un solo vector y vecinos mezclados. *escudo* (el arma) y *escudos* (la moneda) se separan solo por casualidad.
+- **Analogías:** 7 de 13 en el primer puesto. Funcionan las del libro: *quijote : mancha :: dulcinea : toboso*, *rey : reino :: gobernador : ínsula*, *sancho : teresa :: duque : duquesa*, *mesmo : mismo :: agora : ahora*. Fallan las generales: *hombre : mujer :: rey : ?* da nombres de mujer, y *españa : españoles :: francia : ?* da *doce* y *pares* («los doce pares de Francia»).
+- **t-SNE:** con la función de la plantilla sobre las 5.321 palabras, graficando las 300 más frecuentes sin stopwords (con 1.000 no se lee). t-SNE pone en el mismo punto colocaciones (*don / quijote*, *dulcinea / toboso*) y palabras intercambiables (*dijo / respondió / replicó*, *mesmo / mismo*, *buena / mala*). Los seis grupos, con su zoom:
+  1. [Las aventuras](img/tsne-cluster-1-aventuras.png): *molinos*, *viento*, *batanes*, *yangüeses*, *gigantes*. No se parecen entre sí: aparecen juntas cuando los personajes recuerdan las aventuras de la primera parte (overfitting a pocas frases).
+  2. [Cantidades](img/tsne-cluster-2-cantidades.png): los números con *días*, *años*, *azotes*, *escudos*, *reales*. El grupo con más sentido.
+  3. [Personajes por historia](img/tsne-cluster-3-personajes.png): los personajes del *Curioso impertinente*, los de Sierra Morena y los duques, cada historia por separado. Es co-ocurrencia, no significado.
+  4. [Dulcinea](img/tsne-cluster-4-dulcinea.png): *señora*, *hermosura*, *belleza*, *princesa*, *infanta* y *par* («la sin par Dulcinea»): el amor cortés.
+  5. [Monturas](img/tsne-cluster-5-monturas.png): *rocinante*, *rucio*, *asno* y sus aparejos, mezclados con el cuerpo, las armas y los verbos de movimiento: la zona de las escenas de acción.
+  6. [Verbos de la narración](img/tsne-cluster-6-verbos.png): *dio*, *llegó*, *salió*, *volvió*: un grupo gramatical.
+
+![Mapa t-SNE de los embeddings del Quijote](img/tsne-mapa-general.png)
+
+*Las 300 palabras más frecuentes sin stopwords. Los recuadros rojos son los seis grupos de los zooms. El 1 aparece casi vacío porque sus palabras son menos frecuentes que las 300 graficadas; se ven en su zoom.*
+
+- **Conclusiones:** con un solo libro, Word2Vec aprende sinónimos, variantes antiguas, categorías y analogías propias del texto, pero mucho de lo que aprende son frases que se repiten (*yelmo de Mambrino*, *molinos de viento*). Sus límites son el tamaño del corpus, las palabras raras o de contextos variados, la polisemia y la ortografía antigua. Para mejorarlo: más texto de la época, `Phrases` para las colocaciones, normalizar la ortografía o usar fastText.
+
+**Para entregar:** el link a este notebook en GitHub o una copia en Colab compartida con los dos docentes. El notebook corre de punta a punta en unos 8 minutos con CPU; la descarga del corpus puede tardar uno o dos minutos si responde un espejo de Gutenberg.
