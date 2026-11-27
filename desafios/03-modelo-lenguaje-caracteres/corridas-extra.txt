@@ -1,0 +1,61 @@
+TensorFlow 2.21.0 · Keras 3.15.1 · sin GPU: entrena en CPU
+Corrida completa
+--  https://www.gutenberg.org/files/2000/2000-0.txt · HTTP Error 503: Service Unavailable
+--  https://www.gutenberg.org/cache/epub/2000/pg2000.txt · HTTP Error 503: Service Unavailable
+OK  https://aleph.pglaf.org/2/0/0/2000/2000-0.txt · 2,110,809 caracteres en 79 s
+Dataset igual al del notebook: 990,347 caracteres, vocabulario de 53, X (89115, 100), X_val (990, 100)
+SimpleRNN(512) + clipnorm=1.0: 316,981 parámetros entrenables
+  época  1 ·  47 s · perplejidad train 28.321 · validación 25.734  ← mejor
+  época  2 ·  53 s · perplejidad train 19.009 · validación 14.875  ← mejor
+  época  3 ·  45 s · perplejidad train 12.806 · validación 11.950  ← mejor
+  época  4 ·  48 s · perplejidad train  9.098 · validación  7.908  ← mejor
+  época  5 ·  43 s · perplejidad train  6.978 · validación  6.929  ← mejor
+  época  6 ·  44 s · perplejidad train  5.791 · validación  6.330  ← mejor
+  época  7 ·  42 s · perplejidad train  5.157 · validación  5.796  ← mejor
+  época  8 ·  43 s · perplejidad train  4.773 · validación  5.664  ← mejor
+  época  9 ·  42 s · perplejidad train  4.620 · validación  5.500  ← mejor
+  época 10 ·  42 s · perplejidad train  4.447 · validación  5.414  ← mejor
+  época 11 ·  42 s · perplejidad train  4.238 · validación  5.239  ← mejor
+  época 12 ·  42 s · perplejidad train  4.065 · validación  5.182  ← mejor
+  → mejor perplejidad de validación 5.182 (época 12) · 8.9 min
+  guardado en resultados.json
+SimpleRNN(512) con learning_rate=1e-3: 316,981 parámetros entrenables
+  época  1 ·  42 s · perplejidad train 10.687 · validación  7.857  ← mejor
+  época  2 ·  42 s · perplejidad train  6.844 · validación  6.983  ← mejor
+  época  3 ·  42 s · perplejidad train  5.807 · validación  6.178  ← mejor
+  época  4 ·  42 s · perplejidad train  5.084 · validación  5.698  ← mejor
+  época  5 ·  42 s · perplejidad train  4.616 · validación  5.400  ← mejor
+  época  6 ·  42 s · perplejidad train  4.299 · validación  5.265  ← mejor
+  época  7 ·  42 s · perplejidad train  4.071 · validación  5.143  ← mejor
+  época  8 ·  42 s · perplejidad train  3.897 · validación  5.089  ← mejor
+  época  9 ·  42 s · perplejidad train  3.758 · validación  5.043  ← mejor
+  época 10 ·  42 s · perplejidad train  3.645 · validación  5.052
+  época 11 ·  42 s · perplejidad train  3.552 · validación  5.077
+  época 12 ·  42 s · perplejidad train  3.472 · validación  5.130
+  → mejor perplejidad de validación 5.043 (época 9) · 8.4 min
+  guardado en resultados.json
+2 × GRU(256) sin dropout: 647,221 parámetros entrenables
+  época  1 · 122 s · perplejidad train  8.200 · validación  6.139  ← mejor
+  época  2 · 129 s · perplejidad train  4.860 · validación  4.792  ← mejor
+  época  3 · 134 s · perplejidad train  3.939 · validación  4.328  ← mejor
+  época  4 · 126 s · perplejidad train  3.567 · validación  4.195  ← mejor
+  época  5 · 131 s · perplejidad train  3.348 · validación  4.114  ← mejor
+  época  6 · 130 s · perplejidad train  3.186 · validación  4.159
+  época  7 · 132 s · perplejidad train  3.054 · validación  4.150
+  época  8 · 126 s · perplejidad train  2.939 · validación  4.259
+  → mejor perplejidad de validación 4.114 (época 5) · 17.2 min
+  guardado en resultados.json
+2 × GRU(256) + Dropout(0.4): 647,221 parámetros entrenables
+  época  1 · 125 s · perplejidad train  8.178 · validación  6.157  ← mejor
+  época  2 · 128 s · perplejidad train  5.051 · validación  4.712  ← mejor
+  época  3 · 136 s · perplejidad train  4.152 · validación  4.345  ← mejor
+  época  4 · 135 s · perplejidad train  3.805 · validación  4.137  ← mejor
+  época  5 · 139 s · perplejidad train  3.622 · validación  4.082  ← mejor
+  época  6 · 128 s · perplejidad train  3.503 · validación  4.057  ← mejor
+  época  7 · 136 s · perplejidad train  3.416 · validación  3.969  ← mejor
+  época  8 · 131 s · perplejidad train  3.350 · validación  3.983
+  época  9 · 136 s · perplejidad train  3.297 · validación  3.977
+  época 10 · 133 s · perplejidad train  3.253 · validación  3.990
+  → mejor perplejidad de validación 3.969 (época 7) · 22.1 min
+  guardado en resultados.json
+Listo.
