@@ -45,6 +45,8 @@ Sugerencias de la plantilla:
 - **Pregunta de Carlos:** ¿qué hacer con números, signos de puntuación y espacios? Dejarlos: entran al vocabulario como cualquier carácter. Si se limpian, el modelo genera texto plano, sin puntuación.
 - **Hacerlo con tiempo:** a veces la T4 de Colab no está disponible o se corta la conexión. Con créditos se puede usar otra GPU.
 
+En la [clase 6](../../clases/06-seq2seq/resumen.md) (§10), Fernando Silva, que lo corrige, agregó que con una arquitectura clásica, datos limitados y Colab, una perplejidad de 4 o 5 está bien, y que lo tiene en cuenta al corregir.
+
 ## ✎ Ojo con la plantilla
 
 - **El set de validación está mal armado.** `val_text[init*max_context_size:init*(max_context_size+1)]` arma secuencias de largo 0, 1, 2, … en vez de bloques de 100. Debería ser `val_text[init*max_context_size:(init+1)*max_context_size]`.

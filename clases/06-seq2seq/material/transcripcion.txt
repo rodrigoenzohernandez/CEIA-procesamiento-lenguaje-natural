@@ -1,0 +1,708 @@
+nov 26, 2026
+Procesamiento del Lenguaje Natural I (6/8) - a264b26 - Transcripción
+00:07:38
+
+lse posgrados: Hola, buenas. Vamos a empezar con la clase de hoy. ¿Se me escucha bien? Gracias por el feedback. Bien, eh vamos a empezar con la clase de hoy. Bueno, no sé por qué me muestra partido en dos, ¿eh? A ver, creo que solo lo voy a mostrar así completo. Bueno, bien. Eh, vamos a continuar con el avance. Hoy vamos a ver sobre eh sequence to sequence y esto nos va a dar paso para ver después sobre Transformers. Bien, entonces eh un breve repaso de lo que vimos la anterior clase. La anterior clase habíamos hablado sobre las convolutional newal networks para NLP. vimos que sí funcionan, que las CNNs reciben un texto y producen una salida fija, por ejemplo, pueden servir para hacer tareas de clasificación. En este caso, tenemos el ejemplo de una frase corta, I love this movie, se lo pasamos a la CNN y nos dice positivo. Bien, eso es una tarea de clasificación que sí puede hacer la CNN. En clasificación tenemos muchas cosas, ¿verdad?
+
+
+00:09:17
+
+lse posgrados: tenemos clasificación de sentimientos, spam, eh no sé, clasificación de tópicos. Pasamos un una oración, una frase, un párrafo y nos dice esto pertenece a al área de ciencias o al área de biología, no sé. Entonces, tenemos este tipo de clasificaciones, pero decíamos que tiene una limitación y es que las CNNs eh como tienen una ventana que se va deslizando, esa ventana limita encontrar relaciones que sean largas, ¿no? Entonces, eh si le pasamos un párrafo, quizás no sea muy buena idea porque la CNN no va a poder capturar toda esa información. Bien, ahí veíamos una limitación, pero veíamos que sí se puede se puede aplicar las NN. Ahora nosotros tenemos más tareas además de la clasificación, así que ahí podemos mencionar que necesitamos algo más que una CNN. Bien, necesitamos una idea para poder generar texto, por ejemplo. Bien, entonces entre las tallas de NLP tenemos muchas, ¿verdad? clasificación, eh generación, traducción, etcétera, pero entre ellas la que nos interesa ahora es la generación. Y como la CNN solo va por clasificación, entonces vamos a ver un nuevo paradigma y ese es el sequence to sequence.
+
+
+00:10:51
+
+lse posgrados: Entonces, la idea de sequence to sequence es recibir una entrada que sea, por ejemplo, una secuencia en inglés y que te devuelva una secuencia en español, como dice ahí, ¿verdad? I love AI. y se lo pasas al sequence to sequence y te responde, "Me encanta la guía." Bien, entonces esa es la idea de hoy. Ya sabemos cómo funcionan las RNS. Puede ser eh la simple, la vanilla, ¿no? La LCTM, la gru. También vimos que las CNN también pueden resolver problemas. Okay, ya vimos todas las herramientas sueltas. Ahora con el paradigma que vamos a ver hoy día, vamos a juntar las herramientas para ser generadores. Bien, esa es la idea. Entonces para eso tenemos que recordar eh este tipo de arquitecturas. Bueno, aquí dice soluciones. Yo le pondría más bien arquitecturas de neural networks. Bien, entonces acá, por ejemplo, tenemos un slide que si no me equivoco ya lo vieron antes, ¿verdad? con Josselyn y les mencionaba ella que hay diferentes arquitecturas de Neural Networks.
+
+
+00:11:57
+
+lse posgrados: Por ejemplo, tenemos la one to one. Vamos a ver todas estas arquitecturas, un breve repaso porque necesitamos una de estas para armar nuestro sequence to sequence. Entonces vamos a draw y vamos a ver eso. Bien. Entonces, ¿cuál es la idea? La idea es la siguiente, por ejemplo. Hm. Okay. ¿Recuerdan cuando hacíamos clasificación? Bueno, cuando lo realizaban con Josely, usábamos una RN, ¿verdad? Entre las LNS tenemos muchas lns. Tenemos por ejemplo la vanilla, la LCTM y la grú. Bien. Ahora, por ejemplo, nosotros digamos que queremos hacer la clasificación de una oración con una LN. Volvamos a las LNs. Bien. Entonces, yo quiero hacer la clasificación de me siento feliz, digamos. Bien, quiero que me diga qué es esta oración, positiva o negativa. Para eso voy a necesitar una RN. Sabemos que la RNN se ve así, ¿verdad? Recibe la entrada, lo procesa, da una salida. Aquí recibe una entrada, lo procesa, da una salida, recibe una entrada.
+
+
+00:13:38
+
+lse posgrados: lo procesa hace una salida, ¿verdad? Entonces, esto hace una n puede ser la vanilla, el LCTM o la grú. De hecho, esa flecha, la última flecha usualmente va hacia arriba, ¿verdad? Entonces este tipo de arquitectura me permite hacer la clasificación y aquí me va a decir, digamos, positivo. ¿Por qué? Porque mi oración es positiva. Entonces, acá tenemos muchas entradas y una salida, ¿verdad? Y esto es de lo más fácil que podemos hacer. una red normal recurrente. Entonces, esto lo podemos ver aquí. Bien, es una mini to one. ¿Por qué? Porque tenemos muchas entradas, se procesan y al final me da la salida. Bien, entonces eso lo vimos con RNS para hacer tareas, por ejemplo, de clasificación. Bien, ya sabemos eso. Otra tarea que quizás la vieron es sobre hacer taging. Entonces, hay una tarea que se llama posttaging. Bien, el postagging que quizá igual ya lo vieron con Josely, es cuando clasificas una palabra. Bien, entonces la clasificación de una palabra puede ser de manera lingüística, no sé, digamos que vamos a inventarnos que ciertas palabras son de un tipo.
+
+
+00:15:17
+
+lse posgrados: Entonces, volvamos a nuestro ejemplo. Me siento feliz y esto va a entrar una red otra vez, una red en una recurrente. Sabemos que aquí hay nodos que reciben la entrada. Pero en este caso no vamos a esperar hasta el final. Cada nodo me va a dar una salida para cada palabra. Entonces acá me va a decir que para pues es de tipo tres, digamos. Siento es de tipo uno y feliz es de tipo nueve, digamos. Bien. Entonces, las salidas van instantáneamente, ¿verdad? Le pasas una palabra y te da una salida. Esto es una many to many y lo tenemos acá. Bien, de esta manera nosotros podemos ver dos tareas que usualmente son las más comunes en NLP, las que son many to one y las que son many to many. Bien, ¿por qué estamos recordando esto? Porque la idea del sequence to sequence es combinar las dos. Bien, si combinamos las dos vamos a tener un encoder decoder. Entonces hemos dicho sequence to sequence y ahora decimos encoder decoder.
+
+
+00:16:47
+
+lse posgrados: Entonces, son lo mismo. En en teoría sí porque la sequence to sequence es es un paradigma. Bien. Y el encoder decoder es una arquitectura de ese paradigma. Entonces acá tenemos la siguiente idea. Combinando las dos ideas que hemos mencionado, voy a pasarle la siguiente oración a mi modelo que es encoder decoder, que es parte de la sequence sequence. Me siento feliz. Bien, esa es mi oración. Esto entra a una red neuronal recurrente. Lo vamos a poner de otro color para no para no confundirnos. Bien. Y esta me va a dar una salida. Bien. Ahora esa salida no la vamos a pasar por una sigmoide, por ejemplo. Bien. Antes le pasábamos por una sigmoide y nos decía positivo o negativo. Ahora lo tenemos solo como vector. Es un vector. Este vector, si le pasamos una por una red o por un, no sé, o algo y después una sigmoide, ahí le volvemos clasificación binaria. Así que no vamos a hacer eso, vamos a quedarnos solo con este vector.
+
+
+00:18:10
+
+lse posgrados: Bien, es lo mismo que hacíamos antes, solo que no le ponemos esa capa final. ¿Qué sigue? Bueno, lo que sigue es agarrar este vector y pasárselo a otro bloque. Entonces, son diferentes, por eso están de diferente color. Este otro bloque lo que va a hacer es recibir una entrada. Esta entrada es como un botón, bien, es un tag que usualmente dice sos o boss. Bien, entonces, ¿qué significa sos o el boss? Bueno, SOS significa start of sequence. Va a empezar a generar una secuencia. Y boss es begin, el inicio de una secuencia. Entonces, eh si buscan papers, blogs, videos de YouTube, código lo que sea, a veces lo ponen como sos, a veces lo ponen como voz, pero es la misma idea. Bien, entonces entra este tag que es como un comodín, ¿no? Como un botón que dice, "Vas a empezar la secuencia y aquí, ¿qué va a hacer?" lo que va a hacer es tomar en cuenta este vector que me está dando este bloque más este sos y me va a dar un valor, ¿bien?
+
+
+00:19:26
+
+lse posgrados: Y ahí me va a dar eh bien, es la primera generación. Ese lo vamos a usar para que venga aquí como entrada. Y ahora acá me va a dar una salida. La salida es B. Eso lo usamos aquí como entrada. Estamos haciendo una generación autorregresiva, ¿verdad? Y aquí me va a dar happy y después esto va a continuar otra vez va a seguir generando. Y acá, bueno, el modelo ya debería saber que hasta ahí debería generar. Bien, entonces supongamos que este modelo lo hace bien al inicio y va a generarnos lo siguiente.
+CARLOS AGUSTIN BERDAGUER: Perdón, las flechas horizontales del modelo de la derecha, las rayas, las líneas horizontales.
+lse posgrados: Ah, esas flechas,
+CARLOS AGUSTIN BERDAGUER: Sí,
+lse posgrados: sí, son flechas. Es que esto es una red neuronal recurrente. Es como una LSTM, una GRU.
+CARLOS AGUSTIN BERDAGUER: es igual a la de la izquierda.
+lse posgrados: Sí, exactamente. Ambas son redes no recurrentes. Bien. Así que pueden pensar que esto es una LCTM y esto también, digamos.
+
+
+00:20:54
+
+lse posgrados: Bien, estas flechas azules simplemente estoy tomando las salidas y lo estoy copiando y pegando por si acaso. Lo único que estoy haciendo. Entonces acá me genera EOS. EOS significa end of sequence. Bueno, hola, lo siento, se me congeló. Eh, den un segundo. Bien. Bueno, lo siento, se me congeló un rato la compu. Ah, bueno, aquí el mouse se me fue bien. Entonces, les decía que acá me genera EOS. EOS significa end of sequence y ahí termina de generar. Bien, esa es la idea. Entonces, lo que hemos armado acá es un encoder decoder. Bien, el primer bloque que está en la izquierda es un encoder. Es un encoder que, como decíamos hace rato, es una many to one. Recibe muchas entradas y me da una salida como los clasificadores, ¿verdad? Solo aquí no clasifica, solo nos da ese vector previo antes de la clasificación. Este otro bloque se llama decoder. El decoder es un generador. El decoder te da salidas en cada momento.
+
+
+00:22:39
+
+lse posgrados: Bien. Y nosotros estamos usando las salidas para volver a entradas para que vaya entendiendo lo que ha generado, ¿no? Entonces, primero generó I. Bueno, toma en cuenta que has generado I para generar la siguiente palabra. Genera Fel. Okay, toma en cuenta que has generado I feel para generar la siguiente palabra happy y así sucesivamente. Bien, entonces esta es la idea de un sequence to sequence. Bien, un sequence to sequence, ¿qué hace? Junta dos bloques y te resuelve problemas como la generación de este texto para la traducción de idiomas. Entonces, ¿qué hemos hecho aquí? Hemos hecho una many to many de este tipo. Entonces podemos ver que todo lo que hemos mencionado es esto de acá. Aquí hay una secuencia de entrada, ¿verdad? Toda una secuencia. Entra aquí y esa se conecta con un decoder y es me da una salida. Entonces ahora estamos viendo esto, una sequence to sequence. Bien, esa es la idea. ¿Qué tal? Hasta ahí se entendió.
+
+
+00:23:44
+
+lse posgrados: ¿Tienen dudas o comentarios quizás?
+Hernando Scheidl: El begin of sequence es de dónde sale
+lse posgrados: ¿Cuál? Perdón.
+Hernando Scheidl: el begin of Sequence o el start of sequence.
+lse posgrados: Ah, okay, okay, okay. Ese es un ese es un token. Bien, es un token que nosotros le añadimos. O sea, eso nosotros vamos a ver en el código explícitamente le decimos, tienes que empezar con este token, el begin sequence o el SOS, cualquiera de esos dos. Tenemos que nosotros ponerle para que empiece la generación. Así que sí, explícitamente nosotros le damos.
+CARLOS AGUSTIN BERDAGUER: es parte del vocabulario que, o sea, tenemos que agregarlo el vocabulario que usemos,
+lse posgrados: Exactamente.
+CARLOS AGUSTIN BERDAGUER: tanto el begin como el esos dos tokens.
+lse posgrados: Exactamente. Laos el vocabulario. Exactamente. Bien. Esa es la idea. ¿De acuerdo? Entonces, vamos a ver un poco más de esto ahora en los slides, pero esa es la idea de lo que vamos a hacer hoy día y al final, si nos da tiempo, vamos a vamos a hacer el puente con Transformers y si no la próxima clase lo hacemos.
+
+
+00:24:59
+
+lse posgrados: Es un eso es algo muy corto que vamos a ver y ya después vamos a ver Transformers a detalle. Bien, ya vimos esto. Ahora, ¿qué tenemos? eh en soluciones sequence to sequence. O sea, ¿para qué nos serviría el Sequence to sequence? Bueno, el Sequ sequence nos sirve cuando queremos hacer tareas, por ejemplo, como un chatbot. Bien, podemos armar un chatbot con sequest to sequence porque nosotros le pasamos una oración, ¿no? Le paso, no sé, ¿cuánto cuesta la polera o bueno, la remera, no sé, del Barcelona y te va a responder, la remera del Barcelona cuesta 110 €? Bueno, hay una secuencia de entrada y hay una secuencia de salida, ¿verdad? Así que sirve para hacer chatbots. Traducción de idiomas, ya lo hemos visto, ¿verdad? Le pasamos, me siento feliz, te genera I feel happy. Una secuencia de entrada, una secuencia de salida. completar una imagen. También le pasas una imagen incompleta, que es una, bueno, podemos considerarlo como una secuencia de píxeles y te revuelve los los píxeles faltantes.
+
+
+00:26:13
+
+lse posgrados: O puedes hacer un text image o image to text. Después haces un texto, una secuencia de entrada que ser secuencia de palabras y te genera una secuencia de píxeles. Bien, entonces eh es todo lo que ustedes piensen que necesitamos. secuencia de entrada y secuencia de salida. Bien, es por eso sequence to sequence, secuencia a secuencia. Ahora, hoy en día pues no se usa eh sequen sequence. Este este encoder decoder clásico que les he presentado es clásico porque estamos usando el STM group. No se usa hoy en día en en los chatbots, por ejemplo, ¿no? Antes sí se usaba. Antes igual se hacía traducción con esto. Recuerdo hace ya casi 10 años, ¿no? De hecho, ya debe ser 10 años, que había una presentación en la universidad de un investigador y hacía un traductor de de español a no sé qué idioma originario y hacía esto, ¿no? Con sus conms y en su momento era wow, ¿no? Porque era pues lo más moderno, ¿no? en ese momento, pero estamos hablando hace 10 años.
+
+
+00:27:23
+
+lse posgrados: Hoy en día, pues el chatbot pues lo harían con un LLM, ¿no? No sé, algo mucho más moderno, más preciso. En la traducción de idiomas lo mismo, completar una imagen, lo mismo. Bueno, le pasa una imagen completa chat GPT o nano banana, no sé, y les genera una imagen y el texto image, pues eso es lo que hace Chat GPT, ¿verdad? Chargpt internamente maneja Dali, entonces le pasan un texto y les genera una imagen. O sea, todo esto en, o sea, en la práctica ya se ha resuelto con técnicas modernas que lo hacen mucho mejor. Y de hecho, nosotros cuando hagamos el código de hoy día, que es lo clásico, van a ver que funciona, pero tienen sus detalles. En algunos casos funciona hasta cierto punto, eh, y eso pasa por dos razones. Uno, porque lo estamos haciendo sencillo, por las limitaciones de colab y dos porque, bueno, este tipo de ejercicios pues ya han sido resueltos con técnicas modernas. Bien. Ahora, una pregunta que sería buena sería, entonces, ¿para qué vamos a ver todo eso en la clase de hoy?
+
+
+00:28:26
+
+lse posgrados: No, la razón es porque esto es base para entender qué es lo que pasa después. Lo que pasa después es que hacen que se hacen mejoras con el con el mecanismo de atención. Y cuando ustedes ponen atención a este sequence su sequence, lo transforman en un transformer. Bien, entonces esa es la esa es la razón. Bien, esa es eh el motivo de por qué estamos viendo estas arquitecturas clásicas. Por eso la siguiente clase es Transformers. Bien, entonces eh continuamos. Por ejemplo, acá tenemos una un ejemplo, ¿no?, de lo que estamos haciendo, como la traducción de idiomas. Yo le paso, "Hola, mi nombre es Juan Pérez y me va a traducir a Hi, my name is Juan Pérez." Ahora, aquí, por ejemplo, es eh es un ahí tienen un objetivo que es un poco desafiante, ¿no? Y es que cuando ustedes le pasan una secuencia a un idioma y quieren la traducción en otro idioma, las longitudes pueden variar, ¿no? Entonces, el hecho de que las longitudes puedan variar, pues sí lo hace un poco desafiante, pero hay una solución también para eso, ¿no?
+
+
+00:29:42
+
+lse posgrados: Y ahí entra justamente el EOS. Acá, por ejemplo, este generador si no tuviese el EOS generaría sin parar. I feel happy. How do you feel today? We are living in. Bla bla bla bla bla. No. terminaría de generar. En cambio, cuando le pones ese tag, o sea, le dices, por si acaso, si ya no tienes nada que decir EOS, la red te dice EOS y termina de generar. Bien, entonces esto se utiliza cuando tienes eso, secuencias que pueden variar de longitud y eso justamente pasa en las traducciones de idiomas. Bien, y eso lo vamos a ver hoy día igual más adelante, pero bueno, eso es un desafío que lo podamos solucionar y además la traducción que estamos viendo nosotros puede entenderse como la búsqueda de la secuencia objetivo que sea la más probable más probable dada la entrada. En otras palabras, aquí nosotros la traducción que le estamos haciendo a Hola, mi nombre es Juan Pérez, podría decirme cualquier otra cosa, ¿no? Podría decirme my name is Juan Pérez, esa es una opción.
+
+
+00:30:46
+
+lse posgrados: Otra es hi I am Juan Pérez o hi Juan Pérez. Entonces hay muchas posibles traducciones, ¿no? Hay unas que son erróneas, sabemos que son erróneas, pero son alternativas. Entonces nosotros tenemos que buscar cuál es la alternativa ideal para mi traducción. Y eso en realidad nosotros como personas no lo vamos a buscar, no lo vamos a dejar para que la red lo haga. la red tienen que encontrar cuál es esa secuencia más probable dada esta secuencia de entrada. Por eso aquí muestra esta fórmula, ¿no? R max y p de la el y, o sea, te está diciendo la probabilidad de la secuencia de salida dada la secuencia de entrada dados los pesos. Ahí está teta, ¿verdad? Teta. Si ven teta ahí es porque son parámetros. ¿Qué es un parámetro? Los pesos. Entonces, este P es una red neuronal que tiene que aprender a darnos las mejores secuencias dada una secuencia de entrada. Bien, esa es la idea. Entonces, esto está relacionado con algo que también vieron con Josselyn, que es los language models.
+
+
+00:31:53
+
+lse posgrados: Bien, entonces los language models eh es cuando nosotros asignamos probabilidades a secuencias de palabras, ¿verdad? Entonces, ahí, por ejemplo, si yo pongo, "Hola, mi nombre es Juan Pérez, ¿cuál es la probabilidad de esa secuencia?" ¿Qué vamos a hacer? Vamos a multiplicar la probabilidad de hola por la probabilidad de mi, dado que antes dije hola, por la probabilidad de nombre, dado que antes dije mi, hola. Y así sucesivamente, ¿verdad? Entonces todo eso es un language model, te da las probabilidades en base a las secuencias que tienes. Ahora, los sequence to sequence manejan conditional language models. ¿Por qué? Porque nosotros queremos saber una queremos saber la probabilidad de una secuencia de palabras dado un contexto de condicionamiento, ¿no? Entonces ese contexto de condicionamiento va a ser mi entrada. Yo le paso, "Hola, me llamo Fernando y me tiene que decir cuál es la siguiente secuencia más probable." Entonces va a multiplicar las palabras que se van a hacer en inglés, ¿no? Yo le puse, "Hola, mi nombre es Fernando." Y va a decir,
+
+
+00:32:51
+
+lse posgrados: "Bueno, parece que quiere decir, "Hi, my name is Fernando." Okay. Va a multiplicar las probabilidades. high por my, dado que antes dije high, etcétera. Entonces, así va a encontrar la mejor secuencia. Esa sería la idea del conditional language model que tiene internamente los modelos to sequence. Ahora nosotros eh bueno, esto no lo hacemos manualmente, ¿no? O sea, esto es una idea que estamos mencionando. Todo esto pasa internamente en la red neuronal, pero lo que esto nos está diciendo es que para entrenar un una arquitectura de este estilo, ustedes, perdón, ustedes tienen que darle una secuencia de entrada y una secuencia de salida. Es decir, esto es un problema supervisado, por eso hay un una secuencia de entrada y una secuencia de salida. Entonces, ¿cómo se ve esto? Esto se ve como por ejemplo en la película de Tom Hanks. Bien, entonces pensemos en la película de Tom Hanks. No sé si vieron la película La terminal, creo que es de hace mucho tiempo atrás, ¿no? De los 2000. Bien.
+
+
+00:34:00
+
+lse posgrados: Si ahí Hernando recuerda la película igual, Matías, bien la vieron. Genial ahí. Eh, bueno, a lo que recuerdo, creo que la idea es la misma, ¿no? Tom Hanks creo que es de un país ficticio, creo que es de la Unión Soviética y se queda trabado en un aeropuerto de Estados Unidos y no habla inglés, entonces tiene problemas, ¿verdad? Entonces, ¿cómo aprende el inglés? Pues ve revistas o no sé esto que hay en en los aeropuertos, ¿no? En los mismos aviones hay esto, revistas que te hablan de un tema, no sé, las frutas de la Patagonia, digamos, ¿no? Entonces hay un tema ahí para que lo leas mientras viajas y al lado está el mismo texto en inglés, ¿no? Entonces ahí sin dar sin darnos cuenta ahí tenemos un dataset, ¿no? Para hacer la el entrenamiento de este tipo de modelos. ¿Por qué es el dataset? Porque están las parejas ahí, por ejemplo, dice, "Las frutas de la Patagonia son deliciosas, ¿no? Y al lado está el mismo texto en inglés, ahí dice the fruits of Patagonia are delicious." Entonces ahí estás viendo que hay pares.
+
+
+00:35:00
+
+lse posgrados: Sí. Y en base a eso incluso podemos aprender el idioma, ¿verdad? Tal como lo hizo Tom Hanks en la película. Ahora, esto pasa en todo lado, ¿no? Igual en los restaurantes, sí, justo lo menciona Nicolás, la piedra de Droseta, ¿verdad? Igual que es un acontecimiento importante para los jeroglíficos y demás, ¿verdad? Ahora, por ejemplo, algo más moderno que la piedra de Roseta, ¿no? Ahí tenemos el menú de un restaurante. Ahí, por ejemplo, está en español y en inglés, ¿no? Ahí dice picaña la piedra y abajo dice picaña stone cookets. Luego abajo dice chuletón a la piedra y abajo tibone, stick stone cook. Bueno, en ambas secuencias que está en español dice piedra. Okay, yo ya sé que dice piedra, yo sé español, pero digamos que no es inglés. Abajo en su traducción no entiendo lo que dice, pero dos veces dice stone. Entonces, stone debe significar piedra. La misma idea, ¿verdad? Estamos viendo relaciones entre las palabras y de esa manera estamos entendiendo las traducciones.
+
+
+00:35:58
+
+lse posgrados: Eso es lo que va a pasar. Yeah. en la redonal. Bien, por eso le pasamos pares. Ahora tenemos que hacerle muchos pares, bien, eh, para que funcione bien, como cualquier modelo de lenguaje, lo ideal es pasarle una gran cantidad de datos y ahí tenemos datasets, perdón, que sirven para esto. Entonces, por ejemplo, acá tenemos el manifings.org ankey. Voy a entrar acá. Ah, uy, copié todo esto. Entonces, acá y muestra acá diferentes traducciones, ¿no? Entonces, hay datasets de inglés a sudafricano, inglés a albano, bla, bla, bla, todo, ¿verdad? De inglés a n idiomas. Entonces, eh por ejemplo, yo descargué el que era de inglés a francés y aquí saqué un screenshot de cómo se ven esas traducciones. Mientras acá es un archivo TXD grande. Bien. Y ahí tenemos, por ejemplo, la primera oración. Do we need a universal language? La traducción en francés es bueno, no no se lee francés, ¿no? Pero ahí dice, no, beso, bla, bla, bla, bla.
+
+
+00:37:12
+
+lse posgrados: Bien, bueno, estoy tratado de hablarlo en francés. La cosa es que aquí está la traducción en francés de esto, está su par. Luego acá también podemos agregar otras maneras de decirlo porque no solo hay una manera de traducir eso, ¿verdad? Entonces aquí ponemos otra vez do we need a universal language y aquí otra manera en francés de decirlo. Y así así como esto que ven acá hay muchos pares. Bien. Y con esto nosotros podemos hacer el entrenamiento de un encoder decoder. Bien, entonces eh esta es la idea de las traducciones para este tipo de tareas. Ahora, bueno, eh aquí hay muchos desafíos, bien, y esto no solo aplica para este encoder decoder clásico, también aplica para técnicas modernas. Bien, por ejemplo, no sé, eh, los Transformers funcionan muy bien hoy en día para la traducción inglés español, por ejemplo, o español inglés, que ojo, no son lo mismo, no es lo mismo tener un modelo que te traduce el inglés español que viceversa. pareciera que sí lo es, pero no es lo mismo.
+
+
+00:38:32
+
+lse posgrados: Igual, no sé, con el francés y el alemán, quizás diría que el alemán tiene buenos traductores con Transformer, pero la mayoría de estos es inglés y x idioma. Pero si quieren hacer un, bueno, si quieren encontrar, digamos, un traductor más de nicho, por ejemplo, uno que se enfoque en idiomas originarios, eh, van a tener problemas, ¿no? que no hay eso. Y es porque no están digitalizados esos idiomas originarios y por ende pues ah no se ha podido entrenar un modelo, ¿no? Entonces eso es un detalle que hoy en día pues está muy presente. Hoy en día hay aún aún en la época de Generative AI hay competencias y demás para poder hacer traducciones, por ejemplo, de español a un lenguaje originario de de Sudamérica, ¿no? No sé, Aimara, Quechua, guaraní. etcétera. Entonces, eh aún sigue siendo un desafío bien y es porque no hay muchos de esos datasets para lenguajes de nicho. Incluso acá si lo ven en el ani, bueno, por ejemplo, en el eh inglés ruso, pues hay muchos ejemplos, ¿no? Casi medio millón de ejemplos.
+
+
+00:39:49
+
+lse posgrados: Pero inglés y este de acá no sé qué idioma es. Me imagino que es una variante de ruso, estoy adivinando, pero aquí tiene muy pocas secuencias. y con 79 no vas a entrenar nada. Bien, entonces eh es un desafío, no no es tan fácil como parece, ¿no? Necesitas una gran cantidad de datos. Y bueno, les menciono todo esto porque con mi equipo estamos haciendo eso, traducción de español a un lenguaje originario que es elimara y hemos intentado entrenar un transformer moderno de cero utilizando 20,000 secuencias y no hemos tenido buenos resultados. 150,000 secuencias y hemos tenido un poco de mejora. Entonces, es un desafío. Bien, y actualmente estamos viendo cómo solucionarlo, pero bueno, quería compartirles eso, bien, que no es tan sencillo, eh, y que necesitan una gran cantidad de datos. Bueno, esa es la idea. Entonces, eh, ¿qué vamos a hacer? Lo que vamos a hacer nosotros es aprovechar estos datas para entrenar este encoder decoder, bien, que va a resolver el problema. Entonces, acá, por ejemplo, tenemos cómo se va a ver esta solución.
+
+
+00:40:58
+
+lse posgrados: Vamos a agarrar nuestra secuencia de entrada. Bueno, acá no estoy seguro qué idioma es. Digamos que es alemán. Agarro la secuencia que está en alemán, se lo paso al encoder. El encoder, ¿qué es esto que hace? Recordemos que el encoder lo resume. Esa es básicamente la tarea de un encoder. Acá, como podemos ver, el encoder lo resumía en un vector. Bien, ese vector es una representación y también podemos verlo como un embing. Bien, entonces también piensen en eso. Es un embing oración. Bien, entonces aquí le pasamos esta oración. El encoder me da la representación o enviarient que es ese vector. Y eso se lo pasamos al decoder. El decoder, como pueden ver, es lo mismo que he dibujado, ¿verdad? La salida la vuelvo a poner como entrada y así sucesivamente. Es una generación autorreagresiva. Bien. Entonces, al momento de generar está tomando en cuenta todo lo que ha generado antes y de esa manera me genera la reducción en inglés.
+
+
+00:41:58
+
+lse posgrados: Bien, esa es la idea, lo que vamos a hacer más adelante. Ahora, además hay otras tareas que se pueden resolver de la misma manera y ahí entra otro tipo de dataset de pares y este es el de Flicker. Flicker eh tiene datas sobre imágenes con descripciones textuales. Esta tarea se llama image captioning y esto creo que todos lo hemos vivido, ¿verdad? Bueno, yo recientemente lo vi en Instagram. Una vez entré a Instagram y estaba muy lento el internet, entonces no me cargó las imágenes, pero en la parte superior izquierda decía eh esto puede ser la foto de un loro bailando. Bien, entonces es una descripción de ese contenido que estaba en una imagen, ¿verdad? Entonces, eso es image captioning. Podemos resolver este problema del image captioning con el encoder decoder, ¿sí? Pero de la misma manera necesitan muchas imágenes con sus descripciones, es decir, un dataset supervisado. Acá hay un ejemplo de lo que tenemos en el dataset de Flicker, que está disponible en Hanging Face. Ahí les dejé el link por si luego quieren revisarlo.
+
+
+00:43:09
+
+lse posgrados: Y aquí, bueno, está, bueno, visualmente ya podemos ver una persona en la en la escalera que está limpiando una ventana, ¿verdad? Y acá es la descripción que han puesto los que han creado el dataset que dice alguien con un con una polera azul y un una gorra que está en una escalera y está apoyado sobre una ventana. Bueno, es la descripción de esto, ¿verdad? Entonces, ¿cómo funcionaría esto? Nosotros le pasaríamos la imagen. ¿A quién? Al encoder. ¿Qué sería el encoder? una convolution al nivel network, ¿verdad? Este encoder recibe la imagen, nos da un resumen, eso se lo pasamos al decoder y el decoder empieza a generar texto. En este caso, un perro jugando en la playa. Bien, así que esta es otra de las otro de los ejemplos de lo que podemos hacer con el encoder de coder. Bien, hasta ahí. ¿Qué tal? ¿Se entienden la idea de lo que estamos haciendo? ¿Tienen dudas o comentarios quizás? Gracias Vicky por el feedback.
+
+
+00:44:11
+
+lse posgrados: Gracias Denis. Bien, gracias Martín. Entonces vamos a continuar ya que está claro. Bien. Bueno, acá está el resumen de lo que hemos mencionado, ¿verdad? Le pasamos una secuencia de entradas. Creo que lo que aquí podemos rescatar es que nosotros seguimos manejando representaciones vectoriales, ¿no? Seguimos manejando inverings. Yo cuando acá dibujaba nuestro encoder decoder, bueno, también se veía medio mágico, ¿no? Porque aquí el LCTM te recibía las palabras directamente, pero nosotros ya sabemos que las redes neuronales no reciben los datos no estructurados directamente. ¿A qué me refiero? Yeah. Aquí nosotros tenemos que encontrar la manera de representar numéricamente cada palabra. Entonces acá si le hacemos zoom, esta palabra que dice me en realidad va a entrar aquí como vector. Y ese vector qué es su emberi, ¿verdad? Lo mismo con el siento, lo mismo con el feliz. Entonces yo le paso me, va a haber una función que reciba esta palabra me y me devuelva su embing de me. Eso recién va a entrar al LCTM.
+
+
+00:45:30
+
+lse posgrados: lo mismo con siento feliz y acá cuando me genere las salidas pues lo mismo, ¿no? Aquí no me va a generar, me va a generar su embing de y yo aquí lo traduzco y sé que eso es I. Lo mismo aquí con F, ¿verdad? Eso creo que ya lo sabemos, ¿verdad? Que todos los todas estas palabras y demás tienen que estar representadas por un vector siempre. Si no, no va a funcionar. Va a decir, "No puedo recibir palabras.
+CARLOS AGUSTIN BERDAGUER: La dimensión del del perdón,
+lse posgrados: Bien.
+CARLOS AGUSTIN BERDAGUER: la dimensión del embeding es la cantidad de features que recibe neurona.
+lse posgrados: Eh, sí, sí, sí, sí. O sea, es una buena pregunta. Cuando armamos este tipo de redes, por ejemplo, digamos el encoder, nosotros tenemos que pasarle como entrada una matriz. Bien, una matriz donde tienes todas las palabras eh que vas a usar. con sus emberings. Así que sí, básicamente sí. Ahí le estás pasando la dimensión de los embings como entrada. Eso. Pero creo que ahí vale la pena hacer una aclaración también cuando ustedes manejan las RNs.
+
+
+00:46:42
+
+lse posgrados: No sé si recuerdan, pero es algo así. Digamos que yo armo esta RN, ¿verdad? Entonces, yo primero voy a poner embeding. Bueno, es con M, ¿verdad? Envering. Y aquí le pongo una matriz. Bien, voy a usar una matriz que va a usar los números que me ha dado Globe, digamos, o Word toback, no importa. Luego esto lo conecto a un LSTM. Aquí pongo LCTM y le pongo, digamos, 32, ¿verdad? 32 y bla bla bla bla bla. Ahora, ese 32, ¿qué es? ¿Alguien sabe qué es? ¿Alguna idea de qué significa ese 32? Porque no significa el tamaño del inverte.
+CARLOS AGUSTIN BERDAGUER: No es el tamaño de la cadena, o sea, la cantidad, o sea, sería tres en el ejemplo ese que está dibujado.
+lse posgrados: No,
+CARLOS AGUSTIN BERDAGUER: Oh.
+lse posgrados: no sería el tamaño de cadena.
+Rodolfo Di Chiazza: Es la cantidad de de secuencias que le mandas.
+lse posgrados: No, tampoco. El 32 significa el ancho de esa flecha. Bien, estas flechas que tenemos está manejando la información, ¿verdad?
+
+
+00:47:57
+
+lse posgrados: Es una información oculta. digamos que maneja entre noos. ¿Y qué tanta información va a manejar? Pues depende de lo que tú digas ahí. Si pones 32 es ese tamaño, si le pones ocho, pues va a manejar menos información, ¿verdad? Entonces va a depender del problema que traten, pero es eso. De todas maneras vamos a volver a mencionar esto junto al embeding con su matriz en código. Bien, ahí van a verlo nuevamente, pero eso les comento por si acaso, por si hay esa confusión con la matriz. Bien, eso. Bien, entonces acá pues ya sabemos esta idea, ¿verdad? Es un resumen. Aquí me dice que bueno, hay like CATS, va a entrar al encoder, esto me va a volver un context vector o un vector de representación. Se lo paso al decoder, este me genera en francés, ¿verdad? Que le gustan los gatos. Bien, acá hay unos embedings que, bueno, es solo un ejemplo, ¿no? Aquí un embeding de tres números. Aquí también nosotros sabemos que los embings queremos que sea una buena traducción pues mejor si usamos embings que sí sí estén capturando la información semántica.
+
+
+00:49:05
+
+lse posgrados: Entonces los embings que vamos a usar nosotros pues no sé, será un glove de 100 eh dimensiones, ¿no? O sea, cada palabra va a estar representada por 100 números. Pero bueno, la idea pues es la misma. Bien, entonces el encoder ya sabemos qué es lo que hace, ¿verdad? El encoder te recibe la secuencia de entrada y te comprime, te ha dado como un resumen el vector de representación. En nuestro caso aquí visualmente es esta S. Bien, esa S que ven ahí es el resumen del encoder. Entonces, acá estamos viendo en estos slides cómo se da la dinámica del decoder. Entonces, le pasamos todo esto del encoder. El decoder recibe esto y recibe un S. Bien, ese S es el start of sequence o el boss que lo hemos mencionado. Bueno, aquí dice S, pero es la misma idea. Esto lo vamos a poner en representación vectorial y se lo pasamos al H1. Ahora, aquí por ese caso, dice H0, bueno, es su primer, como está empezando esta generación, pues es su primera representación oculta, ¿verdad?
+
+
+00:50:16
+
+lse posgrados: Bueno, eso no no tiene relevancia, ¿no? Eso eso está por default cuando lo declaramos. Entonces, esto me va a generar una salida. Esa salida se ha dado gracias a la información que me ha devuelto el encoder y este tag de entrada, ¿verdad? Este s que me dijo que empiece la generación. Y acá me devuelve un vector. Ese vector me está diciendo cuál de las palabras que yo tengo debería ser la siguiente palabra que voy a generar. Entonces, como yo tengo muchas palabras disponibles, tengo que elegir una de esas. Y como cada palabra se puede considerar como una clase, Entonces tengo un problema multiclase y cuando tengo problemas multiclase tengo que asignar probabilidades para que a partir de esas probabilidades yo pueda elegir el máximo, ¿verdad? Entonces eso, ¿quién me ayuda? Softmax. Por eso aquí dice softmax, porque es un problema multiclasse. Y de ahí elijo uno de ellos y el más eh que tenía más probabilidades era la palabra tom. Bien, ya tengo la palabra Tom. ¿Qué sigue?
+
+
+00:51:30
+
+lse posgrados: Voy a agarrar esa palabra Tom y la voy a poner como entrada para que me genere la siguiente palabra. Ahora va a agarrar el, bueno, otra vez, ¿no?, el resumen que nos ha dado el encoder y lo combinamos con este Tom y va a pasar lo mismo. Y ahora me va a generar likes. Lo mismo se repite aquí. Bear. Tom likes beer. Luego me genera esto. Esto de acá pues es el end of sequence, ¿verdad? EOS. O bueno, aquí está como una barra s que me dice fin. Aquí decía inicio, aquí dice fin. Bien. Entonces así se da la generación en nuestro decoder, que es tal cual lo hemos mencionado en nuestro Scalidra, ¿verdad? Es lo mismo. Teníamos un vector de representación. Esto venía acá, se unía con el el start of sequence y empezaba a generar, me generaba y lo usábamos, me generaba y lo usábamos, me generaba y lo usábamos hasta que me dé el EOS. Esa es la idea.
+
+
+00:52:41
+
+lse posgrados: Bien, entonces eh nosotros esto le vamos a poner un nombre y se llama Teacher Forcy. Bien. Eh, bueno, perdón, no es Teacher Forcy, eso es sin teacher forcing. ¿Por qué es sin teacher forcing? Porque nosotros estamos usando lo que está dándonos la red. O sea, si la red se equivoca, pues vamos a igual usar esa equivocación. Por eso se llama sin teacher forcing. Por ejemplo, acá eh empezamos la generación y dice two. Okay. Estamos usando la salida de la red y pasamos ese to para que me diga beards. Okay. Beards. Y me va a decir flying, etcétera. Ahora yo no esperaba que me diga two flying. Digamos que yo quería que me diga, no sé, two people running. No quería que diga beards, quería que diga people. Pero aquí consideré birs porque no tenía una referencia, ¿no? Yo solo estaba usando lo que el modelo me dice. Entonces, si nosotros queremos usar una referencia, ahí si se llama teacher forcing, porque en el teacher for Ustedes usan un ground truth, o sea, ya saben lo que debería decir, ¿verdad?
+
+
+00:54:05
+
+lse posgrados: Entonces ahí le pasan el start, aquí dice two. Okay, está bien, dijiste to y yo realmente quería que digas to. Pero de todas maneras yo voy a forzar a que la entrada de esto sea true. Aquí me dice beards. Bueno, yo quería que digas birds, así que no lo voy a tomar en cuenta. Y voy a poner lo que quería que diga people. Aquí lo estoy arreglando básicamente, ¿verdad? Entonces ahora dice two people running. Entonces se está alineando poco a poco a lo que yo le he pasado en mi grand truth. Bien, entonces hay esa diferencia. Ahora, eh, ¿cuándo usar cuál? Pues va a depender. Usualmente cuando entrenamos estos se con su sequence le pasamos con teacher forcing, ¿bien? O sea, nosotros le decimos, genera la palabra que piensas que deberías generar. Lo genera bien. Vamos a ver qué también le fue. Bueno, dijiste y yo esperaba que digas true. Bueno, voy a acumular ahí un error de cero porque la has atinado.
+
+
+00:55:08
+
+lse posgrados: Ahora yo voy a forzar a que la entrada sea tu tal como dice acá, ¿verdad? Ahora me dice birds. Bueno, yo esperaba que digas people, pero dijiste birds. Okay, hay un error ahí. Voy a acumular el error. Antes era error cer lo que ha pasado aquí más 10, digamos. paso people y me dice running y así bien, entonces yo le estoy forzando a que el modelo se alíe a lo que yo tengo, mi dataset. Eso lo hago en el entrenamiento. Así que el entrenamiento tiene teacher forcing. Ahora el modelo ya se ha entrenado. ¿Qué hacemos? Inferencia. Ahora una persona me dice, "Voy a usar tu modelo." Okay. Va a hacerlo para traducción. La persona pone eh dos personas corriendo, esa es su oración de entrada y el modelo cuando está en inferencia no tiene un profesor, ¿verdad? No tiene de dónde eh tener referencia porque la oración que le ha pasado a esta persona es una oración que nunca lo ha visto en su vida, digamos.
+
+
+00:56:07
+
+lse posgrados: Entonces, como no tiene referencia, entonces va a tener que completar la oración en base a sus propias salidas. Entonces, por eso aquí no tenemos teacher forcing en la inferencia. Bien, y por eso ahí usa lo que salió two beards flying. Y bueno, aquí se equivocó, ¿verdad? ¿Por qué? Porque no tenía otra opción, tenía que darnos una secuencia. Por eso cuando nosotros veamos después en el ejercicio el el momento de la inferencia, vamos a ver que el modelo a veces lo está haciendo bien, se equivoca una palabra y se empieza a distorsionar. Bien. ¿Por qué? Porque no tiene el teacher forcing, porque está en diferencia. Y bien, esa es la idea. Hasta ahí, ¿qué tal se entendió?
+CARLOS AGUSTIN BERDAGUER: ¿Cómo cómo es el el, o sea, se tiene el cálculo de error para el los para el modelo Teacher Forcing, pero el de la sin teacher forcing, ¿con qué lo compara uno?
+lse posgrados: Ah, okay. Eh,
+CARLOS AGUSTIN BERDAGUER: O cómo entrena uno diciéndole bien,
+lse posgrados: cuando no tienes Okay.
+
+
+00:57:07
+
+CARLOS AGUSTIN BERDAGUER: le pegaste
+lse posgrados: Cuando no tienes teer forcing, usualmente no usas un loss, ¿no? Porque lo estás usando en la inferencia. Entonces, usas una métrica. Ahora, hay muchas métricas para ver cuando una secuencia es similar a la secuencia que esperabas. Ahí, por ejemplo, usamos el bleu. El bleu te va a decir qué tan similar es una secuencia frente a otra secuencia. Igual hay métricas en base en gramas, ¿no? Por ejemplo, ¿cuántas palabras o cuántos pares de palabras latinó o no sé, ese tipo de cosas, pero ahí ya estamos hablando de métricas, no estamos hablando de los ah,
+CARLOS AGUSTIN BERDAGUER: Ah, puede ser la perplejidad. Estábamos usando para el TP, por ejemplo,
+lse posgrados: por ejemplo, muy bien. Eh, sí, la perplejidad, aunque la perplejidad es más para Sí, sí, es para más para Sí,
+CARLOS AGUSTIN BERDAGUER: para Lang
+lse posgrados: sí, sí, es para language models la perplejidad. Exactamente. Eso lo vieron con Josselyn, ¿verdad? La perplejidad.
+CARLOS AGUSTIN BERDAGUER: es el trabajo que tendríamos que entregar hoy.
+
+
+00:58:00
+
+lse posgrados: Sí, sí, el TP3, ¿verdad?
+CARLOS AGUSTIN BERDAGUER: Sí.
+lse posgrados: Sí, sí, exactamente.
+CARLOS AGUSTIN BERDAGUER: Okay. Entonces uno seguía por ese tipo de métricas que medio que un aguje que converjan y y
+lse posgrados: Sí.
+CARLOS AGUSTIN BERDAGUER: listo.
+lse posgrados: Ajá. Exactamente.
+CARLOS AGUSTIN BERDAGUER: Ahí. Bueno, aprovecho y te robo la consulta, pero hasta qué punto uno busca que converja. O sea, dice, tiene una perpigidad de cuatro. No sé si está bien, mal. Las oraciones mal que mal son coherentes, pero hasta que punto uno le le sigue sigue pegando al modelo hasta que, o sea, ¿cuándo terminas de retarlo al modelo?
+lse posgrados: Okay.
+CARLOS AGUSTIN BERDAGUER: Ah.
+lse posgrados: A ver, yo les diría que, a ver, cuando entrenamos una red clásica, como lo que están haciendo ustedes o como lo que vamos a hacer hoy día, eh, yo creo que una perplejidad cuatro, no sé, cinco por ahí, yo creo que está bien. A ver, o sea, no es lo mejor, ¿verdad? podría ser mucho mejor, pero como es una arquitectura clásica, como tienen datos limitados entre comillas y como están manejando colap y no tienen mucha GPU, entonces creo que no no habría mucho más que hacer, ¿no?
+
+
+00:59:12
+
+lse posgrados: Así que eh lo que tienen está bien. Ahora, si tuviesen un LLM y tienen que hacerle fine tuning y demás, bueno, ahí es otra cosa, ¿no? Ahí tendrían que sacar mejores resultados porque la arquitectura es moderna y puede mejorar mucho más. Eso no nada
+CARLOS AGUSTIN BERDAGUER: Muchas gracias. Yeah.
+lse posgrados: igual.
+Gonzalo Rodriguez: consult, o sea, también depende mucho de la del corpus con el que lo entrenas, porque tener una limitación que si no tenes mucho corpus tener cuatro de de perplejidad, por más que le agregues neurón y todo, no no va a mejorar.
+lse posgrados: Exactamente. Sí, sí,
+Gonzalo Rodriguez: Yeah.
+lse posgrados: justamente eso, ¿no? Los datos. Entonces, a ver, o sea, todo lo que hacemos en en la materia hasta la próxima clase es bien ado, ¿no? Pero no es porque por carencias, bueno, en parte sí es por carencias, ¿no? Por el cómputo, por las arquitecturas que están limitadas. Entonces, sí, o sea, sí hay ese límite de de error, así que no hay problema. Bueno, de hecho, yo voy a revisarlo el TP3, ¿no?
+
+
+01:00:16
+
+lse posgrados: Por eso les comento eso, así que no no se preocupen, lo tengo en cuenta todo eso. Bien. Eh, ¿tienen otra pregunta o comentario? Tal vez hasta ahí. Okay. Bien. Entonces vamos a hacer lo siguiente. Vamos a hacer un encoder decoder que no haga traducciones. Por ahora el siguiente ejercicio hace eso. Para entender cómo funciona, vamos a hacer un encoder decoder que me suma 15 valores. Bien. Entonces yo le paso 5 10 15 y el decoder me devuelve 20 25 30. ¿Qué es lo que ha pasado? Internamente ha sumado al 5 + 15 me dado 20. Al 10 + 15 me dado 25 y al 15 + 15 me ha dado 30. Bien. Ahora, bueno, parece muy fácil, ¿verdad? Pero, ¿dónde está lo interesante y lo desafiante? es que yo nunca le voy a decir suma más 15, solo le voy a dar secuencias. Entonces, internamente el modelo debería aprender eso, debería aprender ese patrón y debería añadirle bien sin que nosotros le digamos nada.
+
+
+01:01:38
+
+lse posgrados: Ese va a ser el primer ejercicio que vamos a hacer hoy. Bien, denme un segundo, vuelvo en un minuto. Hola. Bueno, ya volví. Entonces vamos a vamos a hacer lo siguiente. Vamos a hacer un ejercicio que hace lo que les comentaba, que es este ejercicio. Y la idea del ejercicio es que ustedes lo completen. Bien, entonces yo les voy a explicar todo hasta aquí donde está el bloque del encoder decoder. Luego ustedes. van a resolver. Hay partes que dice tu código aquí. Resuelven este bloque, este bloque y lo ejecutan. Lo ejecutan todo, ejecutar, ejecutar, ejecutar y van a ver los resultados que les va a dar. Bien, entonces terminen de hacer eso, lo revisamos conmigo y yo les voy a explicar qué había que hacer. En caso de que se hayan trabado, en caso de que no hayan podido terminarlo, yo les voy a explicar desde aquí, ¿no? De ahí, desde ahí les explico todo a detalle hasta el final. Bien, eso para que igual ustedes empiecen a codear aquí conmigo y igual si si les surgen dudas me comenten y demás.
+
+
+01:03:43
+
+lse posgrados: Bien, esa va a ser la dinámica. Entonces empecemos con la explicación hasta aquí. Ah, igual les voy compartiendo por acá. Bien, entonces el objetivo de nuestro ejercicio es aprender a mapear una secuencia numérica a otra. Yo le paso de entrada 5, 10 y la salida que va a ser 20, 25 30. Bien, eso tiene que aprender esta arquitectura encoder decoder. Para eso vamos a usar queras. importamos Nampi de ese canal importamos el preprocessing de queras, el to categorical el model input, el LSTM, el dense del MAT Plus, el PLT y deborn el SNS. Bueno, ah, solo viendo esto, ¿qué nos podemos dar cuenta? Nos damos cuenta que vamos a armar una red neuronal que va a estar armada en pedazos. Bien, no es secuencial, es una red armada en pedazos. ¿Por qué sabemos que está en pedazos? Porque dice model. Cuando importan el model es porque van a armarlo por pedazos y lo van a lo van a juntar todo como un rompecabezas después. Y eso, ¿qué significa?
+
+
+01:05:11
+
+lse posgrados: Que lo van a hacer de la manera funcional, como ya hemos hablado anterior clase, ¿verdad? El funcional que lo arman en pedazos, lo juntan todo, etcétera. Pues aquí también lo van a hacer. Entonces, vamos a empezar con la generación de datos sintéticos. Bien, primero lo hacemos de manera plana, el X flat y el Y flat. El X flat es del 5 al, bueno, creo que es hasta el 300, vean, del 5 al 300 y el y es del 20 al 315, o sea, lo mismo más 15. Bien, ya tengo eso listo. Son dos listas. Luego los voy a agrupar en secuencias de tres. Bien, aquí lo pongo en el resape que quiero que sean secuencias de tres. ¿Cómo se va a ver ahora? Bueno, ahora se ve así. el X, el Primer elemento es una lista donde tiene los valores 5, 10, 15 y del y lo mismo. El primer elemento ahora es una lista que tiene valores 20, 25, 30. Okay, ya tenemos todo eso listo. Vemos el shape y me dice el X shape.
+
+
+01:06:18
+
+lse posgrados: Hay 20 listas que tienen esos tres elementos. Lo mismo para el Gshape. Bien, ya sabemos esto, ya lo tenemos listo. Ahora la tokenización. Bueno, la tokenización eh necesitamos para hacer la tokenización armar el vocabulario y el vocabulario cubre todos los valores posibles, ¿verdad? Entonces, en nuestro caso, todos los valores posibles sería que considere las dos listas, los números que están en las dos listas. Ahora, eh si lo vemos a detalle, pues sí contempla la mayor parte de los de los datos que están aquí, los contempla aquí, solo que aquí tiene como extra el 305, 310 y 315 y el de arriba tiene como extra el 5, 10 15, ¿verdad? Porque son dos listas desfasadas, por eso uno tiene tres más y el otro tiene tres más. Entonces, el vocabulario va a ser juntar todo eso, todo ese rango. Por eso aquí en el vocabulario que ahora se llama all values, ¿no? Que es el unique concatenando el x y el y va del 5 al 315. Bien, hemos juntado esas dos secuencias.
+
+
+01:07:30
+
+lse posgrados: Bien, ya lo tenemos armado. Ahora aquí entra lo que preguntaba su compañero, ¿verdad? Decía sobre el start of sequence. Ese token de entrada, ¿lo vamos a agregar a vocabulario? Sí, lo agregamos. De hecho, aquí lo estamos poniendo. Agregamos el token especial start of sequence. Vamos a aprovechar que en esta secuencia no tenemos el cero, así que el cero significa start of sequence. Ese va a ser nuestro comodín. Entonces aquí le ponemos al inicio añade el C. Bien, luego hacemos un label encoder. Bien, el label encoder lo jalamos de S learn, del preprocessing, jalamos label encoder y eso lo vamos a entrenar con las etiquetas. Bien, denme un segundo, por favor. Tengo un detalle. Bien, lo siento. Entonces, ¿qué vamos a hacer con el label encoder? Lo que vamos a hacer es vectorizar. Bien, lo vamos aizar como oneeh encoding. Entonces, aquí hacemos preprocessing del learn, ponemos label encoder, hacemos un fit y le pasamos los labels. Entonces, ¿qui nos va a devolver el level encoder, nos va a devolver un vector lleno de ceros donde solo hay un uno, que es básicamente el one hor encoring, ¿verdad?
+
+
+01:09:08
+
+lse posgrados: Lo estamos vectorizando. ¿Por qué hacemos esto? Porque para los números no vamos a tener como tal embedings. Bien, entonces aquí estamos haciendo una suerte de embings. Bien. Y esto voy a aplicar a a mis bueno, a a todos los números que tengo en mi vocabulario y eso le voy a llamar el labels, el label encoder, perdón, que ahora tiene eso, ¿verdad? Todo vectorizado. Acá voy a ver cuántos tengo y ese va a ser mi bocup size. Bien, el tamaño vocabulario son 64. Okay. Y esto lo vamos a usar después. Entonces, ya tengo mi vocabulario, tengo el tamaño de vocabulario y tengo cada elemento de vocabulario vectorizado. ¿Qué es lo que sigue? Eh, lo que sigue es la preparación del dataset. Ver, antes de pasar a la preparación del dataset, solo comentarles que, por ejemplo, este label encoder, el del cero, por ejemplo, ¿cómo nos va a devolver? Nos va a devolver así. Recordemos que, ah, bueno, no puedo dibujar ahí, pero creo que puedo dibujar aquí.
+
+
+01:10:26
+
+lse posgrados: Recordemos que le hemos agregado aquí el cero, ¿verdad? Entonces, ahora mi lista es cero. Sí, Hernando.
+Hernando Scheidl: Una consulta, el start of sequence lo agregamos ahí con el cero y el sequence no tenemos que agregarlo.
+lse posgrados: Okay, eso es una buena pregunta. No lo agregamos en este ejercicio porque aquí la entrada es de tres elementos y la salida es de tres elementos. Son fijos. Agregamos el end of sequence cuando la salida puede variar, por ejemplo, en traducción de idiomas. Así que por ahora no lo agregamos. En el siguiente ejercicio sí lo vamos a agregar. Bien, entonces eh lo hemos armado así, ¿verdad? Ahora se ve del 0 5 10 hasta el 315. Ahora el cer eh bueno, el cero, ¿cómo se ve después de haber hecho este label encoder? Bueno, si queremos ver el cero, se va a ver así, 1, com0. Así bien. Eso es el cero. Está en modo one h encoding. ¿Cómo se debería el 5? Bueno, como es el segundo elemento se va a ver así.
+
+
+01:11:43
+
+lse posgrados: 0 1 ¿Verdad? Eso ya sabemos. es como one encore. Entonces, ahora nuestros números se ven así, están vectorizados por si acaso. Bien, luego tenemos la preparación del dataset. Bien, esta preparación del dataset es una función que recibe mi x, mi y, mi label encoder y mi bo size. Bien, dentro de esta función lo que hacemos es crear tres listas, tres listas vacías. El x1 list, el x2 list y el target ll list. Bueno, target list. Estos tres son eh listas vacías que van a ir acumulando mi entrada al encoder, mi teacher forcing y mi objetivo. Por eso son tres. Entonces, el encoder in, ¿qué es lo que está haciendo? Bueno, lo que va a hacer este encoder in es aplicar el level encoder, va a ser la transformación al x sequence. Bien, entonces el x sequence que viene de acá del for, en realidad es el mismo x, ¿verdad? Aquí simplemente estamos viendo un for que está agrupando el x y en base a ese x y va a ver qué tenemos en cada uno de esos.
+
+
+01:13:02
+
+lse posgrados: Ah, a ver, una manera de explicarlo. Bueno, a ver, en pocas palabras, lo que estamos haciendo es iterar sobre nuestra fila que tiene 0 5 10 15 bla bla. Estamos agarrando y lo estamos guardando vectorizado. Bien, tanto para el encoder in como para el encoder out, en el encoder in entran los valores de X vectorizados y en el encoder out los valores de Y vectorizados. Bien, es una lista. Ya tengo todo eso en el coder in y en el coder out. Luego voy a definir el decoder in. El decoder in. Ahí nosotros vamos a nuevamente poner explícitamente el primer token. Bien, entonces ya lo tenemos ahí como índice cero. Entonces acá eh lo vamos a ver en un momento. Estamos agregando el start of sequence. Bien, lo convertimos a one hor encoding y ya tenemos todo esto listo. ¿Qué vamos a hacer ahora? Lo que vamos a hacer es devolverlo. El x1 list, el x2 list y el target list. Ahora, ¿cómo se ve esto?
+
+
+01:14:09
+
+lse posgrados: O sea, ¿qué qué es lo que hemos hecho realmente en todo esto? Creo que también si lo pensamos así se ve un poco confuso, pero tiene mucho sentido. Vamos a aplicar eso. Aquí aplicamos preparar dataset, le pasamos lo necesario y me devuelve x1, x2 y el target. Veamos qué ha pasado en el x1. Vamos a ver su primer elemento, que sabemos que son tres elementos, ¿verdad? Hace rato lo dijimos, son de tres en tres. Entonces, aquí me devuelve tres listas. El x2, su primer elemento, tres listas. Y el target tres listas. Bien. ¿Qué significa todo esto? Vamos a ver. Entonces, para esto vamos a hacer esto, esa fila que ven acá, este texto yo lo puse a propósito para que nos guíe. Entonces voy a venir a y voy a usar este color. Okay. Okay. Eh, ¿cómo se ve esto? El primer elemento es el cero, ¿verdad? Ya lo sabemos. Este es el primer elemento.
+
+
+01:15:24
+
+lse posgrados: El segundo elemento es el cinco y así sucesivamente, ¿verdad? Simplemente estoy aquí poniéndole índices. Bien, entonces acá veamos la lista empieza aquí en cero. Aquí en esta lista voy a ponerle con azul. Aquí empieza y aquí termina la primera lista. Bien, la primera lista empieza con cero y luego dice uno. ¿Qué significa? que se está activando el segundo elemento. ¿Cuál es el eh a ver cuál es el el elemento que está en esta posición? Es el uno, ¿verdad? O sea, el cinco. A ver, creo que voy a voy a confundirles un poco. A ver. Mm. Sí. Bueno, creo que tiene sentido, ¿verdad? Es que esto de empezar el índice con cero siempre es un poco confuso al inicio, pero si nos ponemos a pensar en el en la posición cero está cero, en la posición uno está uno, significa que esto hace referencia al cinco. Todo esto es el cinco. Ahora veamos la segunda lista. En la posición cero está cer en la posición uno está cer.
+
+
+01:16:43
+
+lse posgrados: En la posición dos está el uno. Significa que habla del 10. Y acá, bueno, creo que eh viendo la relación, pues aquí está hablando del 15, ¿verdad? Porque tiene el uno activado en la posición 3 y en la posición 3 es el 15. Entonces es el 15. Son nuestros números que hace rato lo habíamos visto, el 5, el 10 y el 15. Entonces, todo esto, vamos a ponerlo aquí al lado, es una lista que va a ser la entrada para el encoder. Todo eso es 5 10 15. Bien, ahora abajo, ¿qué está pasando? Abajo la misma idea, pero aquí hay un uno al inicio, que significa que se está activando el cero. Entonces, todo esto es el cero. Lo voy a poner con color verde. Todo esto es el cero. Energí abajo, ¿qué es? Bueno, en la posición cer tiene cer, en la posición uno tiene cer, en la posición dos tiene cer, en la posición 3 tiene cer. En la posición cuatro tiene uno. La posición cuatro es 20. Entonces todo esto es 20. Voy a borrar.
+
+
+01:18:08
+
+lse posgrados: Puf. Bueno, okay. Eso es lo malo de Scalid Draw. Bueno, no importa. Ahora voy a ver el segundo, el tercer elemento, perdón, la tercera lista que tenemos aquí. Bueno, está activado en el quinto elemento, ¿verdad? ¿Y cuál es el quinto elemento? El 25. Entonces, tengo esto de acá. Todo esto es 0 20 25. Y por último, este de acá, vamos a usar naranja. Bueno, en el primer elemento cero, en en el bueno, en en la posición cero cero, en la posición uno cer en la posición dos cer en el tres cuatro. Okay. El cuatro que es, si no me equivoco, es el 20. Okay. Aquí tiene el 20. Aquí tiene la siguiente posición, eso es 25. Y acá tiene la siguiente posición, esto es 30. Entonces, esto es esto. Bien, tengo esas tres listas. Esto es el X 1. Bueno, voy a ponerlo con negro. Esto es el X1, esto es el X2. Y este es el target. Bien, hasta ahí se entendió lo que hicimos.
+
+
+01:19:25
+
+lse posgrados: ¿Se entendió cómo hemos obtenido esos valores a partir del one horing? ¿O tienen dudas? Gracias Denis por el feedback. Bien, gracias Nicolás.
+Gonzalo Rodriguez: Una una consulta ahí el target es como como
+lse posgrados: Sí.
+Gonzalo Rodriguez: el vector como la salida del vector del 5, 10 y 15 y el 20 y el 25 que están en el
+lse posgrados: Exactamente.
+Gonzalo Rodriguez: X2.
+lse posgrados: Okay, eso es una buena pregunta, justamente ahora lo vamos a ver, pero es una buena observación y es exactamente lo que menciona Gonzalo. Entonces, vamos a la segunda parte. ¿Qué significa X1? ¿Qué significa X2? ¿Y qué significa target? Bueno, el X1 es la entrada del encoder. Bien, el target pues es la salida, lo que queremos. ¿Y dónde encaja el X2? El X2 es el Teacher Forcing. Entonces, veamos esto en el dibujo super breve. Tenemos aquí una red neuronal recurrente. Bueno, la voy a dibujar más al lado porque si no no vamos a tener espacio. Ahí.
+
+
+01:20:39
+
+lse posgrados: Esto me va a dar un vector, ¿verdad? Ya lo hemos mencionado, es un vector. Esto va a entrar al otro nodo y aquí son fijos tres tres. ¿Por qué? Porque tengo tres entradas y tres salidas en este caso. Okay. El 5, 10, 15. Entran aquí. cinco. 10 15. ¿Y eso qué es? Mi x1. Bien, aquí agarra todo esto el encoder y me da un resumen. Ese resumen se lo pasamos al decoder y aquí entra el teacher forcing. El decoder, ¿con qué va a empezar? Con el start of sequence. ¿Y qué qué le pusimos de nombre al start of sequence? Le pusimos cer. Cero es mi start of sequence. Hace rato lo dijimos. Entonces, aquí el cero va a iniciar esto. Bien, esto me va a generar una salida, ¿verdad? Digamos que la salida que me genera, porque es probable que pase esto, digamos que me genera ocho. Bueno, ¿por qué es probable que pase esto?
+
+
+01:21:44
+
+lse posgrados: Porque es una red neuronal. Las redes neuronales al inicio no saben lo que están haciendo, ¿verdad? Están manejando pesos aleatorios. Entonces, la idea es que poco a poco aprenda. Bien, me dio ocho. Eso es un problema. No es un problema. ¿Por qué? Porque nosotros tenemos teacher forcing. En el teacher forcing nosotros vamos a decirle, "Tenías que haber dicho 20. Eso se lo pasamos. Ahora digamos que lo hace mejor. Ahora me va a decir 25." Okay, eso sí queríamos que nos diga, ¿verdad? Entonces, eh nosotros vamos a decirle bien, lo hiciste bien. De todas maneras, yo ya sabía la respuesta. Así que aquí le paso 25. Y acá me va a dar una salida, ¿verdad? Y esto es 30. Bueno, ahora, ¿qué sigue? Lo que sigue es comparar. El 8 lo has atinado con el 20. Voy a comparar este de acá con este. No, no la atinó. Hay un loss. Digamos que los es de tres, no, digamos que de 10. No es un valor que le va a dar el loss.
+
+
+01:22:48
+
+lse posgrados: Okay. Este de acá lo lo hiciste bien. Sí, la tiné. Okay. No hay los y este de acá lo hiciste bien. Sí, la tiné. Okay. Entonces, sumados, pues solo tengo este los. Así funciona esto. Por eso tenemos tres secuencias. La entrada, el teacher forcing y el target. Esa es la idea. Bien, creo que alguien levantó la mano. Eh, ahora sí, si tenía una consulta, puede decirme.
+Hernando Scheidl: Per, yo le mano el o no importa que no esté en el diccionario, no.
+lse posgrados: Ah, eh, bueno, es una buena observación. Tienes razón, no está en el diccionario, ¿verdad? O sea, no está en el vocabulario. Entonces, no debería darme ocho, debería darme, digamos, 100. Eso sí está en el diccionario y está mal, ¿verdad? Era más un ejemplo de que va a fallar al inicio.
+Hernando Scheidl: Ah, okay.
+lse posgrados: Bien, otra pregunta que tengan hasta ahí o comentario. ¿Se entendió esta parte? Bien, gracias por el feedback.
+
+
+01:23:57
+
+lse posgrados: Genial. Entonces, eh esa la razón de por qué tenemos esas tres secuencias. Entonces, aquí pues ya hemos comprobado que eso es lo que está pasando. Aquí vemos el shape. Bueno, ya sabemos que pues hay hm 64 eh o sea, que cada vector tiene 64 elementos y esos elementos representan un número, ¿verdad? Y hay tres de esos números en 20 listas. Eso nos está diciendo esto. Bien, al final ya entendemos qué está pasando ahí. Ahora acá es donde ustedes van a programarlo. A ver, eh, a ver, estoy pensando en los tiempos. Sí, está bien. Yo creo que en 15 minutos lo podrían terminar. Eh, de todas maneras, como les comentaba, después de que ustedes realicen esto, lo vamos a revisar conmigo, bien, así que no hay mucho problema. Igual creo que se ve un poco desafiante, ¿no? Pero creo que sería interesante que ustedes lo intenten y después pues van a recibir feedback mientras voy resolviéndolo. Entonces acá van a armar dos cosas, ¿no?
+
+
+01:25:17
+
+lse posgrados: Bueno, en realidad, bueno, hay más de dos cosas, ¿no? Hay el bloque A, bloque B, bloque C. Bueno, hay diferentes bloques, creo que son seis cosas que tienen que armar. Empecemos con la primera parte. La primera parte se llama modelo de entrenamiento teacher forcing. Bien, entonces acá nosotros estamos entrenando y ya dijimos antes que cuando entrenamos aplicamos el teacher forcing. Bien, entonces eh ahí es donde entra en juego ese vector, ¿verdad?, del X2 que habíamos mencionado. ¿Qué vamos a hacer? Vamos a armar un encoder. El encoder va a ser un LSTM. Bien, así que ahí ustedes tienen que definir el STM, le pasan una entrada que, bueno, es una entrada fija, ¿verdad?, de tres elementos. El LSTM les va a devolver el H y el C, que son dos valores que les devuelve el LSTM, y lo vamos a volver en una lista HTCT. Bien, eso se lo pasamos al siguiente bloque que es el decoder. El decoder recibe eso y recibe el primer tag, el start of sequence, que es el cero, ¿verdad?
+
+
+01:26:31
+
+lse posgrados: Y en este caso, pues muestra que hay muchas entradas. Nosotros sabemos que aquí hay tres entradas para el decoder, ¿verdad? El teacher forcing es de tres. Esto le pasamos. Elm me va a dar una una salida y esa salida vamos a ver cuál es el máximo y a partir de eso vamos a tener el primer número generado y así sucesivamente. Bien, eso es el bloque B. Juntan el bloque A y el bloque B con el model. Ya sabemos cómo armar el model. ¿Verdad? Modelos separados, pues todos los juntamos y eso es el bloque C. ¿Y eso dónde se ve? Se ve aquí. Acá dice bloque A, tienen que completar lo que falta. Luego el bloque B, que es el decoder y luego el bloque C. Bueno, el bloque C ya está armado. Aquí ponen entrada de encoder input. Bueno, perdón, ¿dónde estamos? Aquí. model inputs, encoder input, decoder input y la salida lo que dice el decoder. Todo eso es el modelo de inferencia, perdón, el modelo de entrenamiento, el bloque C. Estoy usando teacher forcing.
+
+
+01:27:39
+
+lse posgrados: Luego, ¿qué hacemos? Bueno, ya hemos terminado de hacer eso. Lo que hacemos es definir el bloque D y el bloque E. El bloque D va a aprovechar muchas cosas de lo que han hecho antes. El bloque E también, pero aquí la generación ya no es teer forcing, es autorregresivo. Bien, hay una diferencia ahí y esos dos juntados te va a dar el modelo de inferencia que es el bloque F. Ahora acá, eh, si no me equivoco, acá tienen el bloque E, el bloque D, ya tiene esos dos y el F no aparece porque el F está aquí al final, ya está armado. Ahora, eh, ¿por qué está al final? Porque es para hacer la inferencia. Bien, entonces cuando lo explique yo, después de que ustedes armen esa parte, ahí se va a entender muy rápido qué hace el bloque F. Bien, entonces por ahora lo vamos a dejar así. Bien, de hecho el bloque E también ya está armado, por ejemplo, ¿no? Entonces lo que tienen que armar es el bloque A, B, C, D, nada más.
+
+
+01:28:47
+
+lse posgrados: Bien, entonces nos vamos a dar, sí, 15 minutos para hacer esto. Si lo terminan me avisan y ahí lo revisamos. Y de todas maneras, en 15 minutos vuelvo a la explicación. y les comento cómo había que resolverlo. Bien, el detalle antes de continuar, completan este código y ejecutan todo lo demás. Sí, si quieren sin ver, sin entender lo que se ve ahí, porque lo vamos a ver conmigo. Solo ejecutan, ejecutan, ejecutan y al final les va a decir acá las predicciones. Bien, y ahí vamos a ver que también lo hizo. Entonces, ya tienen el link ahí en el chat. Eh, nuevamente consideren que eh la traducción, bueno, que lo va lo más probable es que lo haga bien. Bien, lo va a hacer bien, pero puede que tenga algo raro en su en su gráfica de los que o de la cura así que luego les voy a decir por qué se ve así. Bien, pero debería funcionarles, deberían pasarle una lista, digamos, 15, 20, 25 y debería darles en salida eh esos valores sumados más 15. A Bien, eso es todo.
+
+
+01:30:01
+
+lse posgrados: Entonces, continuamos en 15 minutos. Voy a estar acá pendiente sus dudas. Hola. ¿Cómo les fue? ¿Alguien logró terminar el ejercicio? Hola, Hernando. Bueno, no te escucho muy bien. Creo que quieres decir algo.
+Hernando Scheidl: Ah, no, sí, yo ahí lo corrí. Estoy tratando de de entender el el gráfico de los que me dio
+lse posgrados: Te dio algo así como esto. A ver, así.
+Hernando Scheidl: eso. Sí, no lo está tratando de entenderlo. ¿Por qué me dias?
+lse posgrados: Ah, okay. Bueno, S, si te dio así, pues está, o sea, está bien. Lo has has logrado armarlo como era debido. Eh, bueno, este los ¿Qué nos dice? nos dice que en el train baja y en el validation sube, es decir, está con overfitting. Bien, es eso es overfitting, está sobreajustado. Bueno,
+Hernando Scheidl: Ha.
+lse posgrados: Denis menciona,
+Hernando Scheidl: M.
+lse posgrados: algo raro me pasa. El validation loss sigue subiendo. ¿Por qué?
+
+
+01:44:58
+
+lse posgrados: Eh, es por esta misma razón. lo mismo que menciona Hernando, eh, es un problema de overfitting cuando el loss del train y del validation tienen una brecha grande. Esofeiting. Bueno, me imagino que te refieres a esto, ¿verdad, Denis? El dos que va subiendo es esto lo que está en la gráfica. Bien. Eh, bueno, genial. Qué bueno que lo hayan resuelto. Eh, creo que era un poco desafiante, ¿no? Pero si nos ponemos a pensar tampoco era muy difícil era armarlo en bloques y luego ejecutarlo. Entonces, vamos a ver cómo había que resolver. Bien, la primera parte eh ya lo hemos visto. Hemos visto cómo agarramos los datos, cómo lo dividimos en tres secuencias. ¿Por qué? Porque una secuencia es la entrada, la otra secuencia es el teacher forcing y la otra secuencia es el target. Entonces, tenemos todo listo. Luego hablamos de la arquitectura encoder decoder. Bien, eh hemos mencionado que cuáles son los componentes y demás. Y acá vamos a construirlo.
+
+
+01:46:14
+
+lse posgrados: Bien, entonces, perdón, lo que vamos a hacer es construir estos bloques acorde a lo que dice la imagen. Bien, entonces el primer bloque, el encoder, el bloque a ¿Qué es lo que hace este encoder? Recibe la secuencia de entrada. Bueno, aquí dice de cualquier longitud, por eso ponemos el non. De todas maneras, ya sabemos cuál es la eh la longitud, ¿verdad? Pero lo vamos a dejar así, ¿no? Y produce un resumen. Estados HC. Bueno, eso dónde está, está acá. Recibe la entrada del X1 hasta el XT. Sabemos que es del X1 a X3 porque son tres elementos. Y nos devuelve el vector que tiene el HT y CT y el CT. Bien, son dos valores. Bien, eso está aquí. Pongo LCTM N units. Bueno, ¿cuántas unidades voy a usar? Depende de lo que dice acá. Bueno, por default son 128. Puedo cambiarlo, eso no pasa nada. Son 128 unidades. Va a retornar el state true y va a recibir como entrada el encoder input.
+
+
+01:47:20
+
+lse posgrados: ¿Qué es el encoder input? Lo que hemos definido antes. Lo estamos definiendo al lado porque esto es una manera de declaración functional, ¿verdad? Eso ya vimos antes. Entonces tiene sentido. Esto me va a devolver tres variables. Eh, una que no lo vamos a usar ahora, que es el the sequence, por eso lo ponemos como barra baja. Otro que es el state H y otro que es el state C. Tanto el state H como el state C lo vamos a usar juntos como un resumen de lo que le hemos pasado a el encoder. Esos dos me van a dar ese vector que está resumiendo toda esa entrada. Así que lo Juntamos los dos en una lista y ese es mi encoder state. Bien, y por eso aquí dice contexto aprendido. Esa es la idea. Bien, entonces hasta aquí ya hemos armado todo el encoder, un LSTM que te devuelve valores, te enfocas en solo dos y ese es tu vector resumen. Eso es todo. Bien, lo siguiente es el decoder.
+
+
+01:48:21
+
+lse posgrados: El decoder es el siguiente bloque que estamos armando acá. Y este bloque tiene cosas que también vamos a usar después aquí. Bien, porque son diferentes, ¿verdad? Este decoder es para entrenamiento y este decoder es para inferencia. Bien, por eso acá dice decoder compartido entre entre entrenamiento e inferencia. Bien, el decoder es el bloque B. ¿Qué vamos a hacer? La misma capa de STM se va a reutilizar en ambas fases. Bueno, por eso estamos diciendo que se comparte bien porque también tiene sentido, ¿no? O sea, se supone que el que el decoder que estamos entrenando después lo vamos a usar en la diferencia. No tendría sentido que el decoder que entrenamos sea un decoder diferente al decoder que vamos a inferencia. O sea, ahí significaría que estamos entrenando dos decoders, no estamos usando solo uno, pero se lo maneja en las dos eh en las dos fases. Bien, el decoder, bueno, ¿qué es? Es un LSTM. Es un LSTM que recibe una entrada. Bien, el decoder input.
+
+
+01:49:31
+
+lse posgrados: Eso lo hemos definido ahí lo vamos a hacer en un momento. Tenemos luego el decoder LSTM, que es un LSTM que maneja n unidades. Bueno, la misma idea, ¿verdad? 128, si no me equivoco. Y acá ya no le ponemos return state, le ponemos return sequences true. Y también le vamos a poner return state true. Pero de esto lo que nos interesa es esto de acá. El return sequences son las flechas que van hacia arriba. En nuestro dibujo que hemos hecho nosotros son estas flechas, esas flechas rojas que ven. Eso es el ret sequences. Bien, ya tenemos eso. Luego definimos también una capa oculta, una dense, ¿verdad?, que es una capa de nodos que, ¿qué va a hacer? Pues va a recibir el n output, bueno, va a recibir eh el número de unidades de salida. Bueno, aquí, ¿cuántas van a ser? Me imagino que van a ser tres, ¿no? A ver, el N output, ¿no? Ah, no, perdón, no son tres.
+
+
+01:50:28
+
+lse posgrados: Es el tamaño de la del vocabulario. Entonces, ahí tienes muchas opciones, ¿verdad? tiene 64, ¿no? Sí, son 64 números. Entonces ahí son 64 nodos. Le pasas un una eh un número y aquí te va a decir cuál es el siguiente número. ¿Cuántas opciones tiene? Tiene 64 opciones. El 5, el 10, el 15, el 20, bla bla bla. De esos va a elegir uno. Y por eso tenemos la activación Sofmax. Bien, lo hemos armado. separado. Ahora lo vamos a juntar para el entrenamiento. Para el entrenamiento yo necesito el decoder STM. Ahí le paso el decoder input y el inicial state, el encoder state. Bueno, ¿qué estoy haciendo ahí? Le estoy diciendo, vas a necesitar como entrada pues el input que hemos definido y vas a empezar a hacer la generación tomando en cuenta lo que nos está devolviendo el encoder. Por eso dice inicial state encoder state. Bien, ahí se está dando el puente. Lo que estamos viendo ahí es esto.
+
+
+01:51:38
+
+lse posgrados: Es esta flecha. Bueno, lo voy a dibujar acá. Esta flecha que ven aquí. en naranja. Eso está pasando. Lo que el encoder me ha dado lo utilizo como inicial state. Uy, bien, ya lo tengo. Eso y eso me va a devolver un decoder out. ¿Qué es el decoder out? El decoder out es flecha roja. Bien, el de turn sequen me habilita eso. Ahora, esta flecha roja va a salir y se va a conectar con una capa oculta. La capa oculta es el decoder dence. Esa recibe el decoder out y me va a decir su veredicto. ¿Cuál es el siguiente número dada esa secuencia? Y ahí me dice, "El siguiente número es el oh, perdón, es el 15, digamos." Bien, eso es lo que pasa en el entrenamiento. Bien, vamos a cerrar hasta ahí. Agarro como entradas mi encoder input y mi decoder input. ¿Qué son esos dos? Pues el decoder, el el encoder input es mi secuencia inicial, ¿verdad?
+
+
+01:52:42
+
+lse posgrados: Eso va a ser la entrada y el decoder input pues va a ser eh esa parte del teacher forcing, ¿verdad? Y el output pues la salida, el decoder out. Sabemos que esto se va a armar como un sándwich. Ya tenemos nuestro modelo para entrenamiento. Bien, ya lo hemos armado. Voy a poner aquí un poco de espacio para diferenciar el otro bloque. Acá tenemos el modelo de diferencia. El modelo de inferencia va a reutilizar muchos componentes de lo que teníamos en el modelo de entrenamiento. Y esto es muy usual. Cuando ustedes arman un bloque grande y después quieren utilizar pedazos de ese bloque grande que se ha entrenado, lo hacen así. Entonces, eh en el caso del encoder para el modelo de inferencia, ¿qué vamos a hacer? Bueno, va a ser algo similar. Aquí dice model inputs encoder input. ¿De dónde sale el encoder input? Ya lo hemos definido antes. Outputs encoder states. Estamos haciendo básicamente el mismo encoder, no hay mucha lógica que cambiar y estamos aprovechando lo que ya se ha entrenado.
+
+
+01:53:50
+
+lse posgrados: Así que no no es más que esto. Ahora donde sí se ve la diferencia es en la parte de el decoder porque está en modo inferencia y ahí es diferente. Es diferente porque cuando nosotros usamos el decoder para hacer inferencia no vamos a usar teacher forcing, vamos a utilizar la salida como entrada, ¿verdad? Eso ya lo hemos visto antes, por eso es un poco diferente. Entonces, ¿cuáles son las entradas para el decoder en modo inferencia? Tenemos un state H y un state C. Bien, es state H y state C son básicamente lo que habíamos recibido antes, ¿verdad? El encoder nos daba eso. El encoder nos da un HC. Bien, al inicio vamos a recibir los del encoder, pero después vamos a recibir de nuestra propia salida. Bien, ya tenemos el H, el C. Juntamos esos dos y se va a llamar states in. Bien, luego voy a usar el decoder ltm que lo he entrenado en la fase de entrenamiento. Le voy a pasar de entrada el decoder inputs y este vector que acabo de crear.
+
+
+01:55:08
+
+lse posgrados: Bien, todo eso me va a devolver un decoder out, un nuevo H y un nuevo C. Esto va a tener mucho más sentido cuando veamos la inferencia, pero bueno, quizás ahora igual ya lo han entendido bien. Aquí el decoder LSTM me está devolviendo tres de presentaciones. De esas tres de presentaciones, las tres las voy a usar. Y este decoder out lo voy a utilizar para qué, para pasarle a mi decoder dense, para que me genere. Esta parte es lo mismo que teníamos hace rato, ¿verdad? Decíamos que el decoder recibe la salida y nos va a decir cuál es la siguiente palabra. La misma idea. Bien, juntamos todo lo que está en diferencia en este modelo. Las entradas igual a el decoder input más el instage in, que ya lo hemos definido, es este vector, la salida, el decoder out, el nuevo H y el nuevo C. Bien, eso es el decoder en modo inferencia. Bien, esto de acá lo vamos a retomar otra vez de manera rápida al final porque al final está en diferencia, así que para que se entienda mucho mejor.
+
+
+01:56:11
+
+lse posgrados: Pero de esa manera teníamos que armar todo esto. Lo demás ya estaba armado y tampoco es muy complicado de entender. Acá lo que continuaba era que veamos las dimensiones de entrada y de salida. Luego, en base a eso, construíamos los modelos, le pasamos el número de unidades 64 y aquí me iba a dar los tres modelos, el modelo para entrenamiento, el encoder paraferencia y el decoder transferencia. Bien, para el modelo voy a utilizar el los categorical cross entropy. ¿Por qué? Porque en cada etapa usa Softmax para decirme cuál es la siguiente palabra, ¿verdad? Entonces, necesito como los el crossentropy y el optimizador utilizamos el Adam. Bien. A Hacemos el entrenamiento. ¿Qué vamos a hacer? Un model. Fit. Eh, le pasamos el x1 x2. Porque estamos haciendo entrenamiento. Le pasamos dos. El x1 es la entrada y el x2 es el teacher forcing. Y le decimos que mi target pues es el target. Épocas 150. Va a tomarlo de cinco en CCO.
+
+
+01:57:19
+
+lse posgrados: El B size, el validation split es de 20% y el verbost 1 nos va a mostrar un log que es sencillo, ¿verdad? Podría ser un poco más robusto si ponemos verpost 2. Bien, hacemos el entrenamiento y como dijeron sus compañeros, el entrenamiento nos da overfeitting. Es eso, podemos identificarlo aquí en el loss. El loss va bajando, este los es de entrenamiento y el los de validación va subiendo. Eso pasa cuando estamos con overfitting. De todas maneras, lo visualizamos y me muestra esto de acá. Bien, tenemos overfeiting. ¿Tiene sentido? Sí, tiene sentido. ¿Por qué tenemos overfitting? Bueno, primero porque el dataset es pequeño, tenemos 60, sí, como 64 secuencias, ¿no? O sea, son dos secuencias cada uno de 64 números. Bueno, de hecho tenemos solo dos secuencias, entonces es un dataset pequeño, es esperable que de overfitting, pero aunque de overfitting sí nos da buenos resultados. Bien, entonces eh ¿cómo podemos mejorarlo? Bueno, hagamos la secuencia mucho más grande, bien, y hagamos quizás la red un poco más sencilla.
+
+
+01:58:26
+
+lse posgrados: A pesar de que la red si es sencilla, tal vez podríamos añadir regularizadores, pero bueno, como les comentaba al inicio de la clase, realmente no tenemos problema con esto, ¿no? Porque sabemos que estamos haciendo pruebas y demás, pero la lógica funciona y eso es lo que nos interesa. Bien, veamos la diferencia. Ya tenemos el modelo entrenado. Vamos a definir una función para convertir secuencias one horing a lista de valores originales. Bueno, eh nosotros estamos manejando las secuencias en one horing, entonces tenemos todo en ceros y unos. ¿Para qué tal si yo quiero volverlo a su valor original? Por ejemplo, el 5 es 0100. Bien, me ha servido para entrenar, pero en diferencia yo no quiero devolver predicciones en vectores de unos y ceros. Quiero devolver números 5, 10, 15, etcétera. Bien, entonces por eso defino esta función de codificar one hor. Bien, ya tengo eso. Ahora tengo el bloque F. Aquí está lo que quedaba pendiente, ¿verdad? Hace rato habíamos armado el D y el E y esos dos se juntaban en el bloque F. Entonces, ¿cuál es la idea?
+
+
+01:59:50
+
+lse posgrados: La idea es la siguiente. Vamos a, como les había comentado, lo vamos a revisar a detalle esta parte porque aquí está una parte muy interesante. que también se se ve en los Transformers. Eh, a ver acá. Bien, tenemos esos dos. Okay. Bien. Entonces, el bloque F, lo voy a diferenciar con esta línea roja. En el bloque F va a juntar las dos inferencias. ¿Qué hace en el primer paso? Paso uno, obtiene el contexto del encoder. Bien, entonces le vamos a pasar al encoder que está en modo inferencia nuestra secuencia. Recibe la secuencia y nos da una predicción. Entonces acá recibe la secuencia y nos va a dar una predicción, ¿verdad? Dice predict. Ese states que nos está devolviendo es esto de acá, el encoder states, el H y el C, ¿verdad? Eso ya lo vimos antes. Bien. Luego, ¿qué sigue? El paso dos, primer token del decoder es el SOS, el índice cero. Bien, eso es importante porque eh nosotros digamos que le hemos pasado aquí en el XC una hora, algo que nunca he visto, ¿no?
+
+
+02:01:35
+
+lse posgrados: Bueno, digamos que le pasamos el 25 30 35, no sé. Bueno, quizás esto lo ha visto, no importa, es un ejemplo. Se supone que esto va a ser su entrada y tiene que generarme una secuencia de salida, ¿verdad? Entonces, ya tenemos esa entrada, ya tenemos los states. Esto ya pasó por el encoder y el encoder ya nos está dando un vector. Ese vector es states. Ahora, esto se lo vamos a pasar al decoder y el decoder tiene que recibir también el tag. Ese tag aquí lo estamos definiendo. Entonces, eh lo que estamos haciendo ahí es que nosotros ya sabemos que el cero es equivale al start, ¿verdad? Pero nosotros no le podemos pasar cero, tenemos que pasarle en vector. Y sabemos que todos los datos que estamos manejando son vectores que han pasado por el tu categorical. Entonces, aprovechamos eso. Bueno, ya que sabemos que todos los valores han pasado por tu categorical para volverse vectores, entonces voy a pasar el cero. Entonces aquí el token va a ser un vector.
+
+
+02:02:46
+
+lse posgrados: Bien, esto me va a volver un vector donde el uno está al inicio, después todo es 0 er, etcétera. Y esto lo voy a usar para que sea mi start sequence. M. Y cómo sé que lo voy a usar para que sea mi start of sequence. Lo voy a saber porque lo tenemos aquí. Entonces, ya tengo lo inicial. ¿Qué es lo que sigue? Definir mi salida. Mi salida es una lista vacía. Hago un for que va a iterar en el N steps. N steps, ¿cuánto es? Tres. Solo tiene que ser tres pasos. Yo sé que mi secuencia de salida tiene que ser de tres elementos, así que solo son tres pasos. Bien, ¿qué voy a hacer? Le paso al decoder model predict mi token, que es lo que acabo de definir, ¿verdad? El cero más los states, este vector. Entonces, estoy haciendo eso, le estoy pasando como entrada esto y esto, esos dos. Y en el decoder me va a dar una salida.
+
+
+02:03:44
+
+lse posgrados: La primera salida, la primera salida que me va a dar el decoder, ¿cuál es? Bueno, aquí lo sabemos, ¿verdad? El decoder model, aquí menciona, recibe como entrada un decoder input. que es el cero y states, que es lo que me ha devuelto el encoder. ¿Qué me va a devolver? Me devuelve el decoder output, el nuevo H y el nuevo C. Y aquí está predicción H y C. Esa predicción la voy a guardar en mi lista de output. Entonces, en mi lista de output estoy acumulando todas las salidas del decoder. Bien, entonces ahí me va a dar como primer elemento 40. Ese 40 lo guardo aquí. Ahora, ¿qué voy a hacer con el H y el C que también me ha devuelto el decoder? Lo voy a usar como los nuevos estados. Bien, entonces aquí me da, voy a ponerlo en azul, aquí me da 40. Ese 40 lo va a usar para que sea su nueva entrada. Por eso aquí dice token. El nuevo token, ¿cuál es? es la última predicción que hiciste.
+
+
+02:04:53
+
+lse posgrados: Entonces, esto entra y acá para darme la salida, ¿qué va a tomar en cuenta? Va a tomar en cuenta ese token y los nuevos estados. Los nuevos estados lo que vamos a definir que van a ser este H y C, ¿verdad? Y así poco a poco me va a ir generando. Y eso es todo. Bien, esa es la idea de cómo funciona la inferencia. Hasta ahí, ¿qué tal? ¿Se entendió la idea de lo que vimos hasta acá? ¿Tienen dudas quizás o comentarios?
+CARLOS AGUSTIN BERDAGUER: Perdón, el n1 sera 128. Puede ser.
+lse posgrados: El N Units. Eh,
+CARLOS AGUSTIN BERDAGUER: E no,
+lse posgrados: sí.
+CARLOS AGUSTIN BERDAGUER: en este yo estaba atento por lo que había preguntado antes de que había preguntado si en el LCTM era tres el valor con el ejemplo que habías dado en el dibujo. Dijiste, "No, no, eso ya lo vamos a ver." y estaba creo que era 128 en este caso y no lo estaría
+lse posgrados: No.
+CARLOS AGUSTIN BERDAGUER: atando a lo o al tres, que son los tres valores que pasamos y tres valores después que era el decoder.
+
+
+02:06:06
+
+lse posgrados: Okay. Okay. La pregunta es, si estamos manejando 128, ¿eso cómo se encaja con las tres salidas?
+CARLOS AGUSTIN BERDAGUER: Sí, sí, eso sí una buena forma de tundar.
+lse posgrados: Ah, okay, bien. Eh, sí. A ver, ese 128, si no me equivoco, te refieres al número de unidades que tenemos aquí, ¿verdad? Construir modelos Nun 128.
+CARLOS AGUSTIN BERDAGUER: Sí, exacto.
+lse posgrados: Okay. Luego más abajo, cuando llamamos al construir modelos, creo que incluso le ponemos 64. Eh, aquí le pongo N Unit 64. Bien, ahí n units es la flecha que está atravesando la red neunal
+CARLOS AGUSTIN BERDAGUER: Ah, okay.
+lse posgrados: recurrente. Entonces, ¿dónde está el tres? Esa es una buena pregunta, ¿verdad? ¿Dónde sabemos que estamos haciendo tres generaciones? Eso lo tenemos justamente acá. En la inferencia le digo, vas a hacer tres veces la generación. Haz un for tres veces, genera una vez, dos veces, tres veces y ahí se detiene. No necesitamos un EOS porque es fijo. Eso es todo.
+CARLOS AGUSTIN BERDAGUER: Estoy pensando,
+
+
+02:07:15
+
+lse posgrados: Ahí.
+CARLOS AGUSTIN BERDAGUER: ¿eh? Yeah.
+lse posgrados: Okay. Okay. Bueno, solo para complementar, ¿no? Ese N units no tiene nada que ver con eso, ¿no? El n units es el grosor de esa flecha de A ver, creo que ese dibujo está muy tal vez ya muy utilizado. Eh, ¿dónde está nuestro vector? Bueno, aquí creo que no tenemos un dibujo así, ¿no?
+CARLOS AGUSTIN BERDAGUER: del many to many que tenías ahí.
+lse posgrados: Y sí,
+CARLOS AGUSTIN BERDAGUER: Eso es ahí.
+lse posgrados: esto de aquí, estas flechas, ese grosor es de 128 unidades, eso es o 64 unidades o 16 o 32. Eso. Todas las flechas que veas que van hacia horizontal, de horizontal, de la manera horizontal, eso es eso a eso se refiere. ¿Qué tan gruesa es esa flecha?
+CARLOS AGUSTIN BERDAGUER: Pero no tiene que ver con la dimensión del one hood and go de de que de cómo está encodeado en onehot encoding y el dato
+lse posgrados: Eh, no, no, no tiene que ver.
+CARLOS AGUSTIN BERDAGUER: porque en aprendizaje profundo lo habíamos visto.
+
+
+02:08:24
+
+CARLOS AGUSTIN BERDAGUER: Estoy tratando de engancharlo con cómo lo habíamos visto en la otra materia.
+lse posgrados: Ah, okay, okay, entiendo, entiendo, Carlos. Eh, es que sí, ¿no? Es un poco confuso aquí cómo lo manejamos, ¿eh? Pero es que es recurrente, no es otra dinámica. Eh, cuando manejamos las redes neonales clásicas es diferente, pero sí, eso bien.
+CARLOS AGUSTIN BERDAGUER: Aú así tiene que ver con la capacidad del modelo,
+lse posgrados: Bien.
+CARLOS AGUSTIN BERDAGUER: con la cantidad de neurón el modelo.
+lse posgrados: Sí, claro, claro. En eso sí, claro. O sea, estás si le pones 64, digamos, o sea, estás diciendo que las características que va a encontrar pues se van a almacenar en 64 elementos. Eso es es un buen número, ¿no? Si le pones cuatro, digamos, que es potencia de dos también, bueno, es muy poca información que vas a ir acumulando. Entonces, sí es parte de la definición de la capacidad del modelo. Ahora, si le pones 1028 creo que es demasiado, ¿no? Entonces, tal vez Exactamente.
+CARLOS AGUSTIN BERDAGUER: va a memorizado o verfitear ahí.
+
+
+02:09:34
+
+lse posgrados: Incluso de hecho quizás por eso hay overfeiting.
+CARLOS AGUSTIN BERDAGUER: Ok.
+lse posgrados: Quizás deberíamos haberle puesto un valor más pequeño. Gracias, Carlos. Bien. Eh, y bueno, eso es todo. Entonces, terminamos de hacer esto. Realizamos pruebas. Le voy a pasar 20 25 30. Ese es mi lista de de testeo. Acá mi target, pues sabemos que tiene que sumar más 15, así que lo definimos manualmente porque es mi target. Preparo el dataset. Bueno, preparar dataset siempre es importante, ¿no? Al menos en NLP, todo lo que hayas hecho de preprocesamiento para tus datos, para entrenarlo, tienes que hacer lo mismo para los datos que van a ser inferencia. Entonces, aplicamos eso y eh ya que ya están transformados según lo que necesitábamos, se lo pasamos a través de predecir. Y predecir, ¿qué me va a dar? me va a dar lo siguiente. La predicción es 35 40 45. Esa es la predicción del modelo. Y lo esperado era 35 40 45. O sea, lo hizo bien, bien.
+
+
+02:10:42
+
+lse posgrados: Eh, le atinó a lo que estábamos esperando. En ningún momento nosotros en el entrenamiento le dijimos suma 15. Acá por si acaso le decimos suma 15 porque ese es el target, ¿verdad? Entonces, aquí lo tenemos, el target y lo que dice el modelo es esto. Así que lo hizo bien. Hizo esa suma sin saber que tenía que hacer una suma y el los pues es bajo, ¿no? Porque latinó. Y eso es todo. Bien, de esa manera nosotros armamos un encoder de coder. Hasta ahí. ¿Qué tal? ¿Tienen dudas sobre lo que hemos visto? ¿Algún comentario antes de ver lo siguiente? Tal vez. Todo claro. Gracias Federico, gracias Hernando, gracias Nicolás. Bien, entonces vamos a hacer ah, a ver, denme un segundo, voy a buscar el otro ejercicio, ¿eh? A ver. Okay. No. tenemos por aquí. ¿De acuerdo? Bien, les comparto esto. Bien, vamos a ver esto y con eso terminamos. Bien, eh, como bueno, igual que la anterior clase, pues vamos a salir como una media hora antes, así que esto es por los descansos, ¿no?, que lo hemos llevado al final, ¿eh?
+
+
+02:12:29
+
+lse posgrados: Entonces, el encoder decoder ya lo vios hecho, vimos el ejercicio, hicimos la solución. Ahora lo que nos queda es hacer lo mismo. Bien, vamos a hacer lo mismo. Van a ver que es la misma idea. Quizás la manera de cómo se construye este encoder decoder está un poco desordenado, ¿no? O sea, está bien, ¿no? Pero quizás se parece desordenado, pero es la misma idea. Solo que vamos a hacer una pequeña diferencia. Vamos a agregar el EOS. ¿Por qué? Porque vamos a hacer traducción de idiomas y sabemos que cuando le pasas una secuencia en un idioma, su traducción en otro idioma no va a tener el mismo número de elementos, puede variar, ¿verdad? Entonces ahí nos ayuda el EOS. Nosotros antes habíamos contrarrestado poniendo el número de steps tres y ahí terminaba, ¿verdad? Ahora, eh, no le vamos a poner eso, le vamos a poner si generas EOS, ahí lo detenemos. Esa va a ser la condición. Entonces, eso es lo que menciona aquí.
+
+
+02:13:28
+
+lse posgrados: Como las secuencias van a variar, utiliza el EOS para así detener la secuencia. Bien, entonces eso se usa cuando queremos hacer traductores. Entonces vamos a hacer un traductor de inglés español y vamos a vectorizar ahora con erings. Antes hemos hecho one horing porque eran números. Ahora vamos a estar en beits. Entonces vamos a este colap. Bien, este colap ya está resuelto, ¿bien? Así que no tienen que resolverlo. Eh, igual como les digo, es similar a lo que hemos hecho antes. Bien, vamos a usar qué eras, eh, vamos a usar el pad sequences, el tokenizer, el reducir el learning rate. Eso es un callback, ¿no? Bueno, ahí dice tensorflow. Callbacks, tenemos el reduce lr plateo y early stopping. Bueno, ambos son callbacks, eh, ya lo hemos usado antes, ¿verdad? El stoping es cuando queremos detener en entrenamiento eh según un número de paciencia y el reduce lon plateo es cuando queremos deducir el learning rate poco a poco según igual paciencia. Entonces si el modelo está empezando a fallar o no está aprendiendo, aplicamos la reducción del learning rate.
+
+
+02:14:52
+
+lse posgrados: Bien, de la misma manera de cómo aplicamos el stoping. Eh, luego importamos el input, el LCTM, dening dropout. Bueno, todo Todo eso me dice que lo voy a armar en pedazos, igual el model que estoy aplicando ahí. Bien. Y voy a importar el pickle. Bueno, el pickle es para cargar los edings ya entrenados. Bien, eso lo vamos a usar después. Entonces, primero voy a descargar el dataset de traducción de español inglés. Bueno, esto es similar a lo que hemos visto hace rato en Anky, ¿verdad? Que tenemos pares de español e inglés. Bien, lo descargo y ya lo tengo listo. Bien, luego, ¿qué hago? Voy a definir el número máximo de oraciones y la semilla. Bueno, la semilla es para tener los mismos resultados, ¿no? Porque sabemos que vamos a utilizar muchos valores aleatorios. Por ejemplo, al empezar el entrenamiento de las redes, los pesos no los conocemos, son valores aleatorios. Entonces, eh eso lo estamos definiendo con esta semilla para tener resultados similares ustedes con lo que voy a presentarles aquí.
+
+
+02:15:53
+
+lse posgrados: Ahora, si cambian la semilla, pues obviamente vamos a tener cosas diferentes. Bien, luego cargamos los datos. Okay, los datos que he cargado antes, pues aquí simplemente lo estoy poniendo en input sentences, output sentences y output sentences inputs. Bueno, otra vez tres secuencias. ¿Por qué? Porque lo que necesito es teacher forcing, la entrada, la encoder, la salida del decoder y el teacher forcing. Entonces acá es solo eso. Estamos cargando y le estamos agregando el SOS y el EOS. Bueno, creo que es igual es nuevo, ¿verdad? Entonces, acá visualmente vamos a ver qué ha pasado. Le he agregado el EOS para el outputes y le he agregado el SOS para el outputences inputs. Eso quiere decir que el output sentences inputs es nuestro teacher forcing. Veámoslo visualmente. Ya hicimos todo esto. Vamos a ver el primer elemento de input sentences, el primer elemento de output sentences y el primer elemento de output sentences inputs. Bueno, somebody my car. Esa es la entrada al encoder.
+
+
+02:16:56
+
+lse posgrados: Lo que esperamos, el target es alguien robó mi auto, EOS. Y lo que vamos a usar como teacher forcing es sos alguien robó mi auto. Eh, entonces tiene sentido, ¿verdad? Es lo que habíamos mencionado antes. Y bueno, lo vamos a dibujar igual para que no quede dudas. Uy, abrimos acá. Bueno, es una imagen muy grande, ¿eh? A ver. Listo. De acuerdo. Ahí que tenemos. Bueno, visualmente se ve así. Vamos a Okay, aquí pongo son bar. My car. Flecha, flecha, flecha, flecha. Bueno, esa flecha se rara. Neal. network me da un vector. Este vector se conecta este de acá y acá le pongo sos. Bien, vamos a hacer así hasta aquí. Luego acá tenemos esto de acá. Aquí entra el SOS. Bien, estamos aquí con el punto rojo, con el color azul y aquí el verde, ¿verdad? Entonces voy a dibujar por colores y luego les explico. Es lo mismo que sabemos, ¿verdad?
+
+
+02:18:31
+
+lse posgrados: Aquí dice, "Alguien probó mi auto." Bien, ya tengo todo eso. Ahora con verde voy a poner las salidas esperadas. Alguien robó mi auto EOS. Bien, así se ve. Esa es la idea. Bien, es lo que hemos armado. La diferencia es que ahora tenemos el SOS y el EOS. Antes no lo teníamos así, solo teníamos el SOS. Bien, ya tenemos esto. ¿Qué es lo que sigue? Vamos a aplicar tokenización. Bueno, todo esto que estamos viendo aquí, por si acaso, lo hacemos ahora porque son palabras. Antes no era necesario hacer esto porque eran números. Entonces, ¿qué hacemos? Bueno, primero definimos el maxup size. Bueno, máximo vamos a tener 8,000 palabras únicas. El tokenizador va a tomar en cuenta eso y luego se va a ajustar a los datos que le vamos a pasar nosotros y eh lo va a tokenizar. Ahora, al tokenizar lo divide en palabras, ¿verdad? Y a cada palabra le asigna un índice. No es un emberin, es un índice, es un número.
+
+
+02:19:53
+
+lse posgrados: Digamos, Fernando es el 95, Juan es el 98, Pérez es el 12, no sé, son solo índices. Entonces, eh esos índices lo podemos saber a partir de este word to index. Este word to index inputs lo estamos jalando del tokenizador. El tokenizador ya tokenizado todo, ya sabe que Fernando es 95, bla bla bla. Entonces, eso lo voy a jalar para guardarlo en este word index. Así que si más adelante yo quiero saber cuál es el índice de hola, pues yo utilizaría esto. Bien, ahora solo voy a tomar en cuenta las 8000 palabras más frecuentes. Bien, ya sabemos por qué. Porque aquí dice max workup size 8000. Bien, entonces eh esto lo considero para el tokenizador también del output tokenizer. Aquí dice el input, ahora es para el output. Y aquí voy a filtrar, voy a filtrar los signos. Bien, esos no quiero tomarlos en cuenta. Bien, luego en el outputizer también le digo por si acaso tienes que considerar también Bien, el SOS y el EOS, porque esos también son parte de mi vocabulario.
+
+
+02:21:05
+
+lse posgrados: Bien, va a tomar en cuenta eso. Lo toquenizo y listo. Y de paso armo este word to index output, lo mismo que he armado antes, ¿verdad? Ahora, respecto al output. Bien, ¿cuántos palabras tengo en mi output? pues tomo el mínimo del tamaño de mi word to index outputs + un eh, y también considero el maxup size. El mínimo entre estos dos es mi número de palabras que tengo en mi output. Bien. Eh, y eso lo voy a usar después. Hm, si no me equivoco, sí, más adelante lo utilizo, pero solo me está diciendo eso. ¿Cuántas palabras tengo en mi output? Luego calculo los largos máximos a partir de los datos. Entonces, acá pues estoy usando eh el el input integer sequence, que es esto de acá, y este output integer sequence, que también lo tenemos. Uy, perdón, acá. Bien, entonces ahí estoy calculando cuánto es el máximo. Ahora, ¿por qué me por qué quiero saber esto? ¿Por qué quiero saber cuál es el largo máximo?
+
+
+02:22:09
+
+lse posgrados: Porque yo después voy a aplicar el padding. Bien, o sea, yo debo tener aquí en mi input tokenizer, bueno, en mi input sequence, ¿no? Por ejemplo, yo le puedo decir, "Hola, me llamo Fernando y no sé, y bla bla bla bla bla bla bla." Es una oración de 50 palabras, una super oración. Y luego hay otro dato de una persona que solo pone, "Hola, soy Juan Pérez." Son cuatro palabras. Entonces sabemos nosotros en base a lo que ya han visto con Joselyine, que las secuencias tienen que tener la misma longitud, ¿verdad? Entonces ahí lo que hacemos es hacer pading. Entonces ya sé todo esto, ya sé cuántos elementos hay, cuál es la secuencia más grande, la secuencia más pequeña, etcétera. Ahora yo voy a tomar en cuenta las secuencias más largas porque a partir de eso yo voy a hacer pading, voy a rellenar. Todas tienen que tener la misma secuencia. Entonces ahí dice pad sequences y le pasamos el max l que hemos calculado tanto para el input como para el output y le ponemos padding post.
+
+
+02:23:12
+
+lse posgrados: Bien. Okay. Entonces ahí también hay algo interesante en el encoder. Cuando yo aplico el padding, perdón, cuando yo aplico el padding en el encoder, yo no le digo nada de padding post, solo le digo aplica padding. Ahora, en el decoder, yo le pongo padding post, tanto para el target como para el teacher forcing. ¿Por qué? ¿Por qué aplico eso? Porque la dinámica es diferente. En el encoder yo no tengo problemas de poner ceros al inicio. De hecho es mejor porque lo que pasa en una recur network es que va a haber uno por uno, ¿verdad? Y lo que ha visto al inicio, si es si la secuencia es muy larga, se va a olvidar poco a poco y eso se llama vanishing gradient. Entonces, cuando nosotros queremos hacer un resumen de un eh, no sé, de una secuencia de entrada. Nosotros no queremos que sea muy largo porque el resumen no va a salir muy bien en el resumen, solo va a considerar las últimas palabras. Entonces, como acá queremos rellenar para que tenga el tamaño del vector más largo, nos conviene poner ceros al inicio, porque estos ceros se va a olvidar, ¿verdad?
+
+
+02:24:24
+
+lse posgrados: O sea, probablemente se olvide, no lo tom en cuenta, no importa. La información que nos interesa está al final. Así que no hay problema. Por otro lado, el decoder no puede ser así. Lo que va a darnos el decoder tienen que ser palabras, ¿verdad? No tiene que darnos ceros. Si le ponemos ceros al inicio para estos valores que van a ir al decoder, el decoder va a aprender a generar ceros. No tiene sentido. Por eso ahí ponemos post, porque esos ceros lo ponemos al final después del EOS, porque sabemos que el EOS va a detener la secuencia. Así que no nos preocupamos de eso. Esa es la razón de por qué hacemos así el padding. Bien, muy importante porque si lo hacen al revés va a fallar. Bien, luego definimos una función para obtener un data, un un tenso flow data dataset. Bueno, todo esto que ven aquí es simplemente para nosotros hacer el llamado de los datos. Es similar al dataer. Si recuerdan, el dataloader de P torch hace eso.
+
+
+02:25:23
+
+lse posgrados: Le llamamos a una función y me va a dar datos. Digamos que le llamo al data loader make dataset. Bueno, no es datalader, no, pero si si esto fuese p torch, digamos que el data loader se llama M dataset. Le llamo y me va a devolver, no sé, 16 palabras, 16 oraciones. En este caso hace algo similar, pero está hecho en tensor flow. Bien, simplemente es eso, es una manera de cómo manejar los datasets en tensor blog. Luego aplicamos la función en el dataset para obtener el train y validation set. Bueno, lo que les decía, ¿verdad? Aplicamos esta función de madeet a todos mis datos que tenemos, tanto para el train como para validation. Bien, ya tengo eso, simplemente armado mis datas en formato de tensor. Luego acá tenemos una función. Toda esta función que ven aquí, bueno, realmente no nos interesa verlo a detalle porque es el cargado de Glow. Bien, simplemente está buscando el link de Glow, lo descarga y lo guarda nada más. Bien, entonces aquí estamos guardando los erings, para eso sirve esto.
+
+
+02:26:26
+
+lse posgrados: Al final nos dice, "Ya encontré el link que necesitabas y lo tengo guardado en globbering.pll pico." Bien, ya tengo mis embargings. Acá define una función para cargar los embings de Glob. Bien, esto me va a ayudar más adelante. Lo que hace es cargar ese pickle que hemos jalado de internet y nos va a devolver un Word to index y un matrix FN. Eh, bien. Bueno, en resumen, esto me va me va a cargar losings de Globe. Bien. Igual esto pues no hay muchas cosas que hablar de esto, simplemente está cargando lo que hemos descargado. Bien, luego definimos una función para obtener el embeding por palabra. Bueno, ¿qué va a ser esto? Yo le paso el nombre Fernando. Bueno, ¿qué va a hacer? Me va a dar el embeding de Fernando. ¿De dónde está jalando el embing? Pues de estos que ya cargó. Me paso Fernando y me dice, "El embing de Fernando es 789 576." Listo. Bien, para eso nos sirve.
+
+
+02:27:27
+
+lse posgrados: Luego tenemos esta función, una función para armar la matriz de Bueno, esto está interesante. Aquí nosotros vamos a armar una matriz tomando en cuenta las palabras que yo ya tengo en mi ejercicio. Ahora, en esta traducción español, inglés, no creo que estén todas las palabras, ¿no?, del vocabulario español inglés, pues debe haber palabras que no están, por ejemplo, no sé, Fernando, digamos, Fernando aparece en nada de esas traducciones en el dataset, pero Fernando tiene en very, pero bueno, no necesitamos el ening de Fernando porque no está en el dataset, ¿verdad? Por eso armamos una matriz donde vamos a pedir solo lo que necesitamos y esa matriz la vamos a ir rellenando. Entonces, acá se ve así. Eh, lo voy a dibujar acá al lado, creo. Mejor. Okay. Bueno, creo que esto no va a dar. Ahora sí. Bien. Acá dice NP.0, ¿verdad? Eso dice NP.0 ceros porque inicialmente va a construir una matriz llena de ceros. Entonces va a ser algo así. Dice NB Words por dim.
+
+
+02:28:43
+
+lse posgrados: Pues aquí están todas las palabras únicas que tengo en mi vocabulario. Y esto de acá va a ser de dimensión del embering. Eling, si no me equivoco, de globe es de 100 elementos. Entonces, estoy creando una matriz así, bien, el tamaño del vocabulario y las 100 dimensiones que sé que tiene elo. Luego, ¿qué voy a hacer? Voy a rellenarlo de ceros. Ahí dicen pceros. Entonces aquí digamos el primero es para hola, digamos hola todo está cero. No, no sabemos aún su en abajo está chao, tiene todo cero y así sucesivamente. Ahora digamos que aquí al final está cocoliso. Bien. Bueno, cocoliso igual está con cero, supongamos. Luego, ¿qué voy a hacer? Voy a buscar con getwarings, las palabras que tengo. Voy a buscar sus embarings. Entonces, busco el embing de hola. Bueno, el embing de hola es 17987. Okay, eso qué voy a hacer, lo reemplazo con lo que estaba aquí de ceros. Aquí pongo 1 7 8 9 bla bla bla bla.
+
+
+02:29:45
+
+lse posgrados: Busco el de Chao. Bueno, chao es 2 2 5 7 y así. Bien, voy rellenando los enverins. Ahora, también hay que tomar en cuenta que probablemente haya palabras que nosotros tenemos, pero que el ember enverin no los tiene. por ejemplo, Cocol Cocolizo es muy puntual, ¿no? Es el bueno es era el nombre de mi loro, así que no creo que Glove tenga el embering para cocoliso, entonces le dejamos en cero porque no existe su ening, ¿bien? Así que lo dejamos en cero y así vamos a ir rellenando. Los que están en glove pues lo rellenamos. Los que no están, pues adiós, se quedan en cero. Y eso es todo. Ya tenemos esa función que me construye la matriz de berings. Bien, vamos a agarrar todas estas funciones que hemos hablado y esto me va a ayudar a construir esa matriz deberins. Para eso hemos hecho todo eso. Entonces, este bloque lo que hace es eso, llamar el glow, el cargar los berings de globe. Eso lo guarda aquí en estos dos.
+
+
+02:30:48
+
+lse posgrados: Eso lo utiliza para construir en matriz de beings y eso me pone en embeding matrix. Bien, ya tengo. Y de paso me dice, por si acaso tienes 211 elementos que no tienen en Berin, o sea, entre esos está cocoliso, etcétera, ¿verdad? Palabras muy puntuales que no tienen embis en Glockf. Bueno, por ahora lo dejamos así. Definimos el número de unidades, 256. Bien, eso va a ser el número de unidades que voy a manejar en mi red neuronal LSTM. Detalle, nosotros en nuestros no tenemos 256 elementos, ¿verdad? Y eso es lo que les le comentaba a su compañero, esas unidades no tienen que ver con eso. Bien, con el tamaño del emberi, ¿bien? Entonces, eh, ¿qué hago acá? Voy a construir el el encoder. El encoder en este caso va a recibir las secuencias y las va a pasar por un edad edading matrix, ¿verdad? Eling matrix me va a devolver los valores de cada palabra. Antes hacíamos one horing, aquí hay un embeding matrix que me va a devolver los embedings para cada palabra.
+
+
+02:31:58
+
+lse posgrados: Entonces acá el input, ¿qué es? Bueno, es le ponemos el shape, el maxim lent, ya sabemos, ¿verdad? Es la máxima longitud que tiene nuestro lent. Y bueno, a este encoder le vamos a llamar encoder inputs. Bien. Eh, luego construimos una capa de embing. La capa de embing, ¿qué maneja? El input dim, pues el número de de palabras vocabulario, el output dim el número del embering que tenemos, la dimensión del embing, la dimensión del embing creo que es 100 y los pesos de esteing pues vamos a aprovechar los valores que hemos cargado de Globe y no queremos entrenarlo, no queremos modificar esos valores porque se supone que ya han sido entrenados, no tiene sentido volverlos a entrenar, aunque en ciertas ocasiones sí tiene sentido, ahora no. Listo, ya tenemos esto. ¿Qué sigue? un dropout para evitar overfeitting, un LCTM, un LSTM que tiene eh 256 unidades. Este de acá me retorna a los estados y eh tiene este nombre. Bueno, aquí mismo lo vamos a llamar, ¿verdad? Aquí lo hemos definido y aquí lo llamamos.
+
+
+02:32:59
+
+lse posgrados: Le pasamos, eh. el lo que ha pasado antes, ¿verdad? Después del dropout y me va a devolver state H y state C. Lo mismo que hemos hecho antes, ¿verdad? Nuestro encoder recibía las entradas y me devolvía H y C. No hace nada más que eso. Bien, luego tenemos el decoder. El decoder es lo mismo que hemos hecho antes, por si acaso, solo que en este caso vamos a vamos a tener unos pequeños cambios. Primero, el input. Bueno, vamos a usar el del max output l, no del input len, porque aquí estamos hablando de la otra parte, ¿verdad? Acá definimos el embaring, ya sabemos, eh, es la misma idea que antes, solo que aquí, si se dan cuenta, el embeding lo estamos definiendo sin tomar el embeding matrix. Luego definimos el dropout, eh, definimos un lstm. Este LSTM me va a dar return sequences true, o sea, me va a dar esas flechas hacia arriba, lo mismo que dijimos hace rato. Entonces, llamamos este STM, le paso las entradas y me va a devolver el decoder out.
+
+
+02:34:02
+
+lse posgrados: Bueno, ese decoder out se lo paso en decoder dense layer y me devuelve la salida. Es lo mismo que hemos hecho antes, bien, solo que aquí está separado en dos bloques. Y eso es todo. Ahora voy a construir el encoder y el decoder. Bueno, para construir el encoder, ¿qué hago? Bueno, voy a pasarle todo lo que necesita y me va a devolver el encoder inputs, el encoder state, el encodereding layer y el encodingm layer. Ahora para construir el decoder le paso lo necesario y me devuelve todo en pedazos. Bien, es una manera diferente a lo que hemos visto antes. Antes estaba todo junto, ¿verdad? Estaba un poco más ordenado. Aquí está un poco desordenado, pero hace lo mismo. Me devuelve en pedazos y yo después voy a tener que ajustar dónde usar qué. Defino el modelo que vamos a entrenar. ¿Qué va a manejar encoder inputs? Decoder inputs y quién me va a devolver el decoder outputs. Lo mismo que hicimos antes. Definimos los callbacks, el lning rate que va a ir bajando con una paciencia de cuatro y el stopping que se va se va a detener si es que no van mejorando.
+
+
+02:35:03
+
+lse posgrados: El validation loss tiene paciencia de seis. Bien, luego eh hago la compilación, manejo el los que es un categorical cross entropy. ¿Por qué? porque es multiclase, el optimizador es Adam y las métricas que va a manejar es una curac. Bueno, básicamente lo mismo que teníamos antes. Entrenamos el modelo, eh, le pasamos el dataset de entrenamiento, el dataset de validación, 100 épocas y los callbacks, los dos que he definido antes, y hago el entrenamiento. El acurí empieza abajo y poco a poco va subiendo. Bien, va a llegar hasta cierto punto, lo mejor que pudo, 51% de Acuracir, el validation accuracy 0.30. 34. Bueno, a ver, no es el mejor acudací que hemos obtenido. Podemos hacer algunas pequeñas mejoras, pero ya sabemos por qué está pasando esto. Bien, vamos a graficarlo para entender qué pasó. Y bueno, vemos que en la kirura sí va subiendo. Pero aquí está empezando a a ver una brecha y el los lo mismo va bajando y empez y está empezando a ver una brecha, por eso se ha detenido porque el callback nos ha evitado un overfeitting.
+
+
+02:36:14
+
+lse posgrados: Bien, ¿qué vamos a hacer? Vamos a hacer la inferencia. En la inferencia vamos a utilizar esos pedazos que nos ha devuelto el encoder y el decoder. Para la parte del encoder, la diferencia, ¿qué vamos a hacer? Vamos a necesitar el encoder en bearing layer. Le paso mis entradas, me devuelve el encoder en being y eso se lo paso al lm y me devuelve el H y C. Bueno, es lo mismo que teníamos antes, ¿verdad? Por eso dice desde utiliza pesos entrenados y el decoder inference, eh, bueno, ¿qué va a hacer? Va a recibir esas tres entradas. Es lo mismo que teníamos en anterior ejercicio, el input single, el estado H y el estado C. Bueno, aquí, ¿qué va a hacer? va a recibir este input single y que bueno después va a ser nuestro token, ¿verdad?, del start sequence. Nos da una salida. Esta salida la utilizo para pasarle al encoder lstm. Ahí aprovecho en pasarle el state H y el state C, que inicialmente me lo da el encoder y me devuelve todo esto.
+
+
+02:37:14
+
+lse posgrados: De todo esto me interesa esto. Esto se lo paso al dense layer y me da la salida. Bien, lo mismo que hemos hecho en el anterior ejercicio. Agarro todo y lo pongo en este modelo. Fin. Ya tengo esos dos, el build encoder inference y el build decoder inference. Utilizo todo eso y me va a dar el encoder y el decoder model para inferencia. Bien. Eh, bueno, aquí dice aplicamos inferencia grid y bueno, aquí menciona esto. No creo que este comentario no tiene mucha relación con esto. Lo voy a cambiar. Pero bueno, esto que dice aplicamos inferencia GDI se refiere a un proceso que está aquí por si acaso. Acá simplemente estamos armando un index to word. Entonces como todos los tokens, bueno, como todo lo que tenemos nosotros dividido en tokens está relacionado a un número, yo no lo veo como palabras. Lo que estamos haciendo aquí es pasarle, "Hola, me llamo Fernando, pero el número es 57 8 9 15 y el modelo nos dice 279 11 18." Entonces,
+
+
+02:38:18
+
+lse posgrados: yo no quiero que estén números, por eso defino esto, esto de acá, porque es como un diccionario inverso. Entonces, si yo le paso 95, lo va a volver en palabra y me dice 95 es Fernando. Bien, esa es la idea. Para eso definimos estos dos. Entonces, acá definimos e la función de la inferencia. Esto que ven es lo mismo que hemos hecho hace rato. Acá primero le pasamos al encoder nuestra entrada, nuestra secuencia de entrada. El encoder lo recibe y nos da el HC. Bien, luego definimos el target sequence, que es un cero, ¿verdad? Luego defino del target sequence su primer elemento, porque solo es un elemento, es un cero. Vamos a ponerle el dos. Entonces, el target sequence es el token de entrada al decoder y el EOS, ¿qué va a hacer? Bueno, del Word to index voy a buscar dónde está su valor, ¿verdad? Su valor de EOS. Para eso lo utilizamos, para eso lo hemos definido, para pasarle una palabra y que me diga su índice es este.
+
+
+02:39:20
+
+lse posgrados: Bien, defino una lista vacía que va a ser el output sentence y hago un for. Aquí solo es un for, un for que va a ir generando salidas. Entonces, acá, ¿qué va a pasar? El decoder recibe el target sequence que hemos definido, que es el SOS, el H y el C y me da una salida opu tokens, H y C, lo mismo de antes. ¿Qué voy a hacer? Voy a buscar cuál es el que tiene mayor probabilidad, por eso es Grid. Bueno, de todas las salidas que me ha dado el decoder, el que tiene más alta probabilidad de ser la primera palabra es high. Okay, ese high, voy a comprobar, ¿ese high es EOS? No, no es EOS. Entonces, guárdalo en el output cent. Luego vamos a hacer este cambio. Ahora el índice va a ser mi target sequence, es decir, estoy utilizándolo para que sea mi nueva entrada y va a generarme ahora my. Ahora tiene hi my. Hi, my name is Fernando. EOS.
+
+
+02:40:18
+
+lse posgrados: Okay, ahí vemos el índice. Dice que ahora es EOS. EOS es igual a EOS. Sí, se detiene y se rompe ahí la secuencia y eso es todo. Entonces, aquí ya no tenemos N step TR, ¿verdad? Porque la secuencia puede variar. Por eso usamos eh el EOS para detener la secuencia. Bien. Y eso lo utilizo aquí para hacer traducción. Entonces, esta función translate sentence está aquí. Bien, yo le paso un texto, lo prepara para pasarle a esto y me va a dar su traducción. Realizamos pruebas, primero frases que están en la validación y luego frases nuevas. Lo que está en la validación en inglés, people make mistakes in a situation like this. Lo que esperábamos que diga, en una situación así se cometen errores. Lo que dice el modelo, ¿cuántas personas no hay nada de la vida? No tiene mucho sentido. En inglés, do whatever. He tells you en lo que se esperaba. Haz lo que te diga en la predicción, lo que me dijo.
+
+
+02:41:24
+
+lse posgrados: Bueno, ahí medio que le está tinando un poco, ¿no? Hay un hay error, pero no hay tanto error. O sea, sí hay ciertas cosas similares, ¿no? Está diciendo le diga, dijo y lo que ahí también la atinó. Otro en inglés, don't you have anything better to do. En español lo que esperábamos no tiene nada mejor que hacer. La predicción tienes que hacer eso. Bueno, ahí también hay cosas interesantes, no latina del todo, pero hay cosas interesantes. My brother become a cook. Bueno, a coc, no estoy seguro la traducción. Eh, en real mi hermano se ha vuelto un gallito. La predicción, mi hermano me dio un poco. Bueno, en la parte primera sí lo hizo bien, ¿verdad? Mi hermano, mi hermano y de Tom, la lo real Tom no consume drogas y la predicción Tom no tiene nada. Bueno, el Tom no lo hizo bien. Frases nuevas ahí pues es un poco más difícil, ¿verdad? Porque no tiene un teacher forcing. Entonces le pasamos my mother says hi y me dice mi padre me dijo.
+
+
+02:42:21
+
+lse posgrados: Bueno, ahí medio que lo hizo bien. Padre y madre pues se confundió, pero además medio que dijo algo interesante. Where is the train station? ¿Dónde está? En la habitación. Bueno, estaba cerca, ¿verdad? ¿Dónde está la estación de tren? Era la respuesta correcta. Y bueno, los demás pues lo mismo, ¿no? Can you help me puedes hablar conmigo? Bueno, el puedes latinó lo demás. Y I love learning languages. Me gusta el café. Debería haber dicho me gusta aprender lenguajes. Bien, el traductor funciona, no es lo mejor, tiene sentido. El acuracy es un accuracy bajo, pero sí nos está generando salidas. Sí. ¿Cómo sabemos que aplica el EOS? Porque la secuencia que me da no es muy larga. Bien, si hubiese sido muy largo significa que Leos nunca lo da, pero sí lo da y por eso se detiene. Eh, hay cosas que sí le atina, hay cosas que no. Es cuestión de mejorar, es cuestión de agrandar el dataset y hacer unas pequeñas configuraciones, pero funciona.
+
+
+02:43:16
+
+lse posgrados: Hasta ahí, ¿qué tal? ¿Qué les pareció? ¿Tienen dudas tal vez sobre el código? ¿Se entiende todo lo que hemos mencionado? Gracias por el feedback, Carlos Hernando. Gracias, gracias a todos por el feedback. Bien, entonces vamos a ir a la siguiente parte. Eh, ese es confortante que no ande tan bien como el TP. Okay, voy a tomar en cuenta eso también. Eh, bueno, justo hablando de TPS, pues aquí tienen el último TP. Bien, entonces acá eh es el desafío cuatro. El desafío cuatro consiste en utilizar este código que les he mostrado y extender y analizar, ¿no? Entonces, van a usar el mismo código que les acabo de mostrar, van a poner, no sé, más entrenamiento, van a cambiar número de neuronas, eh, etcétera. Bien, es eso, solo es un análisis. Aquí les estoy dejando unos puntos, pero bueno, van a verlo después en el GitHub formalmente, todo lo que tienen que hacer. Bien. Por si acaso, aquí solo es como un breve resumen.
+
+
+02:44:31
+
+lse posgrados: En GitHub va a estar desafío cuatro, lo que tienen que hacer. Ahora, opcionalmente pueden replicar el modelo en Py Torch o tal vez utilizar otro en Bering, etcétera. Esto que es opcional, si lo hacen bien, tienen puntos extra por si acaso, pero es opcional. Lo ideal es que completen los otros puntos que van a estar en el GitHub. Y eso es todo. Bien, eh el desafío 3 y cu yo los reviso, así que si tienen dudas sobre eso pueden escribir a mi correo o también la próxima clase me comentan al final o bueno, no sé, yo creo que mejor por correo para que haya más tiempo para comentarles. Para terminar la clase de hoy, pues esto es lo que hemos visto, ¿verdad? Lo hemos mencionado, es un encoder decoder, pero esto tiene un cuello de botella y ese cuello de botella es ese vector de representación. Entonces, tenemos que ver la manera de evitarlo porque nos va a dar problemas. Y le vamos a poner ahí entonces un mecanismo de atención. Con el mecanismo de atención lo evitamos y lo mejoramos. Ahora, si el mecanismo de atención es tan bueno, ¿por qué no usamos todo atención? Y si ustedes convierten el encoder en atención, el puente en atención y el decoder en atención, lo que ustedes han construido es un transformer. Bien. Entonces, la próxima clase vamos a ver eso, cómo pasamos del sequence to sequence clásico al transformer y vamos a ver a detalle cómo funciona un transformer. Bien, y con eso terminamos la clase de hoy. No sé si tienen dudas, comentarios antes de terminar la clase o gracias por los aplausos. Gracias, gracias a todos. Bien, entonces nos vemos el siguiente jueves. Cualquier cosa me escriben por correo. Buenas noches. Chao. Chao.
+Rodolfo Di Chiazza: Chao. Gracias.
+lse posgrados: No.
+
+
+La transcripción finalizó después de 02:46:38
+
+Esta transcripción editable se generó por computadora y puede contener errores. Los usuarios también pueden cambiar el texto después de que se cree.

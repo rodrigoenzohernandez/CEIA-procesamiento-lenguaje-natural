@@ -7,7 +7,7 @@ Cuatro desafíos de código, individuales o en pareja. La nota de la materia es 
 | 1 | Vectorización de texto | Clase 1 (22/10) | Jueves 05/11 (clase 3) | [01-vectorizacion](01-vectorizacion/README.md) | Resuelto, falta entregar |
 | 2 | Word embeddings | Clase 2 (29/10) | Jueves 12/11 (clase 4) | [02-word-embeddings](02-word-embeddings/README.md) | Resuelto, falta entregar |
 | 3 | Generación de secuencias (modelo por caracteres) | Clase 4 (12/11) | Jueves 26/11 (clase 6) | [03-modelo-lenguaje-caracteres](03-modelo-lenguaje-caracteres/README.md) | Resuelto, falta entregar |
-| 4 | Modelos seq2seq | Clase 6 (26/11) | Jueves 10/12 (clase 8) | | |
+| 4 | Traductor seq2seq (encoder-decoder) | Clase 6 (26/11) | Jueves 10/12 (clase 8) | [04-traductor-seq2seq](04-traductor-seq2seq/README.md) | Sin empezar (falta la consigna formal en GitHub) |
 
 ## Nota máxima según la fecha de entrega
 
