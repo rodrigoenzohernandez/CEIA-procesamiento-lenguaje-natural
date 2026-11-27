@@ -37,14 +37,15 @@
 |---|---|
 | Azar | 0.049 |
 | Prototipos 1-NN (TF-IDF de la plantilla) | 0.505 |
-| Prototipos 1-NN (sin stopwords, `sublinear_tf`) | 0.545 |
+| Prototipos 1-NN con `sublinear_tf` (la mejor de 4 variantes, vista en test) | 0.568 |
+| Un prototipo por clase (centroide TF-IDF) | 0.609 |
 | `MultinomialNB(alpha=1)`, baseline de la plantilla | 0.585 |
 | `MultinomialNB(alpha=0.01)` con `stop_words='english'` | 0.684 |
 | `ComplementNB(alpha=0.3)` con `stop_words='english'` y `sublinear_tf` | **0.698** |
 
-- **Punto 1:** 13 de los 25 vecinos son de la misma clase. La similitud falla con documentos cortos o vacíos, cuando el sentido depende del orden (*program manager*) y cuando el parecido lo explican las stopwords.
-- **Punto 2:** el 1-NN es diez veces mejor que el azar, pero queda por debajo de Naïve Bayes. Decide un solo vecino, los 224 documentos de test vacíos caen todos en `rec.autos` y confunde grupos de temas cercanos (religión, política, hardware).
-- **Punto 3:** lo que más importa es `alpha`. Con `alpha=1` el suavizado suma 26 veces el peso TF-IDF de cada clase, y el modelo casi no predice las clases chicas. Las variantes de TF-IDF cambian el F1 en ±0.01; sin IDF ni normalización cae unos 0.07. Los parámetros se eligieron con validación cruzada en train (≈ 0.76), que da optimista frente al test (≈ 0.70) porque el test es de fechas posteriores.
-- **Punto 4:** los vecinos de cada palabra son del mismo tema, no sinónimos, y cada palabra tiene un solo sentido (*key* → criptografía, *drive* → discos). Las palabras muy raras (ley de Zipf) arruinan los vecinos de *encryption* y *apple*; sin stopwords y con `min_df=10` se arreglan.
+- **Punto 1:** 13 de los 25 vecinos son de la misma clase. La similitud falla con documentos cortos o vacíos, cuando el sentido depende del orden (*program manager*) y cuando el parecido lo explican las stopwords. Parte de los aciertos viene de atajos del dataset: mensajes del mismo hilo (se ve en el asunto) y el nombre del grupo escrito en el texto (*talk.politics.guns*).
+- **Punto 2:** el 1-NN es diez veces mejor que el azar, pero queda por debajo de Naïve Bayes. Decide un solo vecino (con un centroide por clase sube a 0.609), los 224 documentos de test vacíos caen todos en `rec.autos` y confunde grupos de temas cercanos (religión, política, hardware). Lo que más lo mejora es `sublinear_tf` (0.568); sacar las stopwords ayuda menos (0.533), y las dos cosas juntas dan 0.545.
+- **Punto 3:** lo que más importa es `alpha`. Con `alpha=1` el suavizado suma 26 veces el peso TF-IDF de cada clase, y el modelo casi no predice las clases chicas. Las variantes de TF-IDF quedan dentro del ruido de la validación cruzada (diferencias de 0.001 a 0.005, contra un desvío entre folds de 0.008), salvo `min_df=5` (−0.02 a −0.03) y sacar la normalización L2, que baja el F1 unos 0.06; sacar el IDF casi no cambia. Las stopwords casi no importan, con o sin IDF: no es que el IDF las anule (el de *the* es 1.18), sino que aparecen parecido en todas las clases. Los documentos de test vacíos van a una clase fija: MultinomialNB los manda a `rec.sport.hockey` por el prior y ComplementNB a `alt.atheism` por empate. Los parámetros se eligieron con validación cruzada en train (≈ 0.76), que da optimista frente al test (≈ 0.70) porque el test es de fechas posteriores; el baseline, que no se eligió con CV, también cae (0.625 → 0.585).
+- **Punto 4:** los vecinos de cada palabra son del mismo tema: juntan sinónimos (*gun*–*firearms*) con palabras solo relacionadas (*gun*–*crime*) sin distinguirlos, y cada palabra tiene un solo sentido (*key* → criptografía, *drive* → discos). Las palabras muy raras (ley de Zipf) arruinan los vecinos de *encryption* y *apple*; sin stopwords y con `min_df=10` se arreglan.
 
 **Para entregar:** el link a este notebook en GitHub (el repo es público) o una copia en Colab compartida con los dos docentes.
